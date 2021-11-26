@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.1
+# v0.17.2
 
 using Markdown
 using InteractiveUtils
@@ -11,11 +11,15 @@ begin
 		Pkg.activate(mktempdir())
 		Pkg.Registry.update()
 		Pkg.add("DICOM")
+		Pkg.add("PyCall")
 	end
 	
 	using PlutoUI
 	using DICOM
 end
+
+# ╔═╡ 60c1e037-5da0-4459-9d04-321c65a5c88f
+using PyCall
 
 # ╔═╡ 9506ae45-f63f-4fd6-8467-0597cbde7006
 TableOfContents()
@@ -35,7 +39,10 @@ TODO: Last
 """
 
 # ╔═╡ 0fbe9f2a-fea0-45fc-b429-85afc5db3341
-# tst_path = "/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision/"
+tst_path = "/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision/"
+
+# ╔═╡ d4c3ba02-f060-426d-805b-c6cb6e04c507
+dir = readdir(tst_path)
 
 # ╔═╡ 482d8669-c750-450b-aae8-03afc2a90007
 md"""
@@ -120,8 +127,17 @@ md"""
 ## `dcm_masked`
 """
 
+# ╔═╡ 59ea4e4d-463e-4a01-a436-315b2995d888
+dcm_path = string(tst_path, dir[3])
+
+# ╔═╡ b907e9e6-759d-4d2b-af44-175346668032
+my_vrs = Dict( (0x0000,0x0000) => "" )
+
+# ╔═╡ 0883a26a-54ba-4670-a19b-a6a0a23f5aee
+dcmdir_parse(dcm_path; aux_vr = my_vrs)
+
 # ╔═╡ dfcda44d-5b2c-4a50-9fb2-44cb70b5488e
-function dcm_masked(array_used = None, radius_val = 95, slice_used_center = None)
+function dcm_masked(header, array_used = None, radius_val = 95, slice_used_center = None)
     try
         pixel_size = header.PixelSpacing[0]
 	catch
@@ -212,6 +228,11 @@ function dcm_masked(array_used = None, radius_val = 95, slice_used_center = None
 end
 
 # ╔═╡ 2a3d8ba6-d4c3-4df9-81c4-c3cc7431b646
+md"""
+# Check PyCall
+"""
+
+# ╔═╡ ac7ecd64-d604-4a33-8ebb-e443b2b7aea4
 
 
 # ╔═╡ Cell order:
@@ -220,6 +241,7 @@ end
 # ╟─89d2d135-7669-40be-bba1-24a324cdf14e
 # ╟─3f313b73-2785-4299-a1e9-bc5d4e1ad422
 # ╠═0fbe9f2a-fea0-45fc-b429-85afc5db3341
+# ╠═d4c3ba02-f060-426d-805b-c6cb6e04c507
 # ╟─482d8669-c750-450b-aae8-03afc2a90007
 # ╠═9e825e49-f9b3-4897-8dc7-755bb4e99b57
 # ╠═de7805f3-e670-4fe4-beb9-cfcf6c1bc021
@@ -227,5 +249,10 @@ end
 # ╠═d2d1d02c-e592-4c73-afa2-80f89dd5534e
 # ╠═2d16b7cb-584e-4ff8-84a1-4e5670bd49d3
 # ╟─a69293d3-6093-4b87-abc6-11f1ec9398c3
+# ╠═59ea4e4d-463e-4a01-a436-315b2995d888
+# ╠═b907e9e6-759d-4d2b-af44-175346668032
+# ╠═0883a26a-54ba-4670-a19b-a6a0a23f5aee
 # ╠═dfcda44d-5b2c-4a50-9fb2-44cb70b5488e
 # ╠═2a3d8ba6-d4c3-4df9-81c4-c3cc7431b646
+# ╠═60c1e037-5da0-4459-9d04-321c65a5c88f
+# ╠═ac7ecd64-d604-4a33-8ebb-e443b2b7aea4
