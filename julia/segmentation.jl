@@ -128,7 +128,7 @@ function dcm_masked(
 	        pixel_size = FOV / matrix_size
 		end
     
-    radius = (radius_val / 2) / pixel_size
+    radius = (radius_val / 2) / pixel_size[1]
     central_image = copy(array_used[:, :, slice_used_center])
     central_image = Int.(central_image .< -200)
     kern = Int.(round(5 / pixel_size[1]))
@@ -186,11 +186,6 @@ end
 # ╔═╡ 57730e9f-05b2-4e3a-bff3-a3a6403a66e0
 masked_array, center_insert, mask = dcm_masked(header; array_used=dcm_array, slice_used_center=size(dcm_array, 3)÷2);
 
-# ╔═╡ f9eb1a87-9b95-483f-b4e4-5eb5147b41e1
-# with_terminal() do
-# 	dcm_masked(header; array_used=dcm_array, slice_used_center=size(dcm_array, 3) ÷ 2)
-# end
-
 # ╔═╡ 163c0220-0070-47c1-a15d-6d6f947a7dfd
 heatmap(dcm_array[:, :, 23], colormap=:grays)
 
@@ -217,7 +212,6 @@ heatmap(masked_array[:, :, 23], colormap=:grays)
 # ╠═9b02d4cc-e9b3-47aa-8d57-e0befd64a5fc
 # ╠═dfcda44d-5b2c-4a50-9fb2-44cb70b5488e
 # ╠═57730e9f-05b2-4e3a-bff3-a3a6403a66e0
-# ╠═f9eb1a87-9b95-483f-b4e4-5eb5147b41e1
 # ╠═163c0220-0070-47c1-a15d-6d6f947a7dfd
 # ╠═9711dd45-8422-4b1d-865a-b0d0528865f9
 # ╠═0d230175-04c8-4ba6-b89f-933ac80519f9
