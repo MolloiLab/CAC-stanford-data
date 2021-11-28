@@ -39,7 +39,7 @@ Compare each function to the corresponding python function and test that the ret
 """
 
 # ╔═╡ 0fbe9f2a-fea0-45fc-b429-85afc5db3341
-tst_path = "/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision/"
+tst_path = string(cd(pwd, "..") , "/", "data/Large_rep1")
 
 # ╔═╡ d4c3ba02-f060-426d-805b-c6cb6e04c507
 dir = readdir(tst_path)
@@ -101,14 +101,8 @@ md"""
 ## `dcm_masked`
 """
 
-# ╔═╡ 59ea4e4d-463e-4a01-a436-315b2995d888
-dcm_path = string(tst_path, dir[4])
-
-# ╔═╡ f8d08a1d-bbed-46cd-9c3e-7306f385321d
-dcm_dir = readdir(dcm_path);
-
 # ╔═╡ 0883a26a-54ba-4670-a19b-a6a0a23f5aee
-dcms = dcmdir_parse(dcm_path);
+dcms = dcmdir_parse(tst_path);
 
 # ╔═╡ 59976bc3-271e-4418-874c-b553b59e730a
 dcm_array = load_dcm_array(dcms);
@@ -218,8 +212,6 @@ heatmap(masked_array[:, :, 23], colormap=:grays)
 # ╠═d2d1d02c-e592-4c73-afa2-80f89dd5534e
 # ╠═2d16b7cb-584e-4ff8-84a1-4e5670bd49d3
 # ╟─a69293d3-6093-4b87-abc6-11f1ec9398c3
-# ╠═59ea4e4d-463e-4a01-a436-315b2995d888
-# ╠═f8d08a1d-bbed-46cd-9c3e-7306f385321d
 # ╠═0883a26a-54ba-4670-a19b-a6a0a23f5aee
 # ╠═59976bc3-271e-4418-874c-b553b59e730a
 # ╠═9b02d4cc-e9b3-47aa-8d57-e0befd64a5fc
