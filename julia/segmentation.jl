@@ -10,16 +10,26 @@ begin
 		using Pkg
 		Pkg.activate(mktempdir())
 		Pkg.Registry.update()
-		Pkg.add("DICOM")
-		Pkg.add("PyCall")
+		Pkg.add("Revise")
+		Pkg.add("ImageFiltering")
+		Pkg.add("FixedPointNumbers")
+		Pkg.add("Images")
+		Pkg.add("Statistics")
+		Pkg.add("CairoMakie")
+		Pkg.add(url="https://github.com/Dale-Black/DICOM.jl")
+		Pkg.add(url="https://github.com/Dale-Black/DICOMUtils.jl")
 	end
-	
-	using PlutoUI
-	using DICOM
-end
 
-# ╔═╡ 60c1e037-5da0-4459-9d04-321c65a5c88f
-using PyCall
+	using Revise
+	using PlutoUI
+	using ImageFiltering
+	using FixedPointNumbers
+	using Images
+	using Statistics
+	using CairoMakie
+	using DICOM
+	using DICOMUtils
+end
 
 # ╔═╡ 9506ae45-f63f-4fd6-8467-0597cbde7006
 TableOfContents()
@@ -31,6 +41,12 @@ Do the dcm specific functions last
 Compare each function to the corresponding python function and test that the return values are the same
 """
 
+# ╔═╡ 0fbe9f2a-fea0-45fc-b429-85afc5db3341
+tst_path = "/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision/"
+
+# ╔═╡ d4c3ba02-f060-426d-805b-c6cb6e04c507
+dir = readdir(tst_path)
+
 # ╔═╡ 3f313b73-2785-4299-a1e9-bc5d4e1ad422
 md"""
 ## `dcm_reader`
@@ -38,51 +54,12 @@ md"""
 TODO: Last
 """
 
-# ╔═╡ 0fbe9f2a-fea0-45fc-b429-85afc5db3341
-tst_path = "/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision/"
-
-# ╔═╡ d4c3ba02-f060-426d-805b-c6cb6e04c507
-dir = readdir(tst_path)
-
 # ╔═╡ 482d8669-c750-450b-aae8-03afc2a90007
 md"""
 ## `dcm_list_builder`
 
 TODO: Last
 """
-
-# ╔═╡ 9e825e49-f9b3-4897-8dc7-755bb4e99b57
-# function dcm_list_builder(path, test_text = "")
-#     # function to get list of dcm_files from dcm directory
-#     dcm_path_list = []
-# 	# dir = readdir(path)
-#     for (dirpath, dirnames, filenames) in walkdir(path)
-# 		@show dirpath 
-# 		@show dirnames
-# 		@show filenames
-#         if dirpath not in dcm_path_list
-#    #          for filename in filenames
-#    #              try
-#    #                  tmp_str = str(os.path.join(dirpath, filename))
-#    #                  ds = pydicom.read_file(tmp_str, stop_before_pixels = True)
-#    #                  if dirpath not in dcm_path_list
-#    #                      dcm_path_list.append(dirpath)
-# 			# 		end
-# 			# 	catch
-#    #                  pass
-# 			# 	end
-# 			# end
-# 		else
-#             pass
-# 		end
-# 	end
-#     return dcm_path_list
-# end
-
-# ╔═╡ de7805f3-e670-4fe4-beb9-cfcf6c1bc021
-# with_terminal() do
-# 	dcm_list_builder(tst_path)
-# end
 
 # ╔═╡ 1b755e07-926a-42bd-871e-a693bb037c81
 md"""
@@ -128,131 +105,146 @@ md"""
 """
 
 # ╔═╡ 59ea4e4d-463e-4a01-a436-315b2995d888
-dcm_path = string(tst_path, dir[3])
+dcm_path = string(tst_path, dir[4])
 
-# ╔═╡ b907e9e6-759d-4d2b-af44-175346668032
-my_vrs = Dict( (0x0000,0x0000) => "" )
+# ╔═╡ f8d08a1d-bbed-46cd-9c3e-7306f385321d
+dcm_dir = readdir(dcm_path);
 
 # ╔═╡ 0883a26a-54ba-4670-a19b-a6a0a23f5aee
-dcmdir_parse(dcm_path; aux_vr = my_vrs)
+dcms = dcmdir_parse(dcm_path);
+
+# ╔═╡ 59976bc3-271e-4418-874c-b553b59e730a
+dcm_array = load_dcm_array(dcms);
+
+# ╔═╡ 9b02d4cc-e9b3-47aa-8d57-e0befd64a5fc
+header = dcms[1].meta;
 
 # ╔═╡ dfcda44d-5b2c-4a50-9fb2-44cb70b5488e
-function dcm_masked(header, array_used = None, radius_val = 95, slice_used_center = None)
-    try
-        pixel_size = header.PixelSpacing[0]
-	catch
-        FOV = header.ReconstructionDiameter
-        matrix_size = header.Rows
+function dcm_masked(
+	header; 
+	array_used=nothing, 
+	radius_val=95, 
+	slice_used_center=nothing
+	)
+	
+	pixel_size = 
+		try
+			header[(0x0028, 0x0030)]
+		catch
+	        FOV = header[(0x0018, 0x1100)]
+	        matrix_size = header[(0x0028, 0x0010)]
+	    
+	        pixel_size = FOV / matrix_size
+		end
     
-        pixel_size = FOV / matrix_size
+    radius = (radius_val / 2) / pixel_size
+    central_image = copy(array_used[:, :, slice_used_center])
+    central_image = Int.(central_image .< -200)
+    kern = Int.(round(5 / pixel_size[1]))
+    if kern % 2 == 0
+        kern += 1
 	end
-    
-    radius = (radius_val/2) / pixel_size
-    
-    central_image = array_used[:,:,slice_used_center].copy()
-    
-    central_image[central_image > -200] = 0
-    central_image[central_image != 0] = 1
-
-    image_kernel = math.ceil(5 / header.PixelSpacing[0])
-    if image_kernel % 2 == 0
-        image_kernel += 1
-	end
-    central_image = scipy.signal.medfilt2d(central_image, image_kernel)
-    
-    # plt.imshow(central_image)
-    # plt.show()
-
-    center = [int(array_used.shape[0] / 2), int(array_used.shape[1] / 2)]
-    
-    a = central_image.copy()
-    for index in range(int(array_used.shape[1] / 2))
-        if (central_image[center[0] + index, center[1] + index] == 1 &&
-            central_image[center[0] + index, center[1] + index + 5] == 1)
-            point_1 = [center[0] + index, center[1] + index]
-            break
-        else
-            a[center[0] + index, center[1] + index] = 2
-            pass
+	
+    central_image = mapwindow(median, central_image, (kern, kern))
+    center = [size(central_image, 1) ÷ 2, size(central_image, 2) ÷ 2]
+    a = copy(central_image)
+    local point_1
+	for index in 1:size(central_image, 2) ÷ 2
+		if (central_image[center[1] + index, center[2] + index] == 1 && central_image[center[1] + index, center[2] + index + 5] == 1) 
+			point_1 = [center[1] + index, center[2] + index]
+			break
+		else
+			a[center[1] + index, center[2] + index] = 2
 		end
 	end
     
-    for index in range(int(array_used.shape[1] / 2))
-        if (central_image[center[0] + index, center[1] - index] == 1 &&
-            central_image[center[0] + index, center[1] - index - 5] == 1)
-            point_2 = [center[0] + index, center[1] - index]
-            break
-        else
-            a[center[0] + index, center[1] - index] = 2
-            pass
+	local point_2
+	for index in 1:size(central_image, 2) ÷ 2
+		if (central_image[center[1] + index, center[2] - index] == 1 && central_image[center[1] + index, center[2] - index - 5] == 1) 
+			point_2 = [center[1] + index, center[2] - index]
+			break
+		else
+			a[center[1] + index, center[2] - index] = 2
 		end
 	end
-        
-    # x_iter = range(center[0], int(array_used.shape[0]), 1)
-    # y_iter = range(center[1], int(array_used.shape[1]), 2)
-    # for tmp_x, tmp_y in zip(x_iter, y_iter):
-    #     if (central_image[tmp_x, tmp_y] == 1 and central_image[tmp_x + 5, tmp_y + 5] == 1):
-    #         point_3 = [tmp_x, tmp_y]
-    #         break
-    #     else:
-    #         a[tmp_x, tmp_y] = 2
-    #         pass
-        
-        
-    for index in range(int(array_used.shape[1] / 2))
-        if (central_image[center[0] - index, center[1] - index] == 1 &&
-            central_image[center[0] - index, center[1] - index - 5] == 1)
-            point_3 = [center[0] - index, center[1] - index]
-            break
-        else
-            a[center[0] - index, center[1] - index] = 2
-            pass
+	
+	local point_3
+	for index in 1:size(central_image, 2) ÷ 2
+		if (central_image[center[1] - index, center[2] - index] == 1 && central_image[center[1] - index, center[2] - index - 5] == 1)
+			point_3 = [center[1] - index, center[2] - index]
+			break
+		else
+			a[center[1] - index, center[2] - index] = 2
 		end
 	end
-        
-    # plt.imshow(a)
-    # plt.show()
-    print(point_1, point_2, point_3)
+	
     center_insert = findCircle(point_1, point_2, point_3)
+	rows, cols = Int(header[(0x0028, 0x0010)]), Int(header[(0x0028, 0x0011)])
+    Y, X = collect(1:rows), collect(1:cols)'
+    dist_from_center = @. sqrt((X - center_insert[2])^2 + (Y-center_insert[1])^2)
 
-    Y, X = np.ogrid[:header.Rows, :header.Columns]
-    dist_from_center = np.sqrt((X - center_insert[1])^2 + (Y-center_insert[0])^2)
-
-    mask = dist_from_center <= radius  
-    masked_array = np.zeros_like(array_used)
-    for index in range(array_used.shape[2])
-        masked_array[:,:,index] = array_used[:,:,index] * mask
+    mask = dist_from_center .<= radius[1]  
+    masked_array = zeros(size(array_used))
+    for index in 1:size(array_used, 3)
+        masked_array[:, :, index] = array_used[:, :, index] .* mask
 	end
 
     return masked_array, center_insert, mask
 end
 
-# ╔═╡ 2a3d8ba6-d4c3-4df9-81c4-c3cc7431b646
-md"""
-# Check PyCall
-"""
+# ╔═╡ a8da3e8d-c624-450c-97f1-531715e94931
+rows = Int(header[(0x0028, 0x0010)])
 
-# ╔═╡ ac7ecd64-d604-4a33-8ebb-e443b2b7aea4
+# ╔═╡ 2f983fba-55f9-4bcf-be49-a0e30d97259c
+norm = collect(1:rows)
 
+# ╔═╡ d07b9f1a-51f1-4367-ad4f-65f177882733
+tran = collect(1:rows)'
+
+# ╔═╡ 21702280-ab33-4a97-b436-4e788ae2af26
+size(norm)
+
+# ╔═╡ 85b9ed25-4be4-4a90-b0e9-c46b4ee82c87
+size(tran)
+
+# ╔═╡ 57730e9f-05b2-4e3a-bff3-a3a6403a66e0
+masked_array, center_insert, mask = dcm_masked(header; array_used=dcm_array, slice_used_center=size(dcm_array, 3)÷2);
+
+# ╔═╡ f9eb1a87-9b95-483f-b4e4-5eb5147b41e1
+with_terminal() do
+	dcm_masked(header; array_used=dcm_array, slice_used_center=size(dcm_array, 3) ÷ 2)
+end
+
+# ╔═╡ 163c0220-0070-47c1-a15d-6d6f947a7dfd
+heatmap(dcm_array[:, :, 23], colormap=:grays)
+
+# ╔═╡ 0d230175-04c8-4ba6-b89f-933ac80519f9
+heatmap(masked_array[:, :, 23], colormap=:grays)
 
 # ╔═╡ Cell order:
 # ╠═14b6c3e4-48dd-11ec-336c-6918bf024f43
 # ╠═9506ae45-f63f-4fd6-8467-0597cbde7006
 # ╟─89d2d135-7669-40be-bba1-24a324cdf14e
-# ╟─3f313b73-2785-4299-a1e9-bc5d4e1ad422
 # ╠═0fbe9f2a-fea0-45fc-b429-85afc5db3341
 # ╠═d4c3ba02-f060-426d-805b-c6cb6e04c507
+# ╟─3f313b73-2785-4299-a1e9-bc5d4e1ad422
 # ╟─482d8669-c750-450b-aae8-03afc2a90007
-# ╠═9e825e49-f9b3-4897-8dc7-755bb4e99b57
-# ╠═de7805f3-e670-4fe4-beb9-cfcf6c1bc021
 # ╟─1b755e07-926a-42bd-871e-a693bb037c81
 # ╠═d2d1d02c-e592-4c73-afa2-80f89dd5534e
 # ╠═2d16b7cb-584e-4ff8-84a1-4e5670bd49d3
 # ╟─a69293d3-6093-4b87-abc6-11f1ec9398c3
 # ╠═59ea4e4d-463e-4a01-a436-315b2995d888
-# ╠═b907e9e6-759d-4d2b-af44-175346668032
+# ╠═f8d08a1d-bbed-46cd-9c3e-7306f385321d
 # ╠═0883a26a-54ba-4670-a19b-a6a0a23f5aee
+# ╠═59976bc3-271e-4418-874c-b553b59e730a
+# ╠═9b02d4cc-e9b3-47aa-8d57-e0befd64a5fc
 # ╠═dfcda44d-5b2c-4a50-9fb2-44cb70b5488e
-# ╠═2a3d8ba6-d4c3-4df9-81c4-c3cc7431b646
-# ╠═60c1e037-5da0-4459-9d04-321c65a5c88f
-# ╠═ac7ecd64-d604-4a33-8ebb-e443b2b7aea4
+# ╠═a8da3e8d-c624-450c-97f1-531715e94931
+# ╠═2f983fba-55f9-4bcf-be49-a0e30d97259c
+# ╠═d07b9f1a-51f1-4367-ad4f-65f177882733
+# ╠═21702280-ab33-4a97-b436-4e788ae2af26
+# ╠═85b9ed25-4be4-4a90-b0e9-c46b4ee82c87
+# ╠═57730e9f-05b2-4e3a-bff3-a3a6403a66e0
+# ╠═f9eb1a87-9b95-483f-b4e4-5eb5147b41e1
+# ╠═163c0220-0070-47c1-a15d-6d6f947a7dfd
+# ╠═0d230175-04c8-4ba6-b89f-933ac80519f9
