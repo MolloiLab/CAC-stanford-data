@@ -11,9 +11,8 @@ begin
 		Pkg.activate(mktempdir())
 		Pkg.Registry.update()
 		Pkg.add("Revise")
+		Pkg.add("PlutoUI")
 		Pkg.add("ImageFiltering")
-		Pkg.add("FixedPointNumbers")
-		Pkg.add("Images")
 		Pkg.add("Statistics")
 		Pkg.add("CairoMakie")
 		Pkg.add(url="https://github.com/Dale-Black/DICOM.jl")
@@ -23,8 +22,6 @@ begin
 	using Revise
 	using PlutoUI
 	using ImageFiltering
-	using FixedPointNumbers
-	using Images
 	using Statistics
 	using CairoMakie
 	using DICOM
@@ -90,7 +87,7 @@ function findCircle(point_1, point_2, point_3)
               
     g = (((sx13) * (y12) + (sy13) * (y12) + (sx21) * (y13) + (sy21) * (y13)) ÷ (2 * ((x31) * (y12) - (x21) * (y13))))  
   
-    # eqn of circle be x^2 + y^2 + 2*g*x + 2*f*y + c = 0 where centre is (h = -g, k = -f)  
+    # eqn of circle be x^2 + y^2 + 2*g*x + 2*f*y + c = 0 where center is (h = -g, k = -f)  
     center_insert = [-g,-f]
 
     return center_insert
@@ -192,31 +189,19 @@ function dcm_masked(
     return masked_array, center_insert, mask
 end
 
-# ╔═╡ a8da3e8d-c624-450c-97f1-531715e94931
-rows = Int(header[(0x0028, 0x0010)])
-
-# ╔═╡ 2f983fba-55f9-4bcf-be49-a0e30d97259c
-norm = collect(1:rows)
-
-# ╔═╡ d07b9f1a-51f1-4367-ad4f-65f177882733
-tran = collect(1:rows)'
-
-# ╔═╡ 21702280-ab33-4a97-b436-4e788ae2af26
-size(norm)
-
-# ╔═╡ 85b9ed25-4be4-4a90-b0e9-c46b4ee82c87
-size(tran)
-
 # ╔═╡ 57730e9f-05b2-4e3a-bff3-a3a6403a66e0
 masked_array, center_insert, mask = dcm_masked(header; array_used=dcm_array, slice_used_center=size(dcm_array, 3)÷2);
 
 # ╔═╡ f9eb1a87-9b95-483f-b4e4-5eb5147b41e1
-with_terminal() do
-	dcm_masked(header; array_used=dcm_array, slice_used_center=size(dcm_array, 3) ÷ 2)
-end
+# with_terminal() do
+# 	dcm_masked(header; array_used=dcm_array, slice_used_center=size(dcm_array, 3) ÷ 2)
+# end
 
 # ╔═╡ 163c0220-0070-47c1-a15d-6d6f947a7dfd
 heatmap(dcm_array[:, :, 23], colormap=:grays)
+
+# ╔═╡ 9711dd45-8422-4b1d-865a-b0d0528865f9
+heatmap(mask, colormap=:grays)
 
 # ╔═╡ 0d230175-04c8-4ba6-b89f-933ac80519f9
 heatmap(masked_array[:, :, 23], colormap=:grays)
@@ -239,12 +224,8 @@ heatmap(masked_array[:, :, 23], colormap=:grays)
 # ╠═59976bc3-271e-4418-874c-b553b59e730a
 # ╠═9b02d4cc-e9b3-47aa-8d57-e0befd64a5fc
 # ╠═dfcda44d-5b2c-4a50-9fb2-44cb70b5488e
-# ╠═a8da3e8d-c624-450c-97f1-531715e94931
-# ╠═2f983fba-55f9-4bcf-be49-a0e30d97259c
-# ╠═d07b9f1a-51f1-4367-ad4f-65f177882733
-# ╠═21702280-ab33-4a97-b436-4e788ae2af26
-# ╠═85b9ed25-4be4-4a90-b0e9-c46b4ee82c87
 # ╠═57730e9f-05b2-4e3a-bff3-a3a6403a66e0
 # ╠═f9eb1a87-9b95-483f-b4e4-5eb5147b41e1
 # ╠═163c0220-0070-47c1-a15d-6d6f947a7dfd
+# ╠═9711dd45-8422-4b1d-865a-b0d0528865f9
 # ╠═0d230175-04c8-4ba6-b89f-933ac80519f9
