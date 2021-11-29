@@ -13,6 +13,7 @@ begin
 		Pkg.add("Revise")
 		Pkg.add("PlutoUI")
 		Pkg.add("ImageFiltering")
+		Pkg.add("Images")
 		Pkg.add("Statistics")
 		Pkg.add("CairoMakie")
 		Pkg.add(url="https://github.com/Dale-Black/DICOM.jl")
@@ -22,6 +23,7 @@ begin
 	using Revise
 	using PlutoUI
 	using ImageFiltering
+	using Images
 	using Statistics
 	using CairoMakie
 	using DICOM
@@ -195,6 +197,206 @@ heatmap(mask, colormap=:grays)
 # ╔═╡ 0d230175-04c8-4ba6-b89f-933ac80519f9
 heatmap(masked_array[:, :, 23], colormap=:grays)
 
+# ╔═╡ 9a77474e-a853-4369-a6f3-a9e76a683a27
+md"""
+## `CCI_calcium_image`
+"""
+
+# ╔═╡ a9f499f8-ca32-4310-82d7-f20b790dc04c
+function CCI_calcium_image(dcm_array, calcium_threshold, header)
+    # threshold array according to calcium_threshold 
+    # simultaneously make image binary
+    array = copy(dcm_array)
+    array = Int.(array .> (1.1 * calcium_threshold))
+
+	pixel_size = 
+		try
+			header[(0x0028, 0x0030)]
+		catch
+	        FOV = header[(0x0018, 0x1100)]
+	        matrix_size = header[(0x0028, 0x0010)]
+	    
+	        pixel_size = FOV / matrix_size
+		end
+    CCI_5mm_num_pixels = Int(round(π * (5/2)^2 / pixel_size[1]^2))
+    cal_rod_num_pixels = Int(round(π * (20/2)^2 / pixel_size[1]^2))
+    
+	kern = Int.(round(5 / pixel_size[1]))
+    if kern % 2 == 0
+        kern += 1
+	end
+    
+    slice_dict = Dict()
+    large_index = []
+    cal_rod_dict = Dict()
+    for idx in 1:size(array, 3)
+		array_filtered = mapwindow(median, array[:,:,idx], (kern, kern))
+        output = label_components(array_filtered)
+        count_5mm = 0
+        for index in 2:output[1]
+            if output[2][index][4] in Int(CCI_5mm_num_pixels * 0.6): Int(CCI_5mm_num_pixels * 1.5)
+                count_5mm += 1
+			elseif output[2][index][4] in Int(cal_rod_num_pixels * 0.7):Int(cal_rod_num_pixels * 1.3)
+                cal_rod_dict[index] = [Int(output[3][index][1]), Int(output[3][index][0])]
+			end
+		end
+		
+        if count_5mm > 0 && count_5mm < 4
+            slice_dict[idx] = count_5mm
+		end
+    
+        poppable_keys = []
+        for key in cal_rod_dict
+            start_coordinate = [cal_rod_dict[key][1], cal_rod_dict[key][2]]
+            
+            x_right = 0
+            while array_filtered[start_coordinate[0], start_coordinate[1] + x_right] == 1
+                x_right += 1
+			end
+            
+            x_left = 0
+            while array_filtered[start_coordinate[0], start_coordinate[1] - x_left] == 1
+                x_left += 1
+			end
+            
+            y_top = 0
+            while array_filtered[start_coordinate[0] + y_top, start_coordinate[1]] == 1
+                y_top += 1
+			end
+            
+            y_bottom = 0
+            while array_filtered[start_coordinate[0] - y_bottom, start_coordinate[1]] == 1
+                y_bottom += 1
+			end
+                
+            x_dist = x_right + x_left
+            y_dist = y_top + y_bottom
+            
+            if x_dist not in Int(0.7 * y_dist):Int(1.2 * y_dist)
+                poppable_keys.append(key)
+            else
+				
+			end
+		end
+            
+        for key in poppable_keys
+                cal_rod_dict.pop(key)
+		end
+                
+        if length(cal_rod_dict) == 0
+			nothing
+        else
+            append!(large_index, idx)
+		end
+	end
+			
+    # flipped_index = np.where(dcm_array[center[0], center[1], :] == max(dcm_array[center[0], center[1], :]))[0][0]
+    flipped_index = Int(median(large_index))
+
+    edge_index = []
+    if flipped_index < (dcm_array.shape[2] / 2)
+        flipped = -1
+        for element in large_index
+            if element > (dcm_array.shape[2] / 2)
+                edge_index.append(element)
+			end
+		end
+        if not edge_index
+            pass
+        else
+            for index_edge in range(min(edge_index), dcm_array.shape[2])
+                try
+                    del(slice_dict[index_edge])
+				catch
+                    pass
+				end
+			end
+            for element2 in edge_index
+                large_index.remove(element2)
+			end
+		end
+                
+        for element in range(max(large_index))
+            try
+                del(slice_dict[element])
+			catch
+                pass
+			end
+		end
+    else
+        flipped = 1
+        for element in large_index
+            if element < (dcm_array.shape[2] / 2)
+                edge_index.append(element)
+			end
+		end
+        if not edge_index
+            pass
+        else
+            for index_edge in range(max(edge_index))
+                try
+                    del(slice_dict[index_edge])
+				catch
+                    pass
+				end
+			end
+            for element2 in edge_index
+                large_index.remove(element2)
+			end
+		end
+        for element in min(large_index):size(dcm_array, 3)
+            try
+                del(slice_dict[element])
+			catch
+                pass
+			end
+		end
+	end
+	SliceThickness = header[(0x0018,0x0050)]
+    poppable_keys = []        
+    if flipped == -1
+        for key in slice_dict.keys()
+            if key > (flipped_index + (55 / SliceThickness))
+                poppable_keys.append(key)
+			elseif flipped == 1
+			end
+		end
+        for key in slice_dict.keys()
+            if key < (flipped_index - (55 / SliceThickness))
+                poppable_keys.append(key)
+			end
+		end
+	end
+    for key in poppable_keys
+		slice_dict.pop(key)            
+	end
+                
+       
+    max_key, _ = max(zip(slice_dict.values(), slice_dict.keys()))
+
+    max_keys = []
+    for key in slice_dict.keys()
+        if slice_dict[key] == max_key
+            max_keys.append(key)
+		end
+	end
+    
+    slice_CCI = Int(median(max_keys))
+    
+    array = copy(dcm_array)
+    array = Int.(array .> calcium_threshold)
+    
+    calcium_image = array * dcm_array
+    quality_slice = round(slice_CCI - flipped * (20 / SliceThickness))
+
+    cal_rod_slice = slice_CCI + (flipped * Int(30 / SliceThickness))
+    
+    return calcium_image, slice_CCI, quality_slice, cal_rod_slice, flipped
+end
+
+# ╔═╡ 4eece882-8416-4330-b95a-1cfaeac89aac
+CCI_calcium_image(dcm_array, 130, header)
+
 # ╔═╡ Cell order:
 # ╠═14b6c3e4-48dd-11ec-336c-6918bf024f43
 # ╠═9506ae45-f63f-4fd6-8467-0597cbde7006
@@ -215,3 +417,6 @@ heatmap(masked_array[:, :, 23], colormap=:grays)
 # ╠═163c0220-0070-47c1-a15d-6d6f947a7dfd
 # ╠═9711dd45-8422-4b1d-865a-b0d0528865f9
 # ╠═0d230175-04c8-4ba6-b89f-933ac80519f9
+# ╟─9a77474e-a853-4369-a6f3-a9e76a683a27
+# ╠═a9f499f8-ca32-4310-82d7-f20b790dc04c
+# ╠═4eece882-8416-4330-b95a-1cfaeac89aac
