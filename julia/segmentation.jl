@@ -30,6 +30,7 @@ begin
 		Pkg.add("CairoMakie")
 		Pkg.add(url="https://github.com/JuliaHealth/DICOM.jl")
 		Pkg.add(url="https://github.com/Dale-Black/DICOMUtils.jl")
+		Pkg.add(url="https://github.com/Dale-Black/Phantoms.jl")
 	end
 
 	using Revise
@@ -42,6 +43,7 @@ begin
 	using CairoMakie
 	using DICOM
 	using DICOMUtils
+	using Phantoms
 end
 
 # ╔═╡ 9506ae45-f63f-4fd6-8467-0597cbde7006
@@ -88,6 +90,20 @@ dcm_array = load_dcm_array(dcms);
 # ╔═╡ 9b02d4cc-e9b3-47aa-8d57-e0befd64a5fc
 header = dcms[1].meta;
 
+# ╔═╡ 316a0f8f-163d-44e1-87c2-2cfca14cfc48
+function get_pixel_size(header)
+	pixel_size = 
+		try
+			header[(0x0028, 0x0030)]
+		catch
+			FOV = header[(0x0018, 0x1100)]
+			matrix_size = header[(0x0028, 0x0010)]
+		
+			pixel_size = FOV / matrix_size
+		end
+	return pixel_size
+end
+
 # ╔═╡ 237cfd63-3479-468d-954f-2ebd05376fca
 md"""
 # Whole heart mask
@@ -131,28 +147,23 @@ end
 # ╔═╡ 2d16b7cb-584e-4ff8-84a1-4e5670bd49d3
 findCircle([309, 309], [312, 200], [155, 155])
 
+# ╔═╡ dfbb5c47-630d-4e0a-b8d4-cdfe4d0cae79
+findCircle([20, 20], [30, 10], [10, 20])
+
 # ╔═╡ a69293d3-6093-4b87-abc6-11f1ec9398c3
 md"""
-## `dcm_masked`
+## `mask_heart`
 """
 
 # ╔═╡ dfcda44d-5b2c-4a50-9fb2-44cb70b5488e
-function dcm_masked(
+function mask_heart(
 	header; 
 	array_used=nothing, 
 	radius_val=95, 
 	slice_used_center=nothing
 	)
 	
-	pixel_size = 
-		try
-			header[(0x0028, 0x0030)]
-		catch
-	        FOV = header[(0x0018, 0x1100)]
-	        matrix_size = header[(0x0028, 0x0010)]
-	    
-	        pixel_size = FOV / matrix_size
-		end
+	pixel_size = get_pixel_size(header)
     
     radius = (radius_val / 2) / pixel_size[1]
     central_image = copy(array_used[:, :, slice_used_center])
@@ -210,7 +221,7 @@ function dcm_masked(
 end
 
 # ╔═╡ 57730e9f-05b2-4e3a-bff3-a3a6403a66e0
-masked_array, center_insert, mask = dcm_masked(header; array_used=dcm_array, slice_used_center=size(dcm_array, 3)÷2);
+masked_array, center_insert, mask = mask_heart(header; array_used=dcm_array, slice_used_center=size(dcm_array, 3)÷2);
 
 # ╔═╡ 19e0f1b3-86c3-4ffd-aa39-dd7e1e509312
 center_insert
@@ -264,22 +275,8 @@ md"""
 ## `get_indices`
 """
 
-# ╔═╡ 316a0f8f-163d-44e1-87c2-2cfca14cfc48
-function get_pixel_size(header)
-	pixel_size = 
-		try
-			header[(0x0028, 0x0030)]
-		catch
-			FOV = header[(0x0018, 0x1100)]
-			matrix_size = header[(0x0028, 0x0010)]
-		
-			pixel_size = FOV / matrix_size
-		end
-	return pixel_size
-end
-
 # ╔═╡ c4c6841a-88f4-4ca9-9353-0e9daa6d4dff
-function get_indices(dcm_array, header; calcium_threshold=130, comp_connect=4)
+function get_indices(dcm_array, header; calcium_threshold=130)
     array = copy(dcm_array)
     array = Int.(array .> (1.1 * calcium_threshold))
 
@@ -373,6 +370,15 @@ slice_dict, large_index = get_indices(masked_array, header);
 
 # ╔═╡ 8959750c-291c-4c2a-a6a1-218f8ed82ab1
 slice_dict, large_index
+
+# ╔═╡ f7c771a1-8cc9-4189-ad67-b8a78bfbbfe3
+begin
+	answer_dict = Dict(25=>2, 26=>2, 24=>1)
+	answer_index = [10, 11, 12, 13, 14, 15, 16]
+end
+
+# ╔═╡ 69ac246c-013a-484d-826f-aeaa7a498891
+slice_dict == answer_dict
 
 # ╔═╡ 68c16f9e-8520-41ef-912a-9e61acf2ad1d
 md"""
@@ -487,7 +493,7 @@ md"""
 """
 
 # ╔═╡ 1ac3d601-0057-475e-a6ac-9522618f7bb9
-function compute_CCI(dcm_array, header, slice_dict; calcium_threshold=130)
+function compute_CCI(dcm_array, header, slice_dict, flipped; calcium_threshold=130)
 	SliceThickness = header[(0x0018,0x0050)]
 	max_key, _ = maximum(zip(values(slice_dict), keys(slice_dict)))
     max_keys = []
@@ -510,7 +516,7 @@ function compute_CCI(dcm_array, header, slice_dict; calcium_threshold=130)
 end
 
 # ╔═╡ 5d407e49-fe05-4748-be36-b232b5ce3ccb
-calcium_image1, slice_CCI1, quality_slice1, cal_rod_slice1 = compute_CCI(masked_array, header, slice_dict);
+calcium_image1, slice_CCI1, quality_slice1, cal_rod_slice1 = compute_CCI(masked_array, header, slice_dict, flipped);
 
 # ╔═╡ de1ac95e-2399-45c1-b337-dcfe800394a2
 slice_CCI1
@@ -523,7 +529,6 @@ begin
 	fig4 = Figure()
 	
 	ax4 = Makie.Axis(fig4[1, 1])
-	ax4.title = "Raw DICOM Array"
 	heatmap!(transpose(calcium_image1[:, :, a]), colormap=:grays)
 	ax5 = Makie.Axis(fig4[1,2])
 	heatmap!(transpose(dcm_array[:, :, a]), colormap=:grays)
@@ -532,27 +537,27 @@ end
 
 # ╔═╡ 9a77474e-a853-4369-a6f3-a9e76a683a27
 md"""
-## `CCI_calcium_image`
+## `mask_rod`
 """
 
 # ╔═╡ a9f499f8-ca32-4310-82d7-f20b790dc04c
-function CCI_calcium_image(dcm_array, header; calcium_threshold=130, comp_connect=4)
+function mask_rod(dcm_array, header; calcium_threshold=130)
     slice_dict, large_index = get_indices(
 		dcm_array, header; 
-		calcium_threshold=calcium_threshold, comp_connect= comp_connect
+		calcium_threshold=calcium_threshold
 	)
     slice_dict, flipped, flipped_index = find_edges(
 		dcm_array, slice_dict, large_index
 	)
     slice_dict = poppable_keys(flipped, flipped_index, header, slice_dict)
     calcium_image, slice_CCI, quality_slice, cal_rod_slice = compute_CCI(
-		dcm_array, header, slice_dict; calcium_threshold=calcium_threshold
+		dcm_array, header, slice_dict, flipped; calcium_threshold=calcium_threshold
 	)
 	return calcium_image, slice_CCI, quality_slice, cal_rod_slice
 end
 
 # ╔═╡ 4eece882-8416-4330-b95a-1cfaeac89aac
-calcium_image, slice_CCI, quality_slice, cal_rod_slice = CCI_calcium_image(masked_array, header);
+calcium_image, slice_CCI, quality_slice, cal_rod_slice = mask_rod(masked_array, header);
 
 # ╔═╡ 214d485e-df7e-4a45-b52f-10f854d839a1
 @bind b PlutoUI.Slider(1:size(calcium_image, 3), default=10, show_value=true)
@@ -585,7 +590,7 @@ function angle_calc(side1, side2)
 end
 
 # ╔═╡ f498c292-367d-4441-873e-29bec99af2a6
-angle_calc(4, 3)
+angle_calc(1, 2)
 
 # ╔═╡ 56ce9966-939e-48cd-9c70-2e441bfaea58
 md"""
@@ -614,7 +619,7 @@ md"""
 """
 
 # ╔═╡ 92fca992-b36d-48f3-803e-f92e6463c291
-function calc_output(dcm_array, CCI_slice, calcium_threshold=130, comp_connect=trues(3, 3))
+function calc_output(dcm_array, header, CCI_slice, calcium_threshold=130, comp_connect=trues(3, 3))
 	# Actual scoring for CCI insert
     # First step is to remove slices without calcium from arrays
 	PixelSpacing = get_pixel_size(header)
@@ -677,7 +682,10 @@ function calc_output(dcm_array, CCI_slice, calcium_threshold=130, comp_connect=t
 end
 
 # ╔═╡ fb320178-0d33-4402-b075-7bf7541f94e4
-output = calc_output(masked_array, slice_CCI1);
+output = calc_output(masked_array, header, slice_CCI1);
+
+# ╔═╡ 68dae231-9907-44b2-afca-a5dac57998bb
+output[1]
 
 # ╔═╡ feca7b76-fc10-4aca-adff-4cd323dabc74
 md"""
@@ -685,7 +693,7 @@ md"""
 """
 
 # ╔═╡ ae9ab557-553c-474a-8865-37807b9270fb
-function center_points(output, tmp_center, CCI_slice)
+function center_points(dcm_array, output, header, tmp_center, CCI_slice)
 	PixelSpacing = get_pixel_size(header)
 	rows, cols = Int(header[(0x0028, 0x0010)]), Int(header[(0x0028, 0x0011)])
     sizes = []
@@ -718,7 +726,6 @@ function center_points(output, tmp_center, CCI_slice)
 	end
 
     large1_index, large1_key = maximum(zip(values(max_dict), keys(max_dict)))
-	@show large1_index, large1_key
     pop!(max_dict, large1_key)
     large2_index, large2_key = maximum(zip(values(max_dict), keys(max_dict)))
     pop!(max_dict, large2_key)
@@ -736,7 +743,7 @@ end
 center_insert
 
 # ╔═╡ 42e86a48-1438-4edd-ac2d-f307d534e165
-center, center1, center2, center3 = center_points(output, center_insert, slice_CCI1)
+center, center1, center2, center3 = center_points(dcm_array, output, header, center_insert, slice_CCI1)
 
 # ╔═╡ 0f73d3a7-c6fa-49ee-8fdf-357b0fe94ec8
 md"""
@@ -744,10 +751,9 @@ md"""
 """
 
 # ╔═╡ 9ac2f9ed-92bb-4540-add5-422df2a3f6da
-function calc_centers(output, header, tmp_center, CCI_slice)
+function calc_centers(dcm_array, output, header, tmp_center, CCI_slice)
 	PixelSpacing = get_pixel_size(header)
-	_, center1, center2, center3 = center_points(output, center_insert, CCI_slice)
-	cents = center1, center2, center3
+	_, center1, center2, center3 = center_points(dcm_array, output, header, tmp_center, CCI_slice)
     centers = Dict()
     for size_index4 in (center1, center2, center3)
         center_index = size_index4
@@ -807,7 +813,10 @@ function calc_centers(output, header, tmp_center, CCI_slice)
 end
 
 # ╔═╡ 533a77b8-d541-4277-8123-cbfe416fd263
-calc_centers(output, header, center_insert, slice_CCI1)
+dict = calc_centers(dcm_array, output, header, center_insert, slice_CCI1)
+
+# ╔═╡ 4c8ed7b6-392c-438b-b6d4-946f001c7980
+dict[:Large_MD]
 
 # ╔═╡ 891d81f2-f30e-4365-b0ba-b0cebae9f60f
 md"""
@@ -816,15 +825,12 @@ md"""
 
 # ╔═╡ efad1a40-b466-4e8e-a4ae-ab3c14efc3f6
 function mask_inserts(
-	dcm_array, header, CCI_slice, center_insert; 
-	calcium_threshold=130, comp_connect=4
+	dcm_array, masked_array, header, CCI_slice, center_insert; 
+	calcium_threshold=130, comp_connect=trues(3, 3)
 	)
 	
-    output = calc_output(masked_array, CCI_slice)
-	center, center1, center2, center3 =  center_points(output, center_insert, CCI_slice)
-	cents = center1, center2, center3
-	tmp_center = copy(center)
-    calc_size_density_VS_AS_MS = calc_centers(output, header, tmp_center, CCI_slice)
+    output = calc_output(masked_array, header, CCI_slice, calcium_threshold, comp_connect)
+    calc_size_density_VS_AS_MS = calc_centers(dcm_array, output, header, center_insert, CCI_slice)
 
 	PixelSpacing = get_pixel_size(header)
 	rows, cols = Int(header[(0x0028, 0x0010)]), Int(header[(0x0028, 0x0011)])
@@ -858,13 +864,27 @@ function mask_inserts(
 end
 
 # ╔═╡ 9cf4a86b-d41f-4814-b14e-0854176e73d4
-mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(masked_array, header, 25, center_insert);
+mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(dcm_array, masked_array, header, slice_CCI, center_insert);
 
 # ╔═╡ 492574dc-5674-462d-9df1-a77e0f445994
 masks = mask_L_HD + mask_M_HD + mask_S_HD + mask_L_MD + mask_M_MD + mask_S_MD + mask_L_LD + mask_M_LD + mask_S_LD;
 
 # ╔═╡ 33b38675-7434-46e5-808c-ad4b0cbb0408
 heatmap(transpose(masks), colormap=:grays)
+
+# ╔═╡ 0de7f21c-2021-4c7a-8785-678ab97aa548
+md"""
+## Test against main package
+"""
+
+# ╔═╡ 2d894b09-ab07-4b51-98e4-ecc35fdd5f90
+mask_tuple = Phantoms.mask_inserts(dcm_array, masked_array, header, slice_CCI, center_insert);
+
+# ╔═╡ 3ff5302b-061f-405c-897b-593527481eac
+masks_phantom = mask_tuple[1] + mask_tuple[2] + mask_tuple[3] + mask_tuple[4] + mask_tuple[5] + mask_tuple[6] + mask_tuple[7] + mask_tuple[8] + mask_tuple[9];
+
+# ╔═╡ cd511a0a-cc91-451e-b41c-cc69a98a4cef
+heatmap(transpose(masks_phantom), colormap=:grays)
 
 # ╔═╡ Cell order:
 # ╠═14b6c3e4-48dd-11ec-336c-6918bf024f43
@@ -878,10 +898,12 @@ heatmap(transpose(masks), colormap=:grays)
 # ╠═0883a26a-54ba-4670-a19b-a6a0a23f5aee
 # ╠═59976bc3-271e-4418-874c-b553b59e730a
 # ╠═9b02d4cc-e9b3-47aa-8d57-e0befd64a5fc
+# ╠═316a0f8f-163d-44e1-87c2-2cfca14cfc48
 # ╟─237cfd63-3479-468d-954f-2ebd05376fca
 # ╟─1b755e07-926a-42bd-871e-a693bb037c81
 # ╠═d2d1d02c-e592-4c73-afa2-80f89dd5534e
 # ╠═2d16b7cb-584e-4ff8-84a1-4e5670bd49d3
+# ╠═dfbb5c47-630d-4e0a-b8d4-cdfe4d0cae79
 # ╟─a69293d3-6093-4b87-abc6-11f1ec9398c3
 # ╠═dfcda44d-5b2c-4a50-9fb2-44cb70b5488e
 # ╠═57730e9f-05b2-4e3a-bff3-a3a6403a66e0
@@ -893,10 +915,11 @@ heatmap(transpose(masks), colormap=:grays)
 # ╠═004f4a1e-9d11-44ef-8622-69c311edb2cb
 # ╟─da57bd3c-0d8b-453c-9c4f-ea846850cbec
 # ╟─11e0c502-5b1f-4e60-bb43-a8c04a4e335b
-# ╠═316a0f8f-163d-44e1-87c2-2cfca14cfc48
 # ╠═c4c6841a-88f4-4ca9-9353-0e9daa6d4dff
 # ╠═462fd944-d4ce-4d7b-82ad-40342daff354
 # ╠═8959750c-291c-4c2a-a6a1-218f8ed82ab1
+# ╠═f7c771a1-8cc9-4189-ad67-b8a78bfbbfe3
+# ╠═69ac246c-013a-484d-826f-aeaa7a498891
 # ╟─68c16f9e-8520-41ef-912a-9e61acf2ad1d
 # ╠═f49fe2a8-8429-4fd1-98e3-6e75189a3ac2
 # ╠═494163b1-cb52-45a9-815e-991633018cd5
@@ -913,7 +936,7 @@ heatmap(transpose(masks), colormap=:grays)
 # ╟─9a77474e-a853-4369-a6f3-a9e76a683a27
 # ╠═a9f499f8-ca32-4310-82d7-f20b790dc04c
 # ╠═4eece882-8416-4330-b95a-1cfaeac89aac
-# ╠═214d485e-df7e-4a45-b52f-10f854d839a1
+# ╟─214d485e-df7e-4a45-b52f-10f854d839a1
 # ╠═03622243-d2af-4d1b-a6e1-fd50670e48a8
 # ╟─ee208b64-3cf3-428b-a5f6-74793a82fd93
 # ╟─5930b9c5-2f85-465b-abe0-223580142d49
@@ -926,6 +949,7 @@ heatmap(transpose(masks), colormap=:grays)
 # ╟─5a8963f1-3ec8-4dbe-b567-df2648219b7f
 # ╠═92fca992-b36d-48f3-803e-f92e6463c291
 # ╠═fb320178-0d33-4402-b075-7bf7541f94e4
+# ╠═68dae231-9907-44b2-afca-a5dac57998bb
 # ╟─feca7b76-fc10-4aca-adff-4cd323dabc74
 # ╠═ae9ab557-553c-474a-8865-37807b9270fb
 # ╠═39ce8635-28a7-4eee-875e-325e85d142d5
@@ -933,8 +957,13 @@ heatmap(transpose(masks), colormap=:grays)
 # ╟─0f73d3a7-c6fa-49ee-8fdf-357b0fe94ec8
 # ╠═9ac2f9ed-92bb-4540-add5-422df2a3f6da
 # ╠═533a77b8-d541-4277-8123-cbfe416fd263
+# ╠═4c8ed7b6-392c-438b-b6d4-946f001c7980
 # ╟─891d81f2-f30e-4365-b0ba-b0cebae9f60f
 # ╠═efad1a40-b466-4e8e-a4ae-ab3c14efc3f6
 # ╠═9cf4a86b-d41f-4814-b14e-0854176e73d4
 # ╠═492574dc-5674-462d-9df1-a77e0f445994
 # ╠═33b38675-7434-46e5-808c-ad4b0cbb0408
+# ╟─0de7f21c-2021-4c7a-8785-678ab97aa548
+# ╠═2d894b09-ab07-4b51-98e4-ecc35fdd5f90
+# ╠═3ff5302b-061f-405c-897b-593527481eac
+# ╠═cd511a0a-cc91-451e-b41c-cc69a98a4cef
