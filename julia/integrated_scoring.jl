@@ -169,7 +169,7 @@ md"""
 # ╔═╡ 3818e468-db0a-4bca-bbcd-ba4732e0e9df
 begin
 	arr_L_HD_cal = masked_array[:, :, 25] .* mask_L_HD
-	core_HD = erode(erode(erode(arr_L_HD_cal)))
+	core_HD = erode(arr_L_HD_cal)
 end;
 
 # ╔═╡ 692b4e3d-7aec-4b73-8128-085e5b23d1f5
@@ -178,7 +178,7 @@ heatmap(core_HD, colormap=:grays)
 # ╔═╡ 9f148b9a-fc4e-4d0d-baed-c37f958afc3e
 begin
 	arr_L_MD_cal = masked_array[:, :, 25] .* mask_L_MD
-	core_MD = erode(erode(erode(arr_L_MD_cal)))
+	core_MD = erode(arr_L_MD_cal)
 end;
 
 # ╔═╡ 5bdc9b96-8d13-4c55-be09-139682913c9c
@@ -187,20 +187,35 @@ heatmap(core_MD, colormap=:grays)
 # ╔═╡ 9041e3b6-ccde-4155-bee2-9aab694f5ced
 begin
 	arr_L_LD_cal = masked_array[:, :, 25] .* mask_L_LD
-	core_LD = erode(erode(erode(arr_L_LD_cal)))
+	core_LD = erode(arr_L_LD_cal)
 end;
 
 # ╔═╡ 3244f883-acec-4dbf-83ad-0c8dfb6326e0
 heatmap(core_LD, colormap=:grays)
 
 # ╔═╡ 519e3ed1-8f9a-4ccd-bd6d-115a91aa30d2
-cal_array = [mean(core_LD), mean(core_MD), mean(core_HD)]
+cal_array = [mean(core_LD[core_LD.>0]), mean(core_MD[core_MD.>0]), mean(core_HD[core_HD.>0])]
 
-# ╔═╡ 85f65257-8c39-4836-8517-2109cf55663b
-hist(core_HD, bins=100)
+# ╔═╡ f8fbfd68-7cc9-4422-baff-e9079cbce314
+plot(cal_array,[200,400,800])
 
-# ╔═╡ 61b908cb-41ab-4bd6-9db8-dce88834e43c
-scatter(cal_array)
+# ╔═╡ d38ac6fd-75de-4943-9fec-5fe2592a4513
+md"""
+### 	Measured HU vs Ground truth
+"""
+
+# ╔═╡ 10b5549f-a3db-443d-9f8c-85be8f72a591
+begin
+	x = [1 227.609
+		 1 393.29
+		 1 773.667]
+	y = [200
+		 400
+		 800]
+	β̂ = (x'*x)\x'*y
+	f(a)= β̂[1] + β̂[2]a
+	plot(0:800,f)
+end
 
 # ╔═╡ 3c5e85b2-fd11-4f70-9e6c-cc26fbcce5b3
 md"""
