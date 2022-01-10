@@ -188,6 +188,11 @@ mean_L_HD = mean(m_arr[core_L_HD])
 # md"""
 # #### Visualize High Density
 # """
+# ╔═╡ 3818e468-db0a-4bca-bbcd-ba4732e0e9df
+begin
+	arr_L_HD_cal = masked_array[:, :, 25] .* mask_L_HD
+	core_HD = erode(arr_L_HD_cal)
+end;
 
 # ╔═╡ 692b4e3d-7aec-4b73-8128-085e5b23d1f5
 # begin
@@ -302,6 +307,7 @@ density(intensity) = (intensity - 49.0528) / 1.4046
 
 # ╔═╡ 33a0382a-dd3a-46ec-8ff2-672da09e7f26
 begin
+<<<<<<< HEAD
 	f = Figure()
 	ax1 = Axis(f[1, 1])
 	
@@ -321,6 +327,11 @@ md"""
 
 # ╔═╡ f874712b-76ff-4a0a-a200-48e6f2d6237e
 arr = masked_array[:, :, 23:27];
+=======
+	arr_L_MD_cal = masked_array[:, :, 25] .* mask_L_MD
+	core_MD = erode(arr_L_MD_cal)
+end;
+>>>>>>> 2a130bea0f54a18e9306e9847a906f524c862d5e
 
 # ╔═╡ 728682bd-096a-4bd5-8bda-9519d0eaedc3
 s_bkg = mean_no_CA
@@ -338,10 +349,15 @@ md"""
 
 # ╔═╡ 71343f21-9d2f-4d34-87c1-be54a9b8cd94
 begin
+<<<<<<< HEAD
 	mask_L_HD_3D = Array{Bool}(undef, size(arr))
 	for z in 1:size(arr, 3)
 		mask_L_HD_3D[:, :, z] = mask_L_HD
 	end
+=======
+	arr_L_LD_cal = masked_array[:, :, 25] .* mask_L_LD
+	core_LD = erode(arr_L_LD_cal)
+>>>>>>> 2a130bea0f54a18e9306e9847a906f524c862d5e
 end;
 
 # ╔═╡ b10c83c5-040c-4fc8-83c4-1c8d0504ab21
@@ -350,6 +366,7 @@ s_obj_L_HD = mean(arr[mask_L_HD_3D])
 # ╔═╡ c2212ea1-0644-4522-9f42-5182f10a11b3
 ρ_L_HD = density(s_obj_L_HD) / 1e6 # g/cm^3 => g/mm^3
 
+<<<<<<< HEAD
 # ╔═╡ e72aefc4-3b2b-41b6-9968-88b3f1eed267
 alg_L_HD = Integrated(arr[mask_L_HD_3D]);
 
@@ -358,6 +375,31 @@ V_l_hd = CalciumScoring.score(s_bkg, s_obj_L_HD, pixel_size, alg_L_HD)  # mm^3
 
 # ╔═╡ edeb0ef5-6533-42e1-b3b5-61492af055f4
 l_hd = score(s_bkg, s_obj_L_HD, pixel_size, ρ_L_HD, alg_L_HD)
+=======
+# ╔═╡ 519e3ed1-8f9a-4ccd-bd6d-115a91aa30d2
+cal_array = [mean(core_LD[core_LD.>0]), mean(core_MD[core_MD.>0]), mean(core_HD[core_HD.>0])]
+
+# ╔═╡ f8fbfd68-7cc9-4422-baff-e9079cbce314
+plot(cal_array,[200,400,800])
+
+# ╔═╡ d38ac6fd-75de-4943-9fec-5fe2592a4513
+md"""
+### 	Measured HU vs Ground truth
+"""
+
+# ╔═╡ 10b5549f-a3db-443d-9f8c-85be8f72a591
+begin
+	x = [1 227.609
+		 1 393.29
+		 1 773.667]
+	y = [200
+		 400
+		 800]
+	β̂ = (x'*x)\x'*y
+	f(a)= β̂[1] + β̂[2]a
+	plot(0:800,f)
+end
+>>>>>>> 2a130bea0f54a18e9306e9847a906f524c862d5e
 
 # ╔═╡ db94547a-6447-43b3-afad-886c88472220
 md"""
