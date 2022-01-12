@@ -118,10 +118,10 @@ md"""
 calcium_image, slice_CCI, quality_slice, cal_rod_slice = mask_rod(masked_array, header);
 
 # ╔═╡ 5a285155-5eb5-4c9f-aba2-5c987fc9f141
-@bind b PlutoUI.Slider(1:size(calcium_image, 3), default=10, show_value=true)
+@bind b1 PlutoUI.Slider(1:size(calcium_image, 3), default=10, show_value=true)
 
 # ╔═╡ 8b25a31f-6173-4fe2-9f69-9aa0fa861d7c
-heatmap(calcium_image[:, :, b], colormap=:grays)
+heatmap(calcium_image[:, :, b1], colormap=:grays)
 
 # ╔═╡ 7b320fab-daa4-4c6b-92ca-083e54fbfa34
 c_img = calcium_image[:, :, 12];
@@ -185,20 +185,15 @@ core_L_HD = Bool.(erode(erode(mask_L_HD)));
 mean_L_HD = mean(m_arr[core_L_HD])
 
 # ╔═╡ 1922f9c6-aec3-45e4-a2fd-48532bdc2d97
-# md"""
-# #### Visualize High Density
-# """
-# ╔═╡ 3818e468-db0a-4bca-bbcd-ba4732e0e9df
-begin
-	arr_L_HD_cal = masked_array[:, :, 25] .* mask_L_HD
-	core_HD = erode(arr_L_HD_cal)
-end;
+md"""
+#### Visualize High Density
+"""
 
 # ╔═╡ 692b4e3d-7aec-4b73-8128-085e5b23d1f5
-# begin
-# 	arr_L_HD_cal = m_arr .* core_L_HD
-# 	heatmap(arr_L_HD_cal, colormap=:grays)
-# end
+begin
+	arr_L_HD_cal = m_arr .* core_L_HD
+	heatmap(arr_L_HD_cal, colormap=:grays)
+end
 
 # ╔═╡ da54fc49-8f69-4ff8-bbb7-800183fc3966
 md"""
@@ -212,9 +207,9 @@ core_L_MD = Bool.(erode(erode(mask_L_MD)));
 mean_L_MD = mean(m_arr[core_L_MD])
 
 # ╔═╡ b3a0a168-fc34-4153-af56-313b97eec14f
-# md"""
-# #### Visualize Medium Density
-# """
+md"""
+#### Visualize Medium Density
+"""
 
 # ╔═╡ 9e14592b-cc17-4097-8f7b-15b3fa0acba7
 # begin
@@ -234,9 +229,9 @@ core_L_LD = Bool.(erode(erode(mask_L_LD)));
 mean_L_LD = mean(m_arr[core_L_LD])
 
 # ╔═╡ 4e0a91b8-27a3-4eb3-aa2f-edae2306d84d
-# md"""
-# #### Visualize Low Density
-# """
+md"""
+#### Visualize Low Density
+"""
 
 # ╔═╡ 2c0c2372-675a-4dc8-9ee6-d82fa656c639
 # begin
@@ -252,19 +247,16 @@ md"""
 # ╔═╡ 73fe3538-4bff-4acf-8219-8c130ef0ab9b
 ring = Bool.((dilate(dilate(dilate((dilate(mask_L_LD)))))) - dilate(dilate(dilate((mask_L_LD)))));
 
-# ╔═╡ f193ff12-f020-4348-9f80-5708c1289c1a
-mean_no_CA = mean(m_arr[ring])
+# ╔═╡ fabe0fe4-25a6-4f97-b30a-76e9df7820eb
+no_ca_arr = masked_array[:, :, 23];
+
+# ╔═╡ cd410554-5b3a-4bef-ab3b-d6875c72bd76
+mean_no_CA = mean(no_ca_arr[mask])
 
 # ╔═╡ aafe96bc-6ecc-44dc-9842-926bf93a6536
-# md"""
-# #### Visualize No Calcium
-# """
-
-# ╔═╡ f84b8041-f82a-49af-8362-6771f70e2027
-# begin
-# 	arr_no_CA_cal = m_arr .* ring
-# 	heatmap(arr_no_CA_cal, colormap=:grays)
-# end
+md"""
+#### Visualize No Calcium
+"""
 
 # ╔═╡ 701d01b4-26d6-4f65-8f0a-f6b8dfb24980
 md"""
@@ -286,28 +278,33 @@ linearRegressor = lm(@formula(intensity ~ density), df)
 # ╔═╡ e3972297-eb83-41ec-a9d8-c71330b10ed6
 linearFit = predict(linearRegressor)
 
+# ╔═╡ d1b634cc-9f82-4162-bf1f-e971ec263b3f
+m = linearRegressor.model.pp.beta0[2]
+
+# ╔═╡ a8094e09-8d2a-4b45-a96e-a48703928a02
+b = linearRegressor.model.rr.mu[1]
+
 # ╔═╡ a878d863-798e-4cb2-bd44-31e93f1c6776
 md"""
 We can see from above that the linear regression returns a best fit line with the formula:
 
 ```math
-y = 1.4046x + 49.0528
+y = mx + b
 ```
 
 Which can be solved for ``x`` and then used to calculate the density (``x``) given some measured intensity (``y``)
 
 ```math
-x = \frac{y - 49.0528}{1.4046}
+x = \frac{y - b}{m}
 ```
 
 """
 
 # ╔═╡ 02b73f48-ed97-4b10-bcaf-cd9555d5964c
-density(intensity) = (intensity - 49.0528) / 1.4046
+density(intensity) = (intensity - b) / m
 
 # ╔═╡ 33a0382a-dd3a-46ec-8ff2-672da09e7f26
 begin
-<<<<<<< HEAD
 	f = Figure()
 	ax1 = Axis(f[1, 1])
 	
@@ -325,13 +322,8 @@ md"""
 ## Score Large Inserts
 """
 
-# ╔═╡ f874712b-76ff-4a0a-a200-48e6f2d6237e
+# ╔═╡ 0ed5b044-0ef7-4a18-a73f-606615d76a7c
 arr = masked_array[:, :, 23:27];
-=======
-	arr_L_MD_cal = masked_array[:, :, 25] .* mask_L_MD
-	core_MD = erode(arr_L_MD_cal)
-end;
->>>>>>> 2a130bea0f54a18e9306e9847a906f524c862d5e
 
 # ╔═╡ 728682bd-096a-4bd5-8bda-9519d0eaedc3
 s_bkg = mean_no_CA
@@ -349,15 +341,10 @@ md"""
 
 # ╔═╡ 71343f21-9d2f-4d34-87c1-be54a9b8cd94
 begin
-<<<<<<< HEAD
 	mask_L_HD_3D = Array{Bool}(undef, size(arr))
 	for z in 1:size(arr, 3)
 		mask_L_HD_3D[:, :, z] = mask_L_HD
 	end
-=======
-	arr_L_LD_cal = masked_array[:, :, 25] .* mask_L_LD
-	core_LD = erode(arr_L_LD_cal)
->>>>>>> 2a130bea0f54a18e9306e9847a906f524c862d5e
 end;
 
 # ╔═╡ b10c83c5-040c-4fc8-83c4-1c8d0504ab21
@@ -366,40 +353,14 @@ s_obj_L_HD = mean(arr[mask_L_HD_3D])
 # ╔═╡ c2212ea1-0644-4522-9f42-5182f10a11b3
 ρ_L_HD = density(s_obj_L_HD) / 1e6 # g/cm^3 => g/mm^3
 
-<<<<<<< HEAD
 # ╔═╡ e72aefc4-3b2b-41b6-9968-88b3f1eed267
 alg_L_HD = Integrated(arr[mask_L_HD_3D]);
 
-# ╔═╡ d9b291f5-6e4c-429b-9782-4ce92de25868
-V_l_hd = CalciumScoring.score(s_bkg, s_obj_L_HD, pixel_size, alg_L_HD)  # mm^3
-
 # ╔═╡ edeb0ef5-6533-42e1-b3b5-61492af055f4
 l_hd = score(s_bkg, s_obj_L_HD, pixel_size, ρ_L_HD, alg_L_HD)
-=======
-# ╔═╡ 519e3ed1-8f9a-4ccd-bd6d-115a91aa30d2
-cal_array = [mean(core_LD[core_LD.>0]), mean(core_MD[core_MD.>0]), mean(core_HD[core_HD.>0])]
 
-# ╔═╡ f8fbfd68-7cc9-4422-baff-e9079cbce314
-plot(cal_array,[200,400,800])
-
-# ╔═╡ d38ac6fd-75de-4943-9fec-5fe2592a4513
-md"""
-### 	Measured HU vs Ground truth
-"""
-
-# ╔═╡ 10b5549f-a3db-443d-9f8c-85be8f72a591
-begin
-	x = [1 227.609
-		 1 393.29
-		 1 773.667]
-	y = [200
-		 400
-		 800]
-	β̂ = (x'*x)\x'*y
-	f(a)= β̂[1] + β̂[2]a
-	plot(0:800,f)
-end
->>>>>>> 2a130bea0f54a18e9306e9847a906f524c862d5e
+# ╔═╡ d0b819a6-59ff-4de0-b6c4-2c15d17cb0f1
+l_hd_mg = l_hd * 10^3
 
 # ╔═╡ db94547a-6447-43b3-afad-886c88472220
 md"""
@@ -410,7 +371,7 @@ md"""
 begin
 	mask_L_MD_3D = Array{Bool}(undef, size(arr))
 	for z in 1:size(arr, 3)
-		mask_L_MD_3D[:, :, z] = mask_L_MD
+		mask_L_MD_3D[:, :, z] = (mask_L_MD)
 	end
 end
 
@@ -425,6 +386,9 @@ alg_L_MD = Integrated(arr[mask_L_MD_3D]);
 
 # ╔═╡ 314a36ad-5211-4074-aaed-668be0175fd3
 l_md = score(s_bkg, s_obj_L_MD, pixel_size, ρ_L_MD, alg_L_MD)
+
+# ╔═╡ 1eba82d2-88b5-45e5-94f9-6f7ae4774ac3
+l_md_mg = l_md * 10^3
 
 # ╔═╡ 0ea2438e-be61-4445-8f5e-f66b672139f5
 md"""
@@ -451,83 +415,402 @@ alg_L_LD = Integrated(arr[mask_L_LD_3D]);
 # ╔═╡ f9593c7b-0bfb-4b25-a1e3-235f603e7dc3
 l_ld = score(s_bkg, s_obj_L_LD, pixel_size, ρ_L_LD, alg_L_LD)
 
-# ╔═╡ 832250cb-0c57-4a89-be14-129f2ef026e0
+# ╔═╡ 1e1a5fb0-8aaf-4a45-be6c-f697cb5980a4
+l_ld_mg = l_ld * 10^3
+
+# ╔═╡ 8261e708-c1b0-4a7a-b772-cf2ef7e4e125
 md"""
 ## Score Medium Inserts
 """
 
-# ╔═╡ beb32b0f-c25d-455e-92bd-018e5faa361d
+# ╔═╡ 707f978a-f8be-4517-b6f7-7287f8e2d75d
 md"""
 ### High Density
 """
 
-# ╔═╡ ff6668c5-31fc-4764-ba0e-ffb237195074
+# ╔═╡ d92b01c0-311a-4ed8-945a-57a72b238cc9
 begin
 	mask_M_HD_3D = Array{Bool}(undef, size(arr))
 	for z in 1:size(arr, 3)
 		mask_M_HD_3D[:, :, z] = mask_M_HD
 	end
-end
+end;
 
-# ╔═╡ b3ed970f-0709-465f-9dd6-a8b0cd4c1c03
-# arr_m_hd_cal = masked_array .* mask_M_HD;
-
-# ╔═╡ f764cda0-5864-4291-a9c1-bba70231a1d3
-# @bind z PlutoUI.Slider(1:size(arr_m_hd_cal, 3), default=10, show_value=true)
-
-# ╔═╡ e4efb753-3d52-483e-bdfe-c8646a5102c6
-# heatmap(masked_array[:, :, z], colormap=:grays)
-
-# ╔═╡ 2ccd9e69-4e8d-4480-bd59-96d7fb126370
-# heatmap(arr_m_hd_cal[:, :, z], colormap=:grays)
-
-# ╔═╡ 76f2b9c3-5774-4022-b742-7472c3332a5b
+# ╔═╡ 5e28533f-6b31-4c12-9565-1d9241f58170
 s_obj_M_HD = mean(arr[mask_M_HD_3D])
 
-# ╔═╡ 0b79299c-4a6d-40ce-936b-6fd4d7f26992
-ρ_M_HD = density(s_obj_M_HD) / 100 # g/cm^3 => g/mm^3
+# ╔═╡ 9fca1993-b3c8-4be7-aba1-4fb06e0e1381
+ρ_M_HD = density(s_obj_M_HD) / 1e6 # g/cm^3 => g/mm^3
 
-# ╔═╡ d7d5ba32-f240-456c-b511-8e494ee011f1
+# ╔═╡ a31661cd-fbc1-4c85-bf4f-1dd7b4ed14ec
 alg_M_HD = Integrated(arr[mask_M_HD_3D]);
 
-# ╔═╡ c0a2ff94-4bcd-4e4c-8c34-3b9ca2e420f7
+# ╔═╡ 03359f0d-dd88-47db-a8df-7e0a3ce23798
 m_hd = score(s_bkg, s_obj_M_HD, pixel_size, ρ_M_HD, alg_M_HD)
 
-# ╔═╡ 356f5a4e-0c1d-42c5-9e05-184ccceb7f2d
+# ╔═╡ 93462f29-d951-4256-a640-756c2f8ceca8
+m_hd_mg = m_hd * 10^3
 
+# ╔═╡ cda73fb2-07ae-4937-b754-198b2f911896
+md"""
+### Medium Density
+"""
 
-# ╔═╡ f9f9dda8-a5fb-4535-8092-3dbde2be54e7
+# ╔═╡ a5e3376a-a8b7-4a2e-88ee-304e0af272da
+begin
+	mask_M_MD_3D = Array{Bool}(undef, size(arr))
+	for z in 1:size(arr, 3)
+		mask_M_MD_3D[:, :, z] = mask_M_MD
+	end
+end;
 
+# ╔═╡ 44eaf5eb-95e4-40fd-8e27-83802d6e08b9
+s_obj_M_MD = mean(arr[mask_M_MD_3D])
 
-# ╔═╡ 7c38f7c5-a554-4697-ad5b-548a86decc9d
+# ╔═╡ ccfe54fe-868f-41a4-98b1-8ca4bef07daa
+ρ_M_MD = density(s_obj_M_MD) / 1e6 # g/cm^3 => g/mm^3
 
+# ╔═╡ eb908148-2c3d-415b-bfe5-baf0d2471e4c
+alg_M_MD = Integrated(arr[mask_M_MD_3D]);
 
-# ╔═╡ bca93ffa-1aa6-4c2d-b549-9d87b9b1a587
+# ╔═╡ 49502a40-2e85-4687-9d87-9f9367375de1
+m_md = score(s_bkg, s_obj_M_MD, pixel_size, ρ_M_MD, alg_M_MD)
 
+# ╔═╡ 7e4036f1-214f-4e59-a5db-abbbf3d1aa23
+m_md_mg = m_md * 10^3
 
-# ╔═╡ 039b2635-620d-415b-8460-283e9f7e5ec3
+# ╔═╡ 6a8fd67a-62ca-41aa-87d8-6a96eab16a31
+md"""
+### Low Density
+"""
 
+# ╔═╡ 833f2e9b-458a-42d6-897a-4ce93a516ba5
+begin
+	mask_M_LD_3D = Array{Bool}(undef, size(arr))
+	for z in 1:size(arr, 3)
+		mask_M_LD_3D[:, :, z] = mask_M_LD
+	end
+end;
 
-# ╔═╡ 8ac60d4a-a730-4766-be04-dd818f237bd3
+# ╔═╡ d980e52c-0258-4d95-a774-b337e46c7944
+s_obj_M_LD = mean(arr[mask_M_LD_3D])
 
+# ╔═╡ 33c9fa09-4bf4-4b92-ac0a-2d772ee23baf
+ρ_M_LD = density(s_obj_M_LD) / 1e6 # g/cm^3 => g/mm^3
 
-# ╔═╡ d81c30ed-9ef7-4a6c-bb7f-012f21de942f
+# ╔═╡ e3ace679-5cf9-4ca6-8835-5c2b018121aa
+alg_M_LD = Integrated(arr[mask_M_LD_3D]);
 
+# ╔═╡ 804422b8-8a2e-4ec6-a77a-12a7ac627a3e
+m_ld = score(s_bkg, s_obj_M_LD, pixel_size, ρ_M_LD, alg_M_LD)
 
-# ╔═╡ 310a679b-a374-4c3a-be61-40d8b555ee99
+# ╔═╡ 874424a8-a1f2-4710-91d3-6da3d22578f8
+m_ld_mg = m_ld * 10^3
 
+# ╔═╡ 2ca0a9e2-cab4-428d-820d-ddbf05cede43
+md"""
+## Score Small Inserts
+"""
 
-# ╔═╡ b6255f23-cc94-4092-b50d-16691706634b
+# ╔═╡ 6d967ff1-c870-4cba-8c2d-98d2c2347643
+md"""
+### High Density
+"""
 
+# ╔═╡ b941068e-4348-49ce-a562-f75ce93b0f6c
+begin
+	mask_S_HD_3D = Array{Bool}(undef, size(arr))
+	for z in 1:size(arr, 3)
+		mask_S_HD_3D[:, :, z] = mask_S_HD
+	end
+end;
 
-# ╔═╡ 285c0c5d-ed0c-45c8-b74a-55b1aff4fe98
+# ╔═╡ 8ee64580-75da-4e7f-9d6b-5a4f6c86dba3
+s_obj_S_HD = mean(arr[mask_S_HD_3D])
 
+# ╔═╡ fdcf0efc-b347-47e7-aba4-82e6faba1273
+ρ_S_HD = density(s_obj_S_HD) / 1e6 # g/cm^3 => g/mm^3
 
-# ╔═╡ 9bef33a3-db70-4097-a859-3e9a96743147
+# ╔═╡ cfd3d799-d720-4586-b6eb-5c26cb61346f
+alg_S_HD = Integrated(arr[mask_S_HD_3D]);
 
+# ╔═╡ 64d39cb7-1934-4b79-ae64-afb88935f6f1
+s_hd = score(s_bkg, s_obj_S_HD, pixel_size, ρ_S_HD, alg_S_HD)
 
-# ╔═╡ 964fb40c-c6d0-4925-baad-426f7a693ea8
+# ╔═╡ 33f13e1c-dcd4-4144-a4ec-99105d1dd4b8
+s_hd_mg = s_hd * 10^3
 
+# ╔═╡ 9d77bfbb-4681-408c-b9cb-7836a2cbf1f9
+md"""
+### Medium Density
+"""
+
+# ╔═╡ 75f87fbf-554e-48b4-91a5-cc2c6299b3c9
+begin
+	mask_S_MD_3D = Array{Bool}(undef, size(arr))
+	for z in 1:size(arr, 3)
+		mask_S_MD_3D[:, :, z] = mask_S_MD
+	end
+end;
+
+# ╔═╡ d52e5878-84da-4421-bf18-d6ddfc2aabae
+s_obj_S_MD = mean(arr[mask_S_MD_3D])
+
+# ╔═╡ f089268a-ef08-42b5-afe6-ba2fa8d6ff63
+ρ_S_MD = density(s_obj_S_MD) / 1e6 # g/cm^3 => g/mm^3
+
+# ╔═╡ 47a8effe-fcf4-4917-8d41-07f88783672b
+alg_S_MD = Integrated(arr[mask_S_MD_3D]);
+
+# ╔═╡ 27bf9e2a-db01-421c-8eaf-8c4cf9b4065a
+s_md = score(s_bkg, s_obj_S_MD, pixel_size, ρ_S_MD, alg_S_MD)
+
+# ╔═╡ 38e81cac-c0b6-47be-9790-4377540f4b23
+s_md_mg = s_md * 10^3
+
+# ╔═╡ 83805a01-e3ee-4bef-a5ad-b90bfe6f3a33
+md"""
+### Low Density
+"""
+
+# ╔═╡ 032e9aa4-4312-47d2-be64-4fd61fd87301
+begin
+	mask_S_LD_3D = Array{Bool}(undef, size(arr))
+	for z in 1:size(arr, 3)
+		mask_S_LD_3D[:, :, z] = mask_S_LD
+	end
+end;
+
+# ╔═╡ 29400dab-a97a-4a9f-83a5-e166a1f47b44
+s_obj_S_LD = mean(arr[mask_S_LD_3D])
+
+# ╔═╡ 66bde869-c238-42d5-9073-39a5371fdb67
+ρ_S_LD = density(s_obj_S_LD) / 1e6 # g/cm^3 => g/mm^3
+
+# ╔═╡ 6f797cf4-485c-4199-afe3-0a5b27281dfd
+alg_S_LD = Integrated(arr[mask_S_LD_3D]);
+
+# ╔═╡ 47a150a6-0256-4a06-8811-1fb9bfb70e75
+s_ld = score(s_bkg, s_obj_S_LD, pixel_size, ρ_S_LD, alg_S_LD)
+
+# ╔═╡ 891980c6-4db6-4bf9-bece-29ab8dbcb548
+s_ld_mg = s_ld * 10^3
+
+# ╔═╡ b877b8f5-da63-47c7-aa3f-e989abfd4c76
+md"""
+## Visualize Results
+"""
+
+# ╔═╡ 68b9757d-3345-43e8-8a03-3694c74914c0
+md"""
+### High Density
+"""
+
+# ╔═╡ b6b38c11-17a0-4b78-b1df-0db54f36d5fe
+ground_truth_lg = [19.6, 39.3, 78.5] # mg
+
+# ╔═╡ a00e8fc5-574d-467f-8c5e-e971a2705fb6
+measured_lg = [l_ld_mg, l_md_mg, l_hd_mg] # mg
+
+# ╔═╡ 7f72f4cb-e4b9-478a-888d-8b542b588926
+begin
+	f22 = Figure()
+	ax22 = Axis(f22[1, 1])
+	
+	sc22_1 = scatter!(density_array[2:end], ground_truth_lg, color=:blue)
+	sc22_2 = scatter!(density_array[2:end], measured_lg, color=:red)
+	ax22.title = "Ground Truth vs Measured Mass"
+	ax22.ylabel = "Mass (mg)"
+	ax22.xlabel = "Density (mg/cm^3)"
+	
+	Legend(f22[1, 2],
+    [sc22_1, sc22_2],
+    ["ground truth", "measured"])
+	
+	f22
+end
+
+# ╔═╡ 65c9a7a5-6be5-43f9-b0c7-6ad57925ea6f
+md"""
+### Medium Density
+"""
+
+# ╔═╡ 9823a3c1-887e-47e4-b8d4-ee755aa2ddf5
+ground_truth_md = [4.2, 8.5, 17.0] # mg
+
+# ╔═╡ 19311e20-42ed-4fc5-9e8e-bd579ef12531
+measured_md = [m_ld_mg, m_md_mg, m_hd_mg] # mg
+
+# ╔═╡ 2c0d56bb-2c5c-46c2-83f4-61733512e87c
+begin
+	f23 = Figure()
+	ax23 = Axis(f23[1, 1])
+	
+	sc23_1 = scatter!(density_array[2:end], ground_truth_md, color=:blue)
+	sc23_2 = scatter!(density_array[2:end], measured_md, color=:orange)
+	ax23.title = "Ground Truth vs Measured Mass"
+	ax23.ylabel = "Mass (mg)"
+	ax23.xlabel = "Density (mg/cm^3)"
+
+	Legend(f23[1, 2],
+    [sc23_1, sc23_2],
+    ["ground truth", "measured"])
+	
+	f23
+end
+
+# ╔═╡ 5cc86912-a3e4-44b7-880b-f93c26cf8374
+md"""
+### Low Density
+"""
+
+# ╔═╡ 09ef6539-c621-48de-9b1a-5342b5772ce6
+ground_truth_ld = [0.2, 0.3, 0.6] # mg
+
+# ╔═╡ fb0d7d07-fedc-443b-846c-cb004900d2be
+measured_ld = [s_ld_mg, s_md_mg, s_hd_mg] # mg
+
+# ╔═╡ ccb72aac-3f98-4c00-b176-f7e157bb5bd7
+begin
+	f24 = Figure()
+	ax24 = Axis(f24[1, 1])
+	
+	sc24_1 = scatter!(density_array[2:end], ground_truth_ld, color=:blue)
+	sc24_2 = scatter!(density_array[2:end], measured_ld, color=:orange)
+	ax24.title = "Ground Truth vs Measured Mass"
+	ax24.ylabel = "Mass (mg)"
+	ax24.xlabel = "Density (mg/cm^3)"
+
+	Legend(f24[1, 2],
+    [sc24_1, sc24_2],
+    ["ground truth", "measured"])
+	
+	f24
+end
+
+# ╔═╡ 9dc08bae-57e6-4477-bff7-008ae6e996a0
+md"""
+## Volume Measurements
+"""
+
+# ╔═╡ c061bf75-94f2-45f6-b5cc-3b3abe66547a
+md"""
+### Large
+"""
+
+# ╔═╡ 0c2bea33-62c1-4b64-b55f-44a887e32153
+vol_l_hd = score(s_bkg, s_obj_L_HD, pixel_size, alg_L_HD)
+
+# ╔═╡ 641bc2b3-b599-42a0-8d4d-376e40cacddc
+vol_l_md = score(s_bkg, s_obj_L_MD, pixel_size, alg_L_MD)
+
+# ╔═╡ a2c146a3-f470-4e77-8691-b694ac298615
+vol_l_ld = score(s_bkg, s_obj_L_LD, pixel_size, alg_L_LD)
+
+# ╔═╡ a829ec5b-7647-434e-b3d9-0037891cecbc
+vol_groundtruth_lrg = [98.2, 98.2, 98.2]
+
+# ╔═╡ e5fc8875-10ce-40a2-afbb-d2e5a80c74a0
+vol_measured_lrg = [vol_l_ld, vol_l_md, vol_l_hd]
+
+# ╔═╡ 87b56ab0-e196-4c08-bb56-c8fff5556ded
+md"""
+### Medium
+"""
+
+# ╔═╡ 9698c78c-d1a8-4c5c-ae28-3df1207c84de
+vol_m_hd = score(s_bkg, s_obj_M_HD, pixel_size, alg_M_HD)
+
+# ╔═╡ 827caa30-ec25-4f6a-adeb-5c739a2af3c3
+vol_m_md = score(s_bkg, s_obj_M_MD, pixel_size, alg_M_MD)
+
+# ╔═╡ f2119d87-8a8d-4e10-80aa-e27052ae5f8a
+vol_m_ld = score(s_bkg, s_obj_M_LD, pixel_size, alg_M_LD)
+
+# ╔═╡ 6361f784-0c36-4b8a-9607-078011051758
+vol_groundtruth_med = [21.2, 21.2, 21.2]
+
+# ╔═╡ 55accaa0-56c6-4334-b481-604347bd6c63
+vol_measured_med = [vol_m_ld, vol_m_md, vol_m_hd]
+
+# ╔═╡ 4497f442-13f1-49fa-96e1-36028e013bfc
+md"""
+### Small
+"""
+
+# ╔═╡ e39753c3-962b-436c-976f-13cf3b438f9f
+vol_s_hd = score(s_bkg, s_obj_S_HD, pixel_size, alg_S_HD)
+
+# ╔═╡ 866748cf-dbaa-42ec-8af2-e9c69a17acf4
+vol_s_md = score(s_bkg, s_obj_S_MD, pixel_size, alg_S_MD)
+
+# ╔═╡ 6b038fa8-a115-4244-aceb-d88f5d8eba4d
+vol_s_ld = score(s_bkg, s_obj_S_LD, pixel_size, alg_S_LD)
+
+# ╔═╡ fbddfbea-d94b-4b4c-ae24-775b337fc92a
+vol_groundtruth_small = [21.2, 21.2, 21.2]
+
+# ╔═╡ 8423c6af-b54e-429a-a5c6-07d047c26028
+vol_measured_small = [vol_s_ld, vol_s_md, vol_s_hd]
+
+# ╔═╡ db8331c0-ccc4-45a2-9dec-f1a79b8e56be
+md"""
+### Visualize
+"""
+
+# ╔═╡ 76f28ce7-15a8-4feb-a502-6077a6b4b17c
+begin
+	f25 = Figure()
+	ax25 = Axis(f25[1, 1])
+	
+	sc25_1 = scatter!(density_array[2:end], vol_groundtruth_lrg, color=:blue)
+	sc25_2 = scatter!(density_array[2:end], vol_measured_lrg, color=:purple)
+	ax25.title = "Ground Truth vs Measured Volume (Large Inserts)"
+	ax25.ylabel = "Mass (mg)"
+	ax25.xlabel = "Density (mg/cm^3)"
+
+	Legend(f25[1, 2],
+    [sc25_1, sc25_2],
+    ["ground truth", "measured"])
+	
+	f25
+end
+
+# ╔═╡ 332511a5-b41f-4ed3-8fa7-5e086a1556e5
+begin
+	f26 = Figure()
+	ax26 = Axis(f26[1, 1])
+	
+	sc26_1 = scatter!(density_array[2:end], vol_groundtruth_med, color=:pink)
+	sc26_2 = scatter!(density_array[2:end], vol_measured_med, color=:green)
+	ax26.title = "Ground Truth vs Measured Volume (Medium Inserts)"
+	ax26.ylabel = "Mass (mg)"
+	ax26.xlabel = "Density (mg/cm^3)"
+
+	Legend(f26[1, 2],
+    [sc26_1, sc26_2],
+    ["ground truth", "measured"])
+	
+	f26
+end
+
+# ╔═╡ 3c93ce01-2695-48fd-abad-fd13d77c097a
+begin
+	f27 = Figure()
+	ax27 = Axis(f27[1, 1])
+	
+	sc27_1 = scatter!(density_array[2:end], vol_groundtruth_small, color=:orange)
+	sc27_2 = scatter!(density_array[2:end], vol_measured_small, color=:red)
+	ax27.title = "Ground Truth vs Measured Volume (Small Inserts)"
+	ax27.ylabel = "Mass (mg)"
+	ax27.xlabel = "Density (mg/cm^3)"
+
+	Legend(f27[1, 2],
+    [sc27_1, sc27_2],
+    ["ground truth", "measured"])
+	
+	f27
+end
 
 # ╔═╡ Cell order:
 # ╠═d21e17f4-701d-11ec-3a26-b76aa97ddfe7
@@ -565,34 +848,36 @@ m_hd = score(s_bkg, s_obj_M_HD, pixel_size, ρ_M_HD, alg_M_HD)
 # ╟─6582ef5a-f3a2-444c-b4a4-804f3eef0ca9
 # ╠═311d8c79-6fc3-4f1f-8635-8ae45609e490
 # ╠═2c3a05dc-8a2f-488c-9318-4f40637af04e
-# ╠═1922f9c6-aec3-45e4-a2fd-48532bdc2d97
+# ╟─1922f9c6-aec3-45e4-a2fd-48532bdc2d97
 # ╠═692b4e3d-7aec-4b73-8128-085e5b23d1f5
 # ╟─da54fc49-8f69-4ff8-bbb7-800183fc3966
 # ╠═2eb05244-eec6-46b0-99ad-cbbc8dcb9e2f
 # ╠═36892f7c-e435-4e4d-a13f-584b58422a9c
-# ╠═b3a0a168-fc34-4153-af56-313b97eec14f
+# ╟─b3a0a168-fc34-4153-af56-313b97eec14f
 # ╠═9e14592b-cc17-4097-8f7b-15b3fa0acba7
 # ╟─3435f781-c842-4398-8980-b8a9572a8003
 # ╠═d3248239-f499-44d2-bdc2-9ce448b87a20
 # ╠═8e126adc-7eb5-4fdf-9ea0-d0b8166d7bf6
-# ╠═4e0a91b8-27a3-4eb3-aa2f-edae2306d84d
+# ╟─4e0a91b8-27a3-4eb3-aa2f-edae2306d84d
 # ╠═2c0c2372-675a-4dc8-9ee6-d82fa656c639
 # ╟─4964fa87-188b-4eda-9876-7047e92b2040
 # ╠═73fe3538-4bff-4acf-8219-8c130ef0ab9b
-# ╠═f193ff12-f020-4348-9f80-5708c1289c1a
-# ╠═aafe96bc-6ecc-44dc-9842-926bf93a6536
-# ╠═f84b8041-f82a-49af-8362-6771f70e2027
+# ╠═fabe0fe4-25a6-4f97-b30a-76e9df7820eb
+# ╠═cd410554-5b3a-4bef-ab3b-d6875c72bd76
+# ╟─aafe96bc-6ecc-44dc-9842-926bf93a6536
 # ╟─701d01b4-26d6-4f65-8f0a-f6b8dfb24980
 # ╠═2ebc7519-efa2-4faa-bac1-bc8d0d283929
 # ╠═8d0beb3d-f72b-4d16-9047-166262f8c4e5
 # ╠═59ccd0a1-6946-4a5c-aa5b-bb51b9cbb38c
 # ╠═0ce341dc-3884-4d14-b39d-d02d0e7ba906
 # ╠═e3972297-eb83-41ec-a9d8-c71330b10ed6
+# ╠═d1b634cc-9f82-4162-bf1f-e971ec263b3f
+# ╠═a8094e09-8d2a-4b45-a96e-a48703928a02
 # ╟─a878d863-798e-4cb2-bd44-31e93f1c6776
 # ╠═02b73f48-ed97-4b10-bcaf-cd9555d5964c
 # ╟─33a0382a-dd3a-46ec-8ff2-672da09e7f26
 # ╟─d4d9ad90-551c-4197-b4d0-b7497c945404
-# ╠═f874712b-76ff-4a0a-a200-48e6f2d6237e
+# ╠═0ed5b044-0ef7-4a18-a73f-606615d76a7c
 # ╠═728682bd-096a-4bd5-8bda-9519d0eaedc3
 # ╟─7cf0c601-9917-4c12-b2b6-ccff15fab380
 # ╠═4c720e2d-012a-488e-a20c-4fa0a86115d4
@@ -601,40 +886,99 @@ m_hd = score(s_bkg, s_obj_M_HD, pixel_size, ρ_M_HD, alg_M_HD)
 # ╠═b10c83c5-040c-4fc8-83c4-1c8d0504ab21
 # ╠═c2212ea1-0644-4522-9f42-5182f10a11b3
 # ╠═e72aefc4-3b2b-41b6-9968-88b3f1eed267
-# ╠═d9b291f5-6e4c-429b-9782-4ce92de25868
 # ╠═edeb0ef5-6533-42e1-b3b5-61492af055f4
+# ╠═d0b819a6-59ff-4de0-b6c4-2c15d17cb0f1
 # ╟─db94547a-6447-43b3-afad-886c88472220
 # ╠═b33aa5e8-17e4-4fee-96d3-903c6fa2f4a2
 # ╠═9e7c0c1a-bc4c-431a-9ac8-27a5315b8d4b
 # ╠═a3082016-5b3c-42da-b7a6-ff6bfad17249
 # ╠═8e2d5b7d-0615-45bf-9376-7e5f1ee446e9
 # ╠═314a36ad-5211-4074-aaed-668be0175fd3
+# ╠═1eba82d2-88b5-45e5-94f9-6f7ae4774ac3
 # ╟─0ea2438e-be61-4445-8f5e-f66b672139f5
 # ╠═596dbd94-593d-4736-83b8-62914f5fe34a
 # ╠═0063b41c-024e-44d7-b3e5-086bf611a4d5
 # ╠═f4e82388-be38-40b0-9203-88508a142f19
 # ╠═fe30dc82-f071-4bcf-b4c2-cb0b3d3636cf
 # ╠═f9593c7b-0bfb-4b25-a1e3-235f603e7dc3
-# ╟─832250cb-0c57-4a89-be14-129f2ef026e0
-# ╟─beb32b0f-c25d-455e-92bd-018e5faa361d
-# ╠═ff6668c5-31fc-4764-ba0e-ffb237195074
-# ╠═b3ed970f-0709-465f-9dd6-a8b0cd4c1c03
-# ╠═f764cda0-5864-4291-a9c1-bba70231a1d3
-# ╠═e4efb753-3d52-483e-bdfe-c8646a5102c6
-# ╠═2ccd9e69-4e8d-4480-bd59-96d7fb126370
-# ╠═76f2b9c3-5774-4022-b742-7472c3332a5b
-# ╠═0b79299c-4a6d-40ce-936b-6fd4d7f26992
-# ╠═d7d5ba32-f240-456c-b511-8e494ee011f1
-# ╠═c0a2ff94-4bcd-4e4c-8c34-3b9ca2e420f7
-# ╠═356f5a4e-0c1d-42c5-9e05-184ccceb7f2d
-# ╠═f9f9dda8-a5fb-4535-8092-3dbde2be54e7
-# ╠═7c38f7c5-a554-4697-ad5b-548a86decc9d
-# ╠═bca93ffa-1aa6-4c2d-b549-9d87b9b1a587
-# ╠═039b2635-620d-415b-8460-283e9f7e5ec3
-# ╠═8ac60d4a-a730-4766-be04-dd818f237bd3
-# ╠═d81c30ed-9ef7-4a6c-bb7f-012f21de942f
-# ╠═310a679b-a374-4c3a-be61-40d8b555ee99
-# ╠═b6255f23-cc94-4092-b50d-16691706634b
-# ╠═285c0c5d-ed0c-45c8-b74a-55b1aff4fe98
-# ╠═9bef33a3-db70-4097-a859-3e9a96743147
-# ╠═964fb40c-c6d0-4925-baad-426f7a693ea8
+# ╠═1e1a5fb0-8aaf-4a45-be6c-f697cb5980a4
+# ╟─8261e708-c1b0-4a7a-b772-cf2ef7e4e125
+# ╟─707f978a-f8be-4517-b6f7-7287f8e2d75d
+# ╠═d92b01c0-311a-4ed8-945a-57a72b238cc9
+# ╠═5e28533f-6b31-4c12-9565-1d9241f58170
+# ╠═9fca1993-b3c8-4be7-aba1-4fb06e0e1381
+# ╠═a31661cd-fbc1-4c85-bf4f-1dd7b4ed14ec
+# ╠═03359f0d-dd88-47db-a8df-7e0a3ce23798
+# ╠═93462f29-d951-4256-a640-756c2f8ceca8
+# ╟─cda73fb2-07ae-4937-b754-198b2f911896
+# ╠═a5e3376a-a8b7-4a2e-88ee-304e0af272da
+# ╠═44eaf5eb-95e4-40fd-8e27-83802d6e08b9
+# ╠═ccfe54fe-868f-41a4-98b1-8ca4bef07daa
+# ╠═eb908148-2c3d-415b-bfe5-baf0d2471e4c
+# ╠═49502a40-2e85-4687-9d87-9f9367375de1
+# ╠═7e4036f1-214f-4e59-a5db-abbbf3d1aa23
+# ╟─6a8fd67a-62ca-41aa-87d8-6a96eab16a31
+# ╠═833f2e9b-458a-42d6-897a-4ce93a516ba5
+# ╠═d980e52c-0258-4d95-a774-b337e46c7944
+# ╠═33c9fa09-4bf4-4b92-ac0a-2d772ee23baf
+# ╠═e3ace679-5cf9-4ca6-8835-5c2b018121aa
+# ╠═804422b8-8a2e-4ec6-a77a-12a7ac627a3e
+# ╠═874424a8-a1f2-4710-91d3-6da3d22578f8
+# ╟─2ca0a9e2-cab4-428d-820d-ddbf05cede43
+# ╟─6d967ff1-c870-4cba-8c2d-98d2c2347643
+# ╠═b941068e-4348-49ce-a562-f75ce93b0f6c
+# ╠═8ee64580-75da-4e7f-9d6b-5a4f6c86dba3
+# ╠═fdcf0efc-b347-47e7-aba4-82e6faba1273
+# ╠═cfd3d799-d720-4586-b6eb-5c26cb61346f
+# ╠═64d39cb7-1934-4b79-ae64-afb88935f6f1
+# ╠═33f13e1c-dcd4-4144-a4ec-99105d1dd4b8
+# ╟─9d77bfbb-4681-408c-b9cb-7836a2cbf1f9
+# ╠═75f87fbf-554e-48b4-91a5-cc2c6299b3c9
+# ╠═d52e5878-84da-4421-bf18-d6ddfc2aabae
+# ╠═f089268a-ef08-42b5-afe6-ba2fa8d6ff63
+# ╠═47a8effe-fcf4-4917-8d41-07f88783672b
+# ╠═27bf9e2a-db01-421c-8eaf-8c4cf9b4065a
+# ╠═38e81cac-c0b6-47be-9790-4377540f4b23
+# ╟─83805a01-e3ee-4bef-a5ad-b90bfe6f3a33
+# ╠═032e9aa4-4312-47d2-be64-4fd61fd87301
+# ╠═29400dab-a97a-4a9f-83a5-e166a1f47b44
+# ╠═66bde869-c238-42d5-9073-39a5371fdb67
+# ╠═6f797cf4-485c-4199-afe3-0a5b27281dfd
+# ╠═47a150a6-0256-4a06-8811-1fb9bfb70e75
+# ╠═891980c6-4db6-4bf9-bece-29ab8dbcb548
+# ╟─b877b8f5-da63-47c7-aa3f-e989abfd4c76
+# ╟─68b9757d-3345-43e8-8a03-3694c74914c0
+# ╠═b6b38c11-17a0-4b78-b1df-0db54f36d5fe
+# ╠═a00e8fc5-574d-467f-8c5e-e971a2705fb6
+# ╟─7f72f4cb-e4b9-478a-888d-8b542b588926
+# ╟─65c9a7a5-6be5-43f9-b0c7-6ad57925ea6f
+# ╠═9823a3c1-887e-47e4-b8d4-ee755aa2ddf5
+# ╠═19311e20-42ed-4fc5-9e8e-bd579ef12531
+# ╟─2c0d56bb-2c5c-46c2-83f4-61733512e87c
+# ╟─5cc86912-a3e4-44b7-880b-f93c26cf8374
+# ╠═09ef6539-c621-48de-9b1a-5342b5772ce6
+# ╠═fb0d7d07-fedc-443b-846c-cb004900d2be
+# ╟─ccb72aac-3f98-4c00-b176-f7e157bb5bd7
+# ╟─9dc08bae-57e6-4477-bff7-008ae6e996a0
+# ╟─c061bf75-94f2-45f6-b5cc-3b3abe66547a
+# ╠═0c2bea33-62c1-4b64-b55f-44a887e32153
+# ╠═641bc2b3-b599-42a0-8d4d-376e40cacddc
+# ╠═a2c146a3-f470-4e77-8691-b694ac298615
+# ╠═a829ec5b-7647-434e-b3d9-0037891cecbc
+# ╠═e5fc8875-10ce-40a2-afbb-d2e5a80c74a0
+# ╟─87b56ab0-e196-4c08-bb56-c8fff5556ded
+# ╠═9698c78c-d1a8-4c5c-ae28-3df1207c84de
+# ╠═827caa30-ec25-4f6a-adeb-5c739a2af3c3
+# ╠═f2119d87-8a8d-4e10-80aa-e27052ae5f8a
+# ╠═6361f784-0c36-4b8a-9607-078011051758
+# ╠═55accaa0-56c6-4334-b481-604347bd6c63
+# ╟─4497f442-13f1-49fa-96e1-36028e013bfc
+# ╠═e39753c3-962b-436c-976f-13cf3b438f9f
+# ╠═866748cf-dbaa-42ec-8af2-e9c69a17acf4
+# ╠═6b038fa8-a115-4244-aceb-d88f5d8eba4d
+# ╠═fbddfbea-d94b-4b4c-ae24-775b337fc92a
+# ╠═8423c6af-b54e-429a-a5c6-07d047c26028
+# ╟─db8331c0-ccc4-45a2-9dec-f1a79b8e56be
+# ╟─76f28ce7-15a8-4feb-a502-6077a6b4b17c
+# ╟─332511a5-b41f-4ed3-8fa7-5e086a1556e5
+# ╟─3c93ce01-2695-48fd-abad-fd13d77c097a
