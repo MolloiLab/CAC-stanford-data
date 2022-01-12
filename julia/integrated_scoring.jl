@@ -618,7 +618,7 @@ begin
 	ax22 = Axis(f22[1, 1])
 	
 	sc22_1 = scatter!(density_array[2:end], ground_truth_lg, color=:blue)
-	sc22_2 = scatter!(density_array[2:end], measured_lg, color=:red)
+	sc22_2 = scatter!(density_array[2:end], measured_lg, color=:orange)
 	ax22.title = "Ground Truth vs Measured Mass (Large Inserts)"
 	ax22.ylabel = "Mass (mg)"
 	ax22.xlabel = "Density (mg/cm^3)"
@@ -764,9 +764,9 @@ begin
 	ax25 = Axis(f25[1, 1])
 	
 	sc25_1 = scatter!(density_array[2:end], vol_groundtruth_lrg, color=:blue)
-	sc25_2 = scatter!(density_array[2:end], vol_measured_lrg, color=:purple)
+	sc25_2 = scatter!(density_array[2:end], vol_measured_lrg, color=:pink)
 	ax25.title = "Ground Truth vs Measured Volume (Large Inserts)"
-	ax25.ylabel = "Mass (mg)"
+	ax25.ylabel = "Volume (mm^3)"
 	ax25.xlabel = "Density (mg/cm^3)"
 
 	Legend(f25[1, 2],
@@ -781,10 +781,10 @@ begin
 	f26 = Figure()
 	ax26 = Axis(f26[1, 1])
 	
-	sc26_1 = scatter!(density_array[2:end], vol_groundtruth_med, color=:pink)
-	sc26_2 = scatter!(density_array[2:end], vol_measured_med, color=:green)
+	sc26_1 = scatter!(density_array[2:end], vol_groundtruth_med, color=:blue)
+	sc26_2 = scatter!(density_array[2:end], vol_measured_med, color=:pink)
 	ax26.title = "Ground Truth vs Measured Volume (Medium Inserts)"
-	ax26.ylabel = "Mass (mg)"
+	ax26.ylabel = "Volume (mm^3)"
 	ax26.xlabel = "Density (mg/cm^3)"
 
 	Legend(f26[1, 2],
@@ -799,10 +799,10 @@ begin
 	f27 = Figure()
 	ax27 = Axis(f27[1, 1])
 	
-	sc27_1 = scatter!(density_array[2:end], vol_groundtruth_small, color=:orange)
-	sc27_2 = scatter!(density_array[2:end], vol_measured_small, color=:red)
+	sc27_1 = scatter!(density_array[2:end], vol_groundtruth_small, color=:blue)
+	sc27_2 = scatter!(density_array[2:end], vol_measured_small, color=:pink)
 	ax27.title = "Ground Truth vs Measured Volume (Small Inserts)"
-	ax27.ylabel = "Mass (mg)"
+	ax27.ylabel = "Volume (mm^3)"
 	ax27.xlabel = "Density (mg/cm^3)"
 
 	Legend(f27[1, 2],
