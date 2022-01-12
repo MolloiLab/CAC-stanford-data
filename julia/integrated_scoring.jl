@@ -619,7 +619,7 @@ begin
 	
 	sc22_1 = scatter!(density_array[2:end], ground_truth_lg, color=:blue)
 	sc22_2 = scatter!(density_array[2:end], measured_lg, color=:red)
-	ax22.title = "Ground Truth vs Measured Mass"
+	ax22.title = "Ground Truth vs Measured Mass (Large Inserts)"
 	ax22.ylabel = "Mass (mg)"
 	ax22.xlabel = "Density (mg/cm^3)"
 	
@@ -648,7 +648,7 @@ begin
 	
 	sc23_1 = scatter!(density_array[2:end], ground_truth_md, color=:blue)
 	sc23_2 = scatter!(density_array[2:end], measured_md, color=:orange)
-	ax23.title = "Ground Truth vs Measured Mass"
+	ax23.title = "Ground Truth vs Measured Mass (Medium Inserts)"
 	ax23.ylabel = "Mass (mg)"
 	ax23.xlabel = "Density (mg/cm^3)"
 
@@ -677,7 +677,7 @@ begin
 	
 	sc24_1 = scatter!(density_array[2:end], ground_truth_ld, color=:blue)
 	sc24_2 = scatter!(density_array[2:end], measured_ld, color=:orange)
-	ax24.title = "Ground Truth vs Measured Mass"
+	ax24.title = "Ground Truth vs Measured Mass (Small Inserts)"
 	ax24.ylabel = "Mass (mg)"
 	ax24.xlabel = "Density (mg/cm^3)"
 
