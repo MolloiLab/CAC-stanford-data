@@ -179,7 +179,7 @@ md"""
 """
 
 # ╔═╡ 311d8c79-6fc3-4f1f-8635-8ae45609e490
-core_L_HD = Bool.(erode(erode(mask_L_HD)));
+core_L_HD = Bool.(erode(erode(erode((mask_L_HD)))));
 
 # ╔═╡ 2c3a05dc-8a2f-488c-9318-4f40637af04e
 mean_L_HD = mean(m_arr[core_L_HD])
@@ -343,18 +343,27 @@ md"""
 begin
 	mask_L_HD_3D = Array{Bool}(undef, size(arr))
 	for z in 1:size(arr, 3)
-		mask_L_HD_3D[:, :, z] = mask_L_HD
+		mask_L_HD_3D[:, :, z] = (dilate(mask_L_HD))
 	end
 end;
 
+# ╔═╡ e203fb88-8cec-4100-91f0-399b871f97f8
+heatmap(mask_L_HD_3D[:, :, 1], colormap=:grays)
+
 # ╔═╡ b10c83c5-040c-4fc8-83c4-1c8d0504ab21
-s_obj_L_HD = mean(arr[mask_L_HD_3D])
+s_obj_L_HD = mean(erode(arr[mask_L_HD_3D]))
 
 # ╔═╡ c2212ea1-0644-4522-9f42-5182f10a11b3
 ρ_L_HD = density(s_obj_L_HD) / 1e6 # g/cm^3 => g/mm^3
 
+# ╔═╡ 4c6e214c-4e63-48d6-8a79-41c02355b698
+arr[mask_L_HD_3D]
+
 # ╔═╡ e72aefc4-3b2b-41b6-9968-88b3f1eed267
 alg_L_HD = Integrated(arr[mask_L_HD_3D]);
+
+# ╔═╡ 0c2bea33-62c1-4b64-b55f-44a887e32153
+vol_l_hd = score(s_bkg, s_obj_L_HD, pixel_size, alg_L_HD)
 
 # ╔═╡ edeb0ef5-6533-42e1-b3b5-61492af055f4
 l_hd = score(s_bkg, s_obj_L_HD, pixel_size, ρ_L_HD, alg_L_HD)
@@ -376,7 +385,7 @@ begin
 end
 
 # ╔═╡ 9e7c0c1a-bc4c-431a-9ac8-27a5315b8d4b
-s_obj_L_MD = mean(arr[mask_L_MD_3D])
+s_obj_L_MD = mean(erode(arr[mask_L_MD_3D]))
 
 # ╔═╡ a3082016-5b3c-42da-b7a6-ff6bfad17249
 ρ_L_MD = density(s_obj_L_MD) / 1e6 # g/cm^3 => g/mm^3
@@ -404,7 +413,7 @@ begin
 end
 
 # ╔═╡ 0063b41c-024e-44d7-b3e5-086bf611a4d5
-s_obj_L_LD = mean(arr[mask_L_LD_3D])
+s_obj_L_LD = mean(erode(arr[mask_L_LD_3D]))
 
 # ╔═╡ f4e82388-be38-40b0-9203-88508a142f19
 ρ_L_LD = density(s_obj_L_LD) / 1e6 # mg/cm^3 => g/mm^3
@@ -603,7 +612,7 @@ md"""
 
 # ╔═╡ 68b9757d-3345-43e8-8a03-3694c74914c0
 md"""
-### High Density
+### Large Inserts
 """
 
 # ╔═╡ b6b38c11-17a0-4b78-b1df-0db54f36d5fe
@@ -632,7 +641,7 @@ end
 
 # ╔═╡ 65c9a7a5-6be5-43f9-b0c7-6ad57925ea6f
 md"""
-### Medium Density
+### Medium Inserts
 """
 
 # ╔═╡ 9823a3c1-887e-47e4-b8d4-ee755aa2ddf5
@@ -661,7 +670,7 @@ end
 
 # ╔═╡ 5cc86912-a3e4-44b7-880b-f93c26cf8374
 md"""
-### Low Density
+### Small Inserts
 """
 
 # ╔═╡ 09ef6539-c621-48de-9b1a-5342b5772ce6
@@ -697,9 +706,6 @@ md"""
 md"""
 ### Large
 """
-
-# ╔═╡ 0c2bea33-62c1-4b64-b55f-44a887e32153
-vol_l_hd = score(s_bkg, s_obj_L_HD, pixel_size, alg_L_HD)
 
 # ╔═╡ 641bc2b3-b599-42a0-8d4d-376e40cacddc
 vol_l_md = score(s_bkg, s_obj_L_MD, pixel_size, alg_L_MD)
@@ -748,7 +754,7 @@ vol_s_md = score(s_bkg, s_obj_S_MD, pixel_size, alg_S_MD)
 vol_s_ld = score(s_bkg, s_obj_S_LD, pixel_size, alg_S_LD)
 
 # ╔═╡ fbddfbea-d94b-4b4c-ae24-775b337fc92a
-vol_groundtruth_small = [21.2, 21.2, 21.2]
+vol_groundtruth_small = [0.8, 0.8, 0.8]
 
 # ╔═╡ 8423c6af-b54e-429a-a5c6-07d047c26028
 vol_measured_small = [vol_s_ld, vol_s_md, vol_s_hd]
@@ -883,9 +889,12 @@ end
 # ╠═4c720e2d-012a-488e-a20c-4fa0a86115d4
 # ╟─04bfc7b6-357e-48cb-9994-5f17b5003ef9
 # ╠═71343f21-9d2f-4d34-87c1-be54a9b8cd94
+# ╠═e203fb88-8cec-4100-91f0-399b871f97f8
 # ╠═b10c83c5-040c-4fc8-83c4-1c8d0504ab21
 # ╠═c2212ea1-0644-4522-9f42-5182f10a11b3
+# ╠═4c6e214c-4e63-48d6-8a79-41c02355b698
 # ╠═e72aefc4-3b2b-41b6-9968-88b3f1eed267
+# ╠═0c2bea33-62c1-4b64-b55f-44a887e32153
 # ╠═edeb0ef5-6533-42e1-b3b5-61492af055f4
 # ╠═d0b819a6-59ff-4de0-b6c4-2c15d17cb0f1
 # ╟─db94547a-6447-43b3-afad-886c88472220
@@ -961,7 +970,6 @@ end
 # ╟─ccb72aac-3f98-4c00-b176-f7e157bb5bd7
 # ╟─9dc08bae-57e6-4477-bff7-008ae6e996a0
 # ╟─c061bf75-94f2-45f6-b5cc-3b3abe66547a
-# ╠═0c2bea33-62c1-4b64-b55f-44a887e32153
 # ╠═641bc2b3-b599-42a0-8d4d-376e40cacddc
 # ╠═a2c146a3-f470-4e77-8691-b694ac298615
 # ╠═a829ec5b-7647-434e-b3d9-0037891cecbc
