@@ -24,6 +24,7 @@ begin
 		Pkg.add("CairoMakie")
 		Pkg.add("Statistics")
 		Pkg.add("ImageMorphology")
+		Pkg.add("CSV")
 		Pkg.add("DataFrames")
 		Pkg.add("GLM")
 		Pkg.add(url="https://github.com/JuliaHealth/DICOM.jl")
@@ -36,6 +37,7 @@ begin
 	using CairoMakie
 	using Statistics
 	using ImageMorphology
+	using CSV
 	using DataFrames
 	using GLM
 	using DICOM
@@ -47,8 +49,11 @@ end
 # ╔═╡ 97a264e6-1037-4862-b6bd-2d2486bd419e
 TableOfContents()
 
+# ╔═╡ 6bb78d3f-9aac-4e6a-a35f-a9a9afc1baeb
+SCAN = "Large_rep1"
+
 # ╔═╡ 84926791-1a72-4b9a-add4-7707efa16a08
-path = string(cd(pwd, "..") , "/data/Large_rep1")
+path = string(cd(pwd, "..") , "/data/", SCAN) # edit this as needed
 
 # ╔═╡ 448bb1f2-6548-4bc8-bc7b-99c093833e7e
 dcms = dcmdir_parse(path);
@@ -936,6 +941,13 @@ md"""
 ### Volume
 """
 
+# ╔═╡ 39d67c99-7170-4581-9e00-7fceaee9626a
+inserts = [
+	"Low Density",
+	"Medium Density",
+	"High Density"
+]
+
 # ╔═╡ 85bc17ef-9cae-40c6-a0ab-fbaf78aedb36
 ground_truth_volume_large = [
 	98.2,
@@ -980,6 +992,7 @@ calculated_volume_small = [
 
 # ╔═╡ 8634fef2-5c95-4b45-bbce-7e2fb9d3e4ca
 df1 = DataFrame(
+	inserts = inserts,
 	ground_truth_volume_large = ground_truth_volume_large,
 	calculated_volume_large = calculated_volume_large,
 	ground_truth_volume_medium = ground_truth_volume_medium,
@@ -1097,6 +1110,7 @@ calculated_mass_small = [
 
 # ╔═╡ a2a487c8-cacd-4e64-b0ea-bd488e50cfec
 df2 = DataFrame(
+	inserts = inserts,
 	ground_truth_mass_large = ground_truth_mass_large,
 	calculated_mass_large = calculated_mass_large,
 	ground_truth_mass_medium = ground_truth_mass_medium,
@@ -1165,9 +1179,24 @@ begin
 	fmass4
 end
 
+# ╔═╡ 07aa5b5e-b98a-4eec-8f13-70ac034dfd32
+md"""
+### Save Results
+"""
+
+# ╔═╡ c30dd8f3-1cd4-418a-af45-931ce0c705ff
+df_final = leftjoin(df1, df2, on=:inserts)
+
+# ╔═╡ 6ace3811-70cf-4732-89a4-706c17bb75ed
+output_path = string(cd(pwd, "..") , "/data/", SCAN)
+
+# ╔═╡ 6426d783-b13c-4517-800f-3e54f6e7eee7
+CSV.write(output, df_final)
+
 # ╔═╡ Cell order:
 # ╠═c50510a7-e981-4933-a4b1-fab2efcc43a2
 # ╠═97a264e6-1037-4862-b6bd-2d2486bd419e
+# ╠═6bb78d3f-9aac-4e6a-a35f-a9a9afc1baeb
 # ╠═84926791-1a72-4b9a-add4-7707efa16a08
 # ╠═448bb1f2-6548-4bc8-bc7b-99c093833e7e
 # ╠═2df42240-1fe7-47bb-baee-3150a6408393
@@ -1367,6 +1396,7 @@ end
 # ╠═97a1b5ec-262c-4d63-8730-7213ff42abef
 # ╟─d021f42d-33a0-4681-9669-a44f491626e3
 # ╟─475696f1-7594-4f79-a6a2-952f649fc9df
+# ╠═39d67c99-7170-4581-9e00-7fceaee9626a
 # ╠═85bc17ef-9cae-40c6-a0ab-fbaf78aedb36
 # ╠═f8acffe4-293b-4393-a744-c0c4ba011d99
 # ╠═e3c6d740-e6cd-4c68-bf4a-762a4aea53d7
@@ -1388,3 +1418,7 @@ end
 # ╟─03b6b414-13aa-4185-ae8f-b1903069c266
 # ╟─b202cace-72c1-4f83-8493-0ee7b968a238
 # ╟─32610d65-672d-47a4-bb28-b69d43ac8592
+# ╟─07aa5b5e-b98a-4eec-8f13-70ac034dfd32
+# ╠═c30dd8f3-1cd4-418a-af45-931ce0c705ff
+# ╠═6ace3811-70cf-4732-89a4-706c17bb75ed
+# ╠═6426d783-b13c-4517-800f-3e54f6e7eee7
