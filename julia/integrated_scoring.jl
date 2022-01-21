@@ -50,7 +50,7 @@ end
 TableOfContents()
 
 # ╔═╡ 6bb78d3f-9aac-4e6a-a35f-a9a9afc1baeb
-SCAN = "Large_rep1"
+SCAN = "canon/Large_rep1"
 
 # ╔═╡ 84926791-1a72-4b9a-add4-7707efa16a08
 path = string(cd(pwd, "..") , "/data/", SCAN) # edit this as needed
@@ -1188,10 +1188,10 @@ md"""
 df_final = leftjoin(df1, df2, on=:inserts)
 
 # ╔═╡ 6ace3811-70cf-4732-89a4-706c17bb75ed
-output_path = string(cd(pwd, "..") , "/data/", SCAN)
+output_path = string(cd(pwd, "..") , "/data/output", "/", SCAN)
 
 # ╔═╡ 6426d783-b13c-4517-800f-3e54f6e7eee7
-CSV.write(output, df_final)
+CSV.write(output_path, df_final)
 
 # ╔═╡ Cell order:
 # ╠═c50510a7-e981-4933-a4b1-fab2efcc43a2
