@@ -49,20 +49,41 @@ end
 # ╔═╡ 97a264e6-1037-4862-b6bd-2d2486bd419e
 TableOfContents()
 
-# ╔═╡ 6bb78d3f-9aac-4e6a-a35f-a9a9afc1baeb
-SCAN = "canon/Large_rep1"
+# ╔═╡ 9ecf691f-8523-4ea9-a635-7482a1a7b697
+md"""
+## Load DICOMS
 
-# ╔═╡ 84926791-1a72-4b9a-add4-7707efa16a08
-path = string(cd(pwd, "..") , "/data/", SCAN) # edit this as needed
+All you need to do is set `base_path` once and leave it. After that, the only thing that should change is the `VENDER`, once for every set, and the `SCAN_NUMBER`, once for each scan
+"""
 
-# ╔═╡ 448bb1f2-6548-4bc8-bc7b-99c093833e7e
-dcms = dcmdir_parse(path);
+# ╔═╡ c72aaf65-8ba2-4c81-9bad-a059b983a833
+SCAN_NUMBER = 2
 
-# ╔═╡ 2df42240-1fe7-47bb-baee-3150a6408393
-dcm_array = load_dcm_array(dcms);
+# ╔═╡ e33a903d-d9fb-4960-bc81-128cfbff8af6
+VENDER = "Canon_Aquilion_One_Vision"
 
-# ╔═╡ c515d4f4-38b1-4490-8201-774bfec91440
-header = dcms[1].meta;
+# ╔═╡ 762cde8a-82c0-4cf0-b2b3-8ed00a4abb3d
+BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
+
+# ╔═╡ 416c3d5f-9953-4a0d-be1c-1049e39edd4b
+md"""
+**Everything below should be automatic, just scroll through to visually inspect that things make sense**
+"""
+
+# ╔═╡ 916be3b8-b7e3-447d-82a2-07e5185443e1
+root_path = string(BASE_PATH, VENDER)
+
+# ╔═╡ 4669bb68-6224-4a31-ae50-c2e44744b87e
+dcm_path_list = dcm_list_builder(root_path)
+
+# ╔═╡ df50149d-ad91-4607-8cc1-6a17da8d8562
+pth = dcm_path_list[SCAN_NUMBER]
+
+# ╔═╡ 35c5e1e1-c88d-4202-8f7d-0e6c434ea161
+scan = basename(pth)
+
+# ╔═╡ 5cc4cb9b-b0d7-4158-816f-0cbd4d7a7463
+header, dcm_array, slice_thick_ori1 = dcm_reader(pth);
 
 # ╔═╡ 1fae526e-7db7-46e8-aa63-19882cb2e172
 pixel_size = DICOMUtils.get_pixel_size(header)
@@ -123,22 +144,10 @@ md"""
 calcium_image, slice_CCI, quality_slice, cal_rod_slice = mask_rod(masked_array, header);
 
 # ╔═╡ e9af6401-8f3a-4f86-8d23-02d88dc7ee48
-@bind b1 PlutoUI.Slider(1:size(calcium_image, 3), default=10, show_value=true)
+@bind c PlutoUI.Slider(1:size(calcium_image, 3), default=cal_rod_slice, show_value=true)
 
 # ╔═╡ 4f795d56-a67b-4b9f-be94-c37890a5c4c4
-heatmap(calcium_image[:, :, b1], colormap=:grays)
-
-# ╔═╡ 78793039-df7f-4dbf-9188-155ecc72d944
-# c_img = calcium_image[:, :, 14:16];
-
-# ╔═╡ 99ce29f2-3e8f-49fd-aa2b-3ad13ccd64b3
-# heatmap((c_img[:, :, 2]), colormap=:grays)
-
-# ╔═╡ a4800936-ab66-42ad-8f29-e40cc6b7060a
-# c_img_crop = c_img[210:215, 260:265, :]
-
-# ╔═╡ 8b7822cc-f694-4633-8374-dd3183b78784
-# mean_calcium_rod = mean(c_img_crop)
+heatmap(calcium_image[:, :, c], colormap=:grays)
 
 # ╔═╡ 69d3e9a8-68c9-4a5a-8a4a-86c5fd64a08a
 md"""
@@ -153,9 +162,6 @@ mask_L_LD, mask_M_LD, mask_S_LD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_HD, mas
 # ╔═╡ 544ae005-6661-487f-8662-ea3006ec4069
 masks = mask_L_HD + mask_M_HD + mask_S_HD + mask_L_MD + mask_M_MD + mask_S_MD + mask_L_LD + mask_M_LD + mask_S_LD;
 
-# ╔═╡ 9d0a4171-eb47-4cbf-8f72-4adf041a11d1
-@bind c PlutoUI.Slider(1:size(masks, 3), default=10, show_value=true)
-
 # ╔═╡ 2647d239-58d6-4448-9e3f-66918a10dbad
 heatmap(masks, colormap=:grays)
 
@@ -165,7 +171,7 @@ md"""
 """
 
 # ╔═╡ c2394467-eb15-4610-9bfd-7b3f88a7fb00
-arr_L_HD = masked_array[:, :, 23:28] .* mask_L_HD;
+arr_L_HD = masked_array[:, :, slice_CCI-2:slice_CCI+2] .* mask_L_HD;
 
 # ╔═╡ 9b6e3a13-9044-4b7e-89e0-b552af52bd2b
 @bind d PlutoUI.Slider(1:size(arr_L_HD, 3), default=2, show_value=true)
@@ -185,7 +191,7 @@ md"""
 """
 
 # ╔═╡ b1d01296-26a5-4740-8a88-15fc76d1fa35
-m_arr = masked_array[:, :, 25];
+m_arr = masked_array[:, :, slice_CCI];
 
 # ╔═╡ f93589a5-76c8-403c-9800-1796ca1f6229
 md"""
@@ -349,10 +355,10 @@ function overlay_mask_plot(array, mask, var, title::AbstractString)
 end
 
 # ╔═╡ 3146fe0f-bfe6-4cc9-9782-0ad2a097e777
-arr = masked_array[:, :, 23:27];
+arr = masked_array[:, :, slice_CCI-2:slice_CCI+2];
 
 # ╔═╡ 2694e3e0-f428-470b-a70c-f3b110d68f37
-single_arr = arr[:, :, 3];
+single_arr = masked_array[:, :, slice_CCI];
 
 # ╔═╡ 0483eebd-8106-4444-9037-fb52057fb0b4
 md"""
@@ -1188,7 +1194,7 @@ md"""
 df_final = leftjoin(df1, df2, on=:inserts)
 
 # ╔═╡ 6ace3811-70cf-4732-89a4-706c17bb75ed
-output_path = string(cd(pwd, "..") , "/data/output/", SCAN)
+output_path = string(cd(pwd, "..") , "/data/output/", VENDER, "/", scan)
 
 # ╔═╡ 6426d783-b13c-4517-800f-3e54f6e7eee7
 CSV.write(output_path, df_final)
@@ -1196,11 +1202,16 @@ CSV.write(output_path, df_final)
 # ╔═╡ Cell order:
 # ╠═c50510a7-e981-4933-a4b1-fab2efcc43a2
 # ╠═97a264e6-1037-4862-b6bd-2d2486bd419e
-# ╠═6bb78d3f-9aac-4e6a-a35f-a9a9afc1baeb
-# ╠═84926791-1a72-4b9a-add4-7707efa16a08
-# ╠═448bb1f2-6548-4bc8-bc7b-99c093833e7e
-# ╠═2df42240-1fe7-47bb-baee-3150a6408393
-# ╠═c515d4f4-38b1-4490-8201-774bfec91440
+# ╟─9ecf691f-8523-4ea9-a635-7482a1a7b697
+# ╠═c72aaf65-8ba2-4c81-9bad-a059b983a833
+# ╠═e33a903d-d9fb-4960-bc81-128cfbff8af6
+# ╠═762cde8a-82c0-4cf0-b2b3-8ed00a4abb3d
+# ╟─416c3d5f-9953-4a0d-be1c-1049e39edd4b
+# ╠═916be3b8-b7e3-447d-82a2-07e5185443e1
+# ╠═4669bb68-6224-4a31-ae50-c2e44744b87e
+# ╠═df50149d-ad91-4607-8cc1-6a17da8d8562
+# ╠═35c5e1e1-c88d-4202-8f7d-0e6c434ea161
+# ╠═5cc4cb9b-b0d7-4158-816f-0cbd4d7a7463
 # ╠═1fae526e-7db7-46e8-aa63-19882cb2e172
 # ╟─fea80b94-e9c5-4ff7-9b91-4e35bf03b5e3
 # ╠═49184d1a-1e84-48c7-8f71-d179fd4671c5
@@ -1211,16 +1222,11 @@ CSV.write(output_path, df_final)
 # ╟─c0704706-87c2-4078-8345-7e2097639492
 # ╟─6e597bb0-fa70-46f3-8526-dce3cd4e7b78
 # ╠═07c0f484-6225-4c6f-ab20-1941bd6abc7a
-# ╟─e9af6401-8f3a-4f86-8d23-02d88dc7ee48
+# ╠═e9af6401-8f3a-4f86-8d23-02d88dc7ee48
 # ╠═4f795d56-a67b-4b9f-be94-c37890a5c4c4
-# ╠═78793039-df7f-4dbf-9188-155ecc72d944
-# ╠═99ce29f2-3e8f-49fd-aa2b-3ad13ccd64b3
-# ╠═a4800936-ab66-42ad-8f29-e40cc6b7060a
-# ╠═8b7822cc-f694-4633-8374-dd3183b78784
 # ╟─69d3e9a8-68c9-4a5a-8a4a-86c5fd64a08a
 # ╠═0508d26f-09a1-457b-8cb0-5693f5c9ba3f
 # ╠═544ae005-6661-487f-8662-ea3006ec4069
-# ╟─9d0a4171-eb47-4cbf-8f72-4adf041a11d1
 # ╠═2647d239-58d6-4448-9e3f-66918a10dbad
 # ╟─2afdc85a-a8bf-4fd4-bdef-74c39c0fb452
 # ╠═c2394467-eb15-4610-9bfd-7b3f88a7fb00
@@ -1268,7 +1274,7 @@ CSV.write(output_path, df_final)
 # ╟─fc18a1ee-8042-44e1-bc4c-fb56e345d90d
 # ╠═16057812-b925-4571-8d5b-35254c42683c
 # ╟─53d5b9ae-85b5-4f37-93ca-c76edd0d7916
-# ╟─0a6451a3-19d6-4f4a-9e5b-cc2eb52b5b9d
+# ╠═0a6451a3-19d6-4f4a-9e5b-cc2eb52b5b9d
 # ╟─5bfd1bf6-e24c-42e3-b911-9d87f7c3491c
 # ╠═588a129a-fe05-485f-8441-cd99dac82a03
 # ╟─11b5faad-c162-4cf7-9b6f-2d61750b7a1a
