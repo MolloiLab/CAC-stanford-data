@@ -1224,7 +1224,7 @@ if ~isdir(string(cd(pwd, "..") , "/data/output/", VENDER))
 end
 
 # ╔═╡ 6ace3811-70cf-4732-89a4-706c17bb75ed
-output_path = string(cd(pwd, "..") , "/data/output/", VENDER, "/", scan)
+output_path = string(cd(pwd, "..") , "/data/output/", VENDER, "/", scan, ".csv")
 
 # ╔═╡ 6426d783-b13c-4517-800f-3e54f6e7eee7
 CSV.write(output_path, df_final)
