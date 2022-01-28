@@ -57,7 +57,7 @@ All you need to do is set `base_path` once and leave it. After that, the only th
 """
 
 # ╔═╡ c72aaf65-8ba2-4c81-9bad-a059b983a833
-SCAN_NUMBER = 2
+SCAN_NUMBER = 1
 
 # ╔═╡ e33a903d-d9fb-4960-bc81-128cfbff8af6
 VENDER = "Canon_Aquilion_One_Vision"
@@ -85,8 +85,46 @@ scan = basename(pth)
 # ╔═╡ 5cc4cb9b-b0d7-4158-816f-0cbd4d7a7463
 header, dcm_array, slice_thick_ori1 = dcm_reader(pth);
 
-# ╔═╡ 1fae526e-7db7-46e8-aa63-19882cb2e172
-pixel_size = DICOMUtils.get_pixel_size(header)
+# ╔═╡ 2b909933-b090-4229-a3fa-0d7173a73af3
+md"""
+## Helper Functions
+"""
+
+# ╔═╡ 546334f3-b411-43f9-8d0f-061aed8f22ca
+function collect_tuple(tuple_array)
+	row_num = size(tuple_array)
+	col_num = length(tuple_array[1])
+	container = zeros(Int64, row_num..., col_num)
+	for i in 1:length(tuple_array)
+		container[i,:] = collect(tuple_array[i])
+	end
+	return container
+end
+
+# ╔═╡ 8d9504f9-9fa8-435c-9d1b-1ae42f98aa13
+function overlay_mask_bind(mask)
+	indices = findall(x -> x == 1, mask)
+	indices = Tuple.(indices)
+	label_array = collect_tuple(indices)
+	zs = unique(label_array[:,3])
+	return PlutoUI.Slider(1:length(zs), default=3, show_value=true)
+end
+
+# ╔═╡ 9097cbfa-cf27-411c-9b83-8efeda2cdee6
+function overlay_mask_plot(array, mask, var, title::AbstractString)
+	indices = findall(x -> x == 1, mask)
+	indices = Tuple.(indices)
+	label_array = collect_tuple(indices)
+	zs = unique(label_array[:,3])
+	indices_lbl = findall(x -> x == zs[var], label_array[:,3])
+	
+	fig = Figure()
+	ax = Makie.Axis(fig[1, 1])
+	ax.title = title
+	heatmap!(array[:, :, zs[var]], colormap=:grays)
+	scatter!(label_array[:, 1][indices_lbl], label_array[:, 2][indices_lbl], markersize=1, color=:red)
+	fig
+end
 
 # ╔═╡ fea80b94-e9c5-4ff7-9b91-4e35bf03b5e3
 md"""
@@ -155,7 +193,7 @@ md"""
 """
 
 # ╔═╡ 0508d26f-09a1-457b-8cb0-5693f5c9ba3f
-mask_L_LD, mask_M_LD, mask_S_LD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_HD, mask_M_HD, mask_S_HD = mask_inserts(
+mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(
             dcm_array, masked_array, header, slice_CCI, center_insert
 );
 
@@ -164,6 +202,9 @@ masks = mask_L_HD + mask_M_HD + mask_S_HD + mask_L_MD + mask_M_MD + mask_S_MD + 
 
 # ╔═╡ 2647d239-58d6-4448-9e3f-66918a10dbad
 heatmap(masks, colormap=:grays)
+
+# ╔═╡ 2ea7a51a-4b71-478b-b7bc-7453f601a42e
+heatmap(mask_L_LD)
 
 # ╔═╡ 2afdc85a-a8bf-4fd4-bdef-74c39c0fb452
 md"""
@@ -191,7 +232,7 @@ md"""
 """
 
 # ╔═╡ b1d01296-26a5-4740-8a88-15fc76d1fa35
-m_arr = masked_array[:, :, slice_CCI];
+m_arr = masked_array[:, :, slice_CCI+1];
 
 # ╔═╡ f93589a5-76c8-403c-9800-1796ca1f6229
 md"""
@@ -199,7 +240,7 @@ md"""
 """
 
 # ╔═╡ da6e7dcb-92a1-4dcd-b99a-338dcef1a2ad
-core_L_HD = Bool.(erode((((mask_L_HD)))));
+core_L_HD = Bool.(erode(erode(mask_L_HD)));
 
 # ╔═╡ bcac79e6-3218-4abe-8f49-f32d2a7ba9b8
 mean_L_HD = mean(m_arr[core_L_HD])
@@ -318,42 +359,6 @@ md"""
 # Score Large Inserts
 """
 
-# ╔═╡ 546334f3-b411-43f9-8d0f-061aed8f22ca
-function collect_tuple(tuple_array)
-	row_num = size(tuple_array)
-	col_num = length(tuple_array[1])
-	container = zeros(Int64, row_num..., col_num)
-	for i in 1:length(tuple_array)
-		container[i,:] = collect(tuple_array[i])
-	end
-	return container
-end
-
-# ╔═╡ 8d9504f9-9fa8-435c-9d1b-1ae42f98aa13
-function overlay_mask_bind(mask)
-	indices = findall(x -> x == 1, mask)
-	indices = Tuple.(indices)
-	label_array = collect_tuple(indices)
-	zs = unique(label_array[:,3])
-	return PlutoUI.Slider(1:length(zs), default=3, show_value=true)
-end
-
-# ╔═╡ 9097cbfa-cf27-411c-9b83-8efeda2cdee6
-function overlay_mask_plot(array, mask, var, title::AbstractString)
-	indices = findall(x -> x == 1, mask)
-	indices = Tuple.(indices)
-	label_array = collect_tuple(indices)
-	zs = unique(label_array[:,3])
-	indices_lbl = findall(x -> x == zs[var], label_array[:,3])
-	
-	fig = Figure()
-	ax = Makie.Axis(fig[1, 1])
-	ax.title = title
-	heatmap!(array[:, :, zs[var]], colormap=:grays)
-	scatter!(label_array[:, 1][indices_lbl], label_array[:, 2][indices_lbl], markersize=1, color=:red)
-	fig
-end
-
 # ╔═╡ 3146fe0f-bfe6-4cc9-9782-0ad2a097e777
 arr = masked_array[:, :, slice_CCI-2:slice_CCI+2];
 
@@ -414,6 +419,9 @@ end
 
 # ╔═╡ b74ffab8-cdc6-4009-8e63-476471cecce3
 S_Obj_HD = intensity(800)
+
+# ╔═╡ 68e93f9f-415e-45ff-9d20-10b89d4eec4c
+pixel_size = DICOMUtils.get_pixel_size(header)
 
 # ╔═╡ af011205-0ba2-4e37-bced-a8fe9fe88c2f
 begin
@@ -1212,11 +1220,14 @@ CSV.write(output_path, df_final)
 # ╠═df50149d-ad91-4607-8cc1-6a17da8d8562
 # ╠═35c5e1e1-c88d-4202-8f7d-0e6c434ea161
 # ╠═5cc4cb9b-b0d7-4158-816f-0cbd4d7a7463
-# ╠═1fae526e-7db7-46e8-aa63-19882cb2e172
+# ╟─2b909933-b090-4229-a3fa-0d7173a73af3
+# ╠═546334f3-b411-43f9-8d0f-061aed8f22ca
+# ╠═8d9504f9-9fa8-435c-9d1b-1ae42f98aa13
+# ╠═9097cbfa-cf27-411c-9b83-8efeda2cdee6
 # ╟─fea80b94-e9c5-4ff7-9b91-4e35bf03b5e3
 # ╠═49184d1a-1e84-48c7-8f71-d179fd4671c5
-# ╟─21266f0e-b535-4e72-950e-ba7d125684de
-# ╟─536506ce-2031-4c32-a4e3-d6fc6d7da27c
+# ╠═21266f0e-b535-4e72-950e-ba7d125684de
+# ╠═536506ce-2031-4c32-a4e3-d6fc6d7da27c
 # ╟─e2de04cd-2f66-4192-abae-95693b1b5176
 # ╟─be5f9be6-e10c-48c1-b9fe-ed229a1dff26
 # ╟─c0704706-87c2-4078-8345-7e2097639492
@@ -1228,6 +1239,7 @@ CSV.write(output_path, df_final)
 # ╠═0508d26f-09a1-457b-8cb0-5693f5c9ba3f
 # ╠═544ae005-6661-487f-8662-ea3006ec4069
 # ╠═2647d239-58d6-4448-9e3f-66918a10dbad
+# ╠═2ea7a51a-4b71-478b-b7bc-7453f601a42e
 # ╟─2afdc85a-a8bf-4fd4-bdef-74c39c0fb452
 # ╠═c2394467-eb15-4610-9bfd-7b3f88a7fb00
 # ╟─9b6e3a13-9044-4b7e-89e0-b552af52bd2b
@@ -1264,9 +1276,6 @@ CSV.write(output_path, df_final)
 # ╠═0c8a6dc2-2273-4377-8043-418f7f9dffa7
 # ╟─2f5f42e9-d96c-4ac7-9505-646f0393986c
 # ╟─ed01b680-a24d-44b9-8ef7-58ff4ab5a5ba
-# ╠═546334f3-b411-43f9-8d0f-061aed8f22ca
-# ╠═8d9504f9-9fa8-435c-9d1b-1ae42f98aa13
-# ╠═9097cbfa-cf27-411c-9b83-8efeda2cdee6
 # ╠═3146fe0f-bfe6-4cc9-9782-0ad2a097e777
 # ╠═2694e3e0-f428-470b-a70c-f3b110d68f37
 # ╟─0483eebd-8106-4444-9037-fb52057fb0b4
@@ -1282,6 +1291,7 @@ CSV.write(output_path, df_final)
 # ╟─820b0f29-867b-448f-9fb9-9ff1c3474422
 # ╠═7532aa8e-7dbf-46ad-86c2-7f9ac7f2feca
 # ╠═b74ffab8-cdc6-4009-8e63-476471cecce3
+# ╠═68e93f9f-415e-45ff-9d20-10b89d4eec4c
 # ╠═af011205-0ba2-4e37-bced-a8fe9fe88c2f
 # ╠═0db23983-2ff1-45c0-878b-e6837bed77d6
 # ╟─02be0555-01e0-45d5-9711-cb203ef41b4c
