@@ -59,7 +59,7 @@ All you need to do is set `base_path` once and leave it. After that, the only th
 """
 
 # ╔═╡ c72aaf65-8ba2-4c81-9bad-a059b983a833
-SCAN_NUMBER = 10
+SCAN_NUMBER = 1
 
 # ╔═╡ e33a903d-d9fb-4960-bc81-128cfbff8af6
 VENDER = "GE_Revolution"
@@ -234,7 +234,7 @@ md"""
 """
 
 # ╔═╡ b1d01296-26a5-4740-8a88-15fc76d1fa35
-m_arr = masked_array[:, :, slice_CCI+1];
+m_arr = masked_array[:, :, slice_CCI];
 
 # ╔═╡ f93589a5-76c8-403c-9800-1796ca1f6229
 md"""
