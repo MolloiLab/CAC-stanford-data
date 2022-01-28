@@ -30,6 +30,7 @@ begin
 		Pkg.add("DataFrames")
 		Pkg.add("Statistics")
 		Pkg.add("CairoMakie")
+		Pkg.add("DataStructures")
 		Pkg.add(url="https://github.com/JuliaHealth/DICOM.jl")
 		Pkg.add(url="https://github.com/Dale-Black/DICOMUtils.jl")
 		Pkg.add(url="https://github.com/Dale-Black/Phantoms.jl")
@@ -45,6 +46,7 @@ begin
 	using DataFrames
 	using Statistics
 	using CairoMakie
+	using DataStructures
 	using DICOM
 	using DICOMUtils
 	using Phantoms
@@ -147,15 +149,6 @@ function dcm_reader(dcm_path)
 			index = findall(x -> x==InstanceNumber, instances)
 			pixel_array = head[(0x7fe0, 0x0010)]
             dcm_array[:, :, index] = pixel_array
-   #          if InstanceNumber in instances[1:2]
-   #              if InstanceNumber == instances[1]
-			# 		SliceLocation = head[(0x0020, 0x1041)]
-   #                  loc_1 = SliceLocation
-   #              else
-			# 		SliceLocation = head[(0x0020, 0x1041)]
-   #                  loc_2 = SliceLocation
-			# 	end
-			# end
             index += 1
 		catch
             nothing
@@ -174,7 +167,7 @@ md"""
 """
 
 # ╔═╡ 0883a26a-54ba-4670-a19b-a6a0a23f5aee
-root_path = "/Users/daleblack/Google Drive/Datasets/GE_Revolution"
+root_path = "/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision"
 
 # ╔═╡ 59976bc3-271e-4418-874c-b553b59e730a
 dcm_path_list = dcm_list_builder(root_path)
@@ -183,10 +176,10 @@ dcm_path_list = dcm_list_builder(root_path)
 dcm_reader(dcm_path_list[1]);
 
 # ╔═╡ 8652d37a-7dc2-4123-b20f-87a8981baa26
-dcm_path_list[1]
+dcm_path_list[2]
 
 # ╔═╡ 9b02d4cc-e9b3-47aa-8d57-e0befd64a5fc
-header, dcm_array, slice_thick_ori = dcm_reader(dcm_path_list[10]);
+header, dcm_array, slice_thick_ori = dcm_reader(dcm_path_list[2]);
 
 # ╔═╡ 2185c4e4-a518-4133-8174-662e0dd744eb
 heatmap(transpose(dcm_array[:, :, 8]), colormap=:grays)
@@ -544,7 +537,7 @@ function get_calcium_center_slices(dcm_array, slice_dict, large_index)
 end
 
 # ╔═╡ 494163b1-cb52-45a9-815e-991633018cd5
-slice_dict2, flipped, flipped_index = find_edges(masked_array, slice_dict, large_index)
+slice_dict2, flipped, flipped_index = get_calcium_center_slices(masked_array, slice_dict, large_index)
 
 # ╔═╡ 880db52b-e39c-4578-a6de-ce4a6afa038e
 md"""
@@ -632,11 +625,11 @@ md"""
 
 # ╔═╡ a9f499f8-ca32-4310-82d7-f20b790dc04c
 function mask_rod(dcm_array, header; calcium_threshold=130)
-    slice_dict, large_index = get_indices(
+    slice_dict, large_index = get_calcium_slices(
 		dcm_array, header; 
 		calcium_threshold=calcium_threshold
 	)
-    slice_dict, flipped, flipped_index = find_edges(
+    slice_dict, flipped, flipped_index = get_calcium_center_slices(
 		dcm_array, slice_dict, large_index
 	)
     slice_dict = poppable_keys(flipped, flipped_index, header, slice_dict)
@@ -762,13 +755,8 @@ function calc_output(dcm_array, header, CCI_slice, calcium_threshold=130, comp_c
 	image_for_center = i1 + i2 + i3
 
 	components2 = ImageComponentAnalysis.label_components(image_for_center, comp_connect)
-
-	thresh = 10
-	while length(unique(components2)) > 7
-		seg = ImageSegmentation.felzenszwalb(components2, thresh)
-		components2 = labels_map(seg) .- 1
-		thresh += 10
-	end
+	components2 = Int.(components2 .> 0)
+	components2 = ImageComponentAnalysis.label_components(components2, comp_connect)
 	
 	b1 = analyze_components(components2, BasicMeasurement(area=true, perimeter=true))
 	b2 = analyze_components(components2, BoundingBox(box_area = true))
@@ -790,9 +778,6 @@ output = calc_output(masked_array, header, slice_CCI1);
 
 # ╔═╡ 68dae231-9907-44b2-afca-a5dac57998bb
 output
-
-# ╔═╡ fbde9e13-aff5-43e0-ae44-1ac09fe0a529
-# unique(output[2])
 
 # ╔═╡ 14f46c1f-62fa-45ff-9c78-b01404c466da
 heatmap(transpose(output[2]))
@@ -825,19 +810,15 @@ function center_points(dcm_array, output, header, tmp_center, CCI_slice)
             nothing
 		end
 	end
-	# @info largest
 
     max_dict = Dict()
-	radius = 2.5 ÷ PixelSpacing[1]
+	radius = round(2.5 / PixelSpacing[1], RoundUp)
     for key in largest
-        tmp_arr = create_circular_mask(rows, cols, (key[2][2], key[1][1]), radius)
-        tmp_arr = @. tmp_arr * dcm_array[:,:,CCI_slice] + tmp_arr * dcm_array[:,:,CCI_slice - 1] + tmp_arr * dcm_array[:,:,CCI_slice + 1]
+        tmp_arr = create_circular_mask(rows, cols, (key[2][2], key[2][1]), radius)
+        tmp_arr = @. abs(tmp_arr * dcm_array[:,:,CCI_slice]) + abs(tmp_arr * dcm_array[:,:,CCI_slice - 1]) + abs(tmp_arr * dcm_array[:,:,CCI_slice + 1])
         tmp_arr = @. ifelse(tmp_arr == 0, missing, tmp_arr)
         max_dict[key[1]] = median(skipmissing(tmp_arr))
 	end
-
-	# @info max_dict
-
     large1_index, large1_key = maximum(zip(values(max_dict), keys(max_dict)))
     pop!(max_dict, large1_key)
     large2_index, large2_key = maximum(zip(values(max_dict), keys(max_dict)))
@@ -866,37 +847,45 @@ md"""
 # ╔═╡ 9ac2f9ed-92bb-4540-add5-422df2a3f6da
 function calc_centers(dcm_array, output, header, tmp_center, CCI_slice)
 	PixelSpacing = Phantoms.get_pixel_size(header)
-	_, center1, center2, center3 = center_points(dcm_array, output, header, tmp_center, CCI_slice)
+	center, center1, center2, center3 = center_points(dcm_array, output, header, tmp_center, CCI_slice)
     centers = Dict()
     for size_index4 in (center1, center2, center3)
         center_index = size_index4
-        side_x = abs(tmp_center[1]-center_index[1])
-        side_y = abs(tmp_center[2]-center_index[2])
+        side_x = abs(center[1]-center_index[1])
+        side_y = abs(center[2]-center_index[2])
         
         angle = angle_calc(side_x, side_y)
         if (center_index[1] < center[1] && center_index[2] < center[2])
 			medium_calc = [center_index[1] + (12.5 / PixelSpacing[1]) * sin(angle), (center_index[2] + (12.5 / PixelSpacing[2]) * cos(angle))]
+			
 			low_calc = [center_index[1] + (25 / PixelSpacing[1]) * sin(angle), (center_index[2] + (25 / PixelSpacing[2]) * cos(angle))]
 		elseif (center_index[1] < center[1] && center_index[2] > center[2])
 			medium_calc = [center_index[1] + (12.5 / PixelSpacing[1]) * sin(angle), (center_index[2] - (12.5 / PixelSpacing[2]) * cos(angle))]
+			
 			low_calc = [center_index[1] + (25 / PixelSpacing[1]) * sin(angle), (center_index[2] - (25 / PixelSpacing[2]) * cos(angle))] 
 		elseif (center_index[1] > center[1] && center_index[2] < center[2])
 			medium_calc = [center_index[1] - (12.5 / PixelSpacing[1]) * sin(angle), (center_index[2] + (12.5 / PixelSpacing[2]) * cos(angle))]
+			
 			low_calc = [center_index[1] - (25 / PixelSpacing[1]) * sin(angle), (center_index[2] + (25 / PixelSpacing[2]) * cos(angle))]
 		elseif (center_index[1] > center[1] && center_index[2] > center[2])
 			medium_calc = [center_index[1] - (12.5 / PixelSpacing[1]) * sin(angle), (center_index[2] - (12.5 / PixelSpacing[2]) * cos(angle))]
+			
 			low_calc = [center_index[1] - (25 / PixelSpacing[1]) * sin(angle), (center_index[2] - (25 / PixelSpacing[2]) * cos(angle))]
 		elseif (side_x == 0 && center_index[2] < center[2])
 			medium_calc = [center_index[1], center_index[2] + (12.5 / PixelSpacing[2])]
+			
 			low_calc = [center_index[1], center_index[2] + (25 / PixelSpacing[2])]
 		elseif (side_x == 0 && center_index[2] > center[2])
 			medium_calc = [center_index[1], center_index[2] - (12.5 / PixelSpacing[2])]
+			
 			low_calc = [center_index[1], center_index[2] - (25 / PixelSpacing[2])]
 		elseif (center_index[1] > center[1] && side_y == 0)
             medium_calc = [center_index[1] - (12.5 / PixelSpacing[1]), center_index[2]]
+			
             low_calc = [center_index[1] - (25 / PixelSpacing[1]), center_index[2]]
 		elseif (center_index[1] > center[1] && side_y == 0)
 			medium_calc = [center_index[1] + (12.5 / PixelSpacing[1]), center_index[2]]
+			
             low_calc = [(center_index[1] + (25 / PixelSpacing[1])), center_index[1]]
         else
 			error("unknown angle")
@@ -921,7 +910,6 @@ function calc_centers(dcm_array, output, header, tmp_center, CCI_slice)
             nothing
 		end
 	end
-    
     return centers
 end
 
@@ -929,7 +917,10 @@ end
 dict = calc_centers(dcm_array, output, header, center_insert, slice_CCI1)
 
 # ╔═╡ 4c8ed7b6-392c-438b-b6d4-946f001c7980
-dict[:Large_HD], dict[:Medium_HD], dict[:Small_HD]
+dict[:Large_HD], dict[:Medium_HD], dict[:Small_HD], dict[:Large_MD], dict[:Medium_MD], dict[:Small_MD]
+
+# ╔═╡ f3b55e55-4a0d-4324-84c3-97c0f3604174
+
 
 # ╔═╡ 891d81f2-f30e-4365-b0ba-b0cebae9f60f
 md"""
@@ -958,15 +949,15 @@ function mask_inserts(
 	sm_md = [calc_size_density_VS_AS_MS[:Small_MD][2], calc_size_density_VS_AS_MS[:Small_MD][1]]
 	sm_ld = [calc_size_density_VS_AS_MS[:Small_LD][2], calc_size_density_VS_AS_MS[:Small_LD][1]]
 	
-    mask_L_HD = create_circular_mask(rows, cols, lg_hd, ((5 ÷ PixelSpacing[1]) / 2) + 1)
-    mask_L_MD = create_circular_mask(cols, rows, lg_md, ((5 ÷ PixelSpacing[1]) / 2) + 1)
-    mask_L_LD = create_circular_mask(cols, rows, lg_ld, ((5 ÷ PixelSpacing[1]) / 2) + 1)   
-    mask_M_HD = create_circular_mask(cols, rows, md_hd,((3 ÷ PixelSpacing[1]) / 2) + 1)
-    mask_M_MD = create_circular_mask(cols, rows, md_md, ((3 ÷ PixelSpacing[1]) / 2) + 1)
-    mask_M_LD = create_circular_mask(cols, rows, md_ld, ((3 ÷ PixelSpacing[1]) / 2) + 1) 
-    mask_S_HD = create_circular_mask(cols, rows, sm_hd, ((1 ÷ PixelSpacing[1]) / 2) + 1)
-    mask_S_MD = create_circular_mask(cols, rows, sm_md, ((1 ÷ PixelSpacing[1]) / 2) + 1)
-    mask_S_LD = create_circular_mask(cols, rows, sm_ld, ((1 ÷ PixelSpacing[1]) / 2) + 1)
+    mask_L_HD = create_circular_mask(cols, rows, lg_hd, (round(5 / PixelSpacing[1], RoundUp) / 2) + 1)
+    mask_L_MD = create_circular_mask(cols, rows, lg_md, (round(5 / PixelSpacing[1], RoundUp) / 2) + 1)
+    mask_L_LD = create_circular_mask(cols, rows, lg_ld, (round(5 / PixelSpacing[1], RoundUp) / 2) + 1)   
+    mask_M_HD = create_circular_mask(cols, rows, md_hd, (round(3 / PixelSpacing[1], RoundUp) / 2) + 1)
+    mask_M_MD = create_circular_mask(cols, rows, md_md, (round(3 / PixelSpacing[1], RoundUp) / 2) + 1)
+    mask_M_LD = create_circular_mask(cols, rows, md_ld, (round(3 / PixelSpacing[1], RoundUp) / 2) + 1) 
+    mask_S_HD = create_circular_mask(cols, rows, sm_hd, (round(1 / PixelSpacing[1], RoundUp) / 2) + 1)
+    mask_S_MD = create_circular_mask(cols, rows, sm_md, (round(1 / PixelSpacing[1], RoundUp) / 2) + 1)
+    mask_S_LD = create_circular_mask(cols, rows, sm_ld, (round(1 / PixelSpacing[1], RoundUp) / 2) + 1) 
 
     return mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD
 end
@@ -978,7 +969,13 @@ mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mas
 masks = mask_L_HD + mask_M_HD + mask_S_HD + mask_L_MD + mask_M_MD + mask_S_MD + mask_L_LD + mask_M_LD + mask_S_LD;
 
 # ╔═╡ 33b38675-7434-46e5-808c-ad4b0cbb0408
-heatmap(transpose(masks), colormap=:grays)
+heatmap(transpose(mask_L_HD), colormap=:grays)
+
+# ╔═╡ 4ff3a9d0-9681-4d49-a165-6787245a2a9f
+@bind a3 PlutoUI.Slider(1:size(masked_array, 3), default=26, show_value=true)
+
+# ╔═╡ 105d699f-1d2c-4291-b5c2-3b7f18d81012
+heatmap(transpose(masked_array[:, :, a3]), colormap=:grays)
 
 # ╔═╡ 6e7c6d1a-f25d-46f9-88c7-85400d724736
 md"""
@@ -1069,7 +1066,7 @@ overlay_mask_plot(dcm_array, masks_3D, v1, "masks overlayed")
 # ╠═c4c6841a-88f4-4ca9-9353-0e9daa6d4dff
 # ╠═462fd944-d4ce-4d7b-82ad-40342daff354
 # ╠═8959750c-291c-4c2a-a6a1-218f8ed82ab1
-# ╠═68c16f9e-8520-41ef-912a-9e61acf2ad1d
+# ╟─68c16f9e-8520-41ef-912a-9e61acf2ad1d
 # ╠═f49fe2a8-8429-4fd1-98e3-6e75189a3ac2
 # ╠═494163b1-cb52-45a9-815e-991633018cd5
 # ╟─880db52b-e39c-4578-a6de-ce4a6afa038e
@@ -1100,7 +1097,6 @@ overlay_mask_plot(dcm_array, masks_3D, v1, "masks overlayed")
 # ╠═92fca992-b36d-48f3-803e-f92e6463c291
 # ╠═fb320178-0d33-4402-b075-7bf7541f94e4
 # ╠═68dae231-9907-44b2-afca-a5dac57998bb
-# ╠═fbde9e13-aff5-43e0-ae44-1ac09fe0a529
 # ╠═14f46c1f-62fa-45ff-9c78-b01404c466da
 # ╟─feca7b76-fc10-4aca-adff-4cd323dabc74
 # ╠═ae9ab557-553c-474a-8865-37807b9270fb
@@ -1110,11 +1106,14 @@ overlay_mask_plot(dcm_array, masks_3D, v1, "masks overlayed")
 # ╠═9ac2f9ed-92bb-4540-add5-422df2a3f6da
 # ╠═533a77b8-d541-4277-8123-cbfe416fd263
 # ╠═4c8ed7b6-392c-438b-b6d4-946f001c7980
+# ╠═f3b55e55-4a0d-4324-84c3-97c0f3604174
 # ╟─891d81f2-f30e-4365-b0ba-b0cebae9f60f
 # ╠═efad1a40-b466-4e8e-a4ae-ab3c14efc3f6
 # ╠═9cf4a86b-d41f-4814-b14e-0854176e73d4
 # ╠═492574dc-5674-462d-9df1-a77e0f445994
 # ╠═33b38675-7434-46e5-808c-ad4b0cbb0408
+# ╠═4ff3a9d0-9681-4d49-a165-6787245a2a9f
+# ╠═105d699f-1d2c-4291-b5c2-3b7f18d81012
 # ╟─6e7c6d1a-f25d-46f9-88c7-85400d724736
 # ╠═3cdf5136-6315-45b2-9f7a-b8868f6436d4
 # ╠═bcdb7fe9-b699-48ae-a260-f7d4636a3ec7
