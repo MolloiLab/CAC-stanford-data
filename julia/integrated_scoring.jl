@@ -53,11 +53,13 @@ TableOfContents()
 md"""
 ## Load DICOMS
 
-All you need to do is set `base_path` once and leave it. After that, the only thing that should change is the `VENDER`, once for every set, and the `SCAN_NUMBER`, once for each scan
+All you need to do is set `base_path` once and leave it. After that, the only thing that should change is the `VENDER`, once for every set, and the `SCAN_NUMBER`, once for each scan.
+
+**Check the results each time**: if they don't make since, find `m_arr = masked_array[:, :, slice_CCI];` under the "Calibration Prep" heading and add or subtract one to the `slice_CCI` until the intensity of the high density calibration insert is at its maximum (e.g. `m_arr = masked_array[:, :, slice_CCI + 1]` or `m_arr = masked_array[:, :, slice_CCI - 1]`)
 """
 
 # ╔═╡ c72aaf65-8ba2-4c81-9bad-a059b983a833
-SCAN_NUMBER = 1
+SCAN_NUMBER = 10
 
 # ╔═╡ e33a903d-d9fb-4960-bc81-128cfbff8af6
 VENDER = "Canon_Aquilion_One_Vision"
@@ -204,7 +206,7 @@ masks = mask_L_HD + mask_M_HD + mask_S_HD + mask_L_MD + mask_M_MD + mask_S_MD + 
 heatmap(masks, colormap=:grays)
 
 # ╔═╡ 2ea7a51a-4b71-478b-b7bc-7453f601a42e
-heatmap(mask_L_LD)
+heatmap(mask_M_LD)
 
 # ╔═╡ 2afdc85a-a8bf-4fd4-bdef-74c39c0fb452
 md"""
@@ -232,7 +234,7 @@ md"""
 """
 
 # ╔═╡ b1d01296-26a5-4740-8a88-15fc76d1fa35
-m_arr = masked_array[:, :, slice_CCI+1];
+m_arr = masked_array[:, :, slice_CCI];
 
 # ╔═╡ f93589a5-76c8-403c-9800-1796ca1f6229
 md"""
@@ -818,6 +820,9 @@ end
 begin
 	alg_S_HD = Integrated(arr[mask_S_HD_3D])
 	vol_s_hd = score(s_bkg_S_HD, S_Obj_HD, pixel_size, alg_S_HD)
+	if vol_s_hd < 0
+		vol_s_hd = 0
+	end
 end
 
 # ╔═╡ 6bccdc83-d013-45c0-b939-12ed7dc7f5a8
@@ -879,6 +884,9 @@ end
 begin
 	alg_S_MD = Integrated(arr[mask_S_MD_3D])
 	vol_s_md = score(s_bkg_S_MD, S_Obj_HD, pixel_size, alg_S_MD)
+	if vol_s_md < 0
+		vol_s_md = 0
+	end
 end
 
 # ╔═╡ 6c653671-fe17-426f-8d1c-91db79be4f9c
@@ -940,6 +948,9 @@ end
 begin
 	alg_S_LD = Integrated(arr[mask_S_LD_3D])
 	vol_s_ld = score(s_bkg_S_LD, S_Obj_HD, pixel_size, alg_S_LD)
+	if vol_s_ld < 0
+		vol_s_ld = 0
+	end
 end
 
 # ╔═╡ 97a1b5ec-262c-4d63-8730-7213ff42abef
