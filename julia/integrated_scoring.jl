@@ -62,7 +62,7 @@ All you need to do is set `base_path` once and leave it. After that, the only th
 SCAN_NUMBER = 10
 
 # ╔═╡ e33a903d-d9fb-4960-bc81-128cfbff8af6
-VENDER = "Canon_Aquilion_One_Vision"
+VENDER = "GE_Revolution"
 
 # ╔═╡ 762cde8a-82c0-4cf0-b2b3-8ed00a4abb3d
 BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
@@ -234,7 +234,7 @@ md"""
 """
 
 # ╔═╡ b1d01296-26a5-4740-8a88-15fc76d1fa35
-m_arr = masked_array[:, :, slice_CCI];
+m_arr = masked_array[:, :, slice_CCI+1];
 
 # ╔═╡ f93589a5-76c8-403c-9800-1796ca1f6229
 md"""
@@ -268,6 +268,12 @@ core_L_MD = Bool.(erode(erode((mask_L_MD))));
 
 # ╔═╡ 79305a4d-618c-43e9-a0f5-e8e3d57d15c2
 mean_L_MD = mean(m_arr[core_L_MD])
+
+# ╔═╡ c97742d9-6084-41d9-8ef7-7166d33e1f36
+begin
+	arr_L_MD_cal = m_arr .* core_L_MD
+	heatmap(arr_L_MD_cal, colormap=:grays)
+end
 
 # ╔═╡ 2e7a9cfc-b1a2-4d7f-8db7-69c71f537bc9
 md"""
@@ -1212,6 +1218,11 @@ md"""
 # ╔═╡ c30dd8f3-1cd4-418a-af45-931ce0c705ff
 df_final = leftjoin(df1, df2, on=:inserts)
 
+# ╔═╡ 855b83ae-4b3c-4653-9661-5af01029ebbe
+if ~isdir(string(cd(pwd, "..") , "/data/output/", VENDER))
+	mkdir(string(cd(pwd, "..") , "/data/output/", VENDER))
+end
+
 # ╔═╡ 6ace3811-70cf-4732-89a4-706c17bb75ed
 output_path = string(cd(pwd, "..") , "/data/output/", VENDER, "/", scan)
 
@@ -1267,6 +1278,7 @@ CSV.write(output_path, df_final)
 # ╟─8fbbf202-176d-4582-acc6-dc2346486561
 # ╠═ad828113-99eb-4260-b715-560a0a559df7
 # ╠═79305a4d-618c-43e9-a0f5-e8e3d57d15c2
+# ╠═c97742d9-6084-41d9-8ef7-7166d33e1f36
 # ╟─2e7a9cfc-b1a2-4d7f-8db7-69c71f537bc9
 # ╠═f1756d4e-2a47-4061-94ad-e7601d13b10e
 # ╠═65b074d6-cdd9-47ea-a84e-528b35f3e703
@@ -1447,5 +1459,6 @@ CSV.write(output_path, df_final)
 # ╟─32610d65-672d-47a4-bb28-b69d43ac8592
 # ╟─07aa5b5e-b98a-4eec-8f13-70ac034dfd32
 # ╠═c30dd8f3-1cd4-418a-af45-931ce0c705ff
+# ╠═855b83ae-4b3c-4653-9661-5af01029ebbe
 # ╠═6ace3811-70cf-4732-89a4-706c17bb75ed
 # ╠═6426d783-b13c-4517-800f-3e54f6e7eee7
