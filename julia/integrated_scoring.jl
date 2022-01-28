@@ -59,7 +59,7 @@ All you need to do is set `base_path` once and leave it. After that, the only th
 """
 
 # ╔═╡ c72aaf65-8ba2-4c81-9bad-a059b983a833
-SCAN_NUMBER = 10
+SCAN_NUMBER = 9
 
 # ╔═╡ e33a903d-d9fb-4960-bc81-128cfbff8af6
 VENDER = "GE_Revolution"
