@@ -62,7 +62,7 @@ All you need to do is set `base_path` once and leave it. After that, the only th
 
 # ╔═╡ 9fcf4eca-1593-494e-95f2-e992c9107ebe
 begin
-	SCAN_NUMBER = 1
+	SCAN_NUMBER = 10
 	VENDER = "Canon_Aquilion_One_Vision"
 	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 end
@@ -80,6 +80,9 @@ dcm_path_list = dcm_list_builder(root_path)
 
 # ╔═╡ 879b7ea4-91a7-4423-8e14-14b383c4f1a6
 pth = dcm_path_list[SCAN_NUMBER]
+
+# ╔═╡ b6159bab-9d1c-4a47-b6ee-c165820aa84c
+pth
 
 # ╔═╡ 8ab76bd2-33dc-4834-bc82-b69f9a4bdec3
 scan = basename(pth)
@@ -779,7 +782,12 @@ begin
 end
 
 # ╔═╡ b040556f-5afe-4539-be19-ef5eaecb8448
-mass_s_hd = score(s_bkg_S_HD, S_Obj_HD, pixel_size, ρ_HD, alg_S_HD)
+begin
+	mass_s_hd = score(s_bkg_S_HD, S_Obj_HD, pixel_size, ρ_HD, alg_S_HD)
+	if mass_s_hd < 0
+		mass_s_hd = 0
+	end
+end
 
 # ╔═╡ ca315565-2e7f-435a-be3f-05d4893cfcce
 md"""
@@ -843,7 +851,12 @@ begin
 end
 
 # ╔═╡ 55a9dfbf-6f8a-40ab-9e23-5fe5231a250f
-mass_s_md = score(s_bkg_S_MD, S_Obj_HD, pixel_size, ρ_MD, alg_S_MD)
+begin
+	mass_s_md = score(s_bkg_S_MD, S_Obj_HD, pixel_size, ρ_MD, alg_S_MD)
+	if mass_s_md < 0
+		mass_s_md = 0
+	end
+end
 
 # ╔═╡ c10d0942-ba67-4c71-ae53-1e2ed5020dae
 md"""
@@ -907,7 +920,12 @@ begin
 end
 
 # ╔═╡ 14e7d218-b103-413a-9ce3-51f051243c56
-mass_s_ld = score(s_bkg_S_LD, S_Obj_HD, pixel_size, ρ_LD, alg_S_LD)
+begin
+	mass_s_ld = score(s_bkg_S_LD, S_Obj_HD, pixel_size, ρ_LD, alg_S_LD)
+	if mass_s_ld < 0
+		mass_s_ld = 0
+	end
+end
 
 # ╔═╡ 4ba64fcd-b8d3-4045-8a47-86d1705d19ff
 md"""
@@ -1185,6 +1203,7 @@ CSV.write(output_path, df_final)
 # ╠═e528161c-e925-4891-9c92-66fcdcda7b3e
 # ╠═8103fab5-f51b-4aed-b877-84764adb58ad
 # ╠═879b7ea4-91a7-4423-8e14-14b383c4f1a6
+# ╠═b6159bab-9d1c-4a47-b6ee-c165820aa84c
 # ╠═8ab76bd2-33dc-4834-bc82-b69f9a4bdec3
 # ╠═042c7d6f-9427-4dfa-8712-f7d07f2ffd8c
 # ╟─852c5afc-fdae-4b6f-9b5e-706cb79483ed
@@ -1332,40 +1351,40 @@ CSV.write(output_path, df_final)
 # ╠═da33cf36-6c3d-4c94-a1f1-59a71ae06acb
 # ╠═a48fc90b-f99d-4408-be54-d170977e394f
 # ╠═2563b25a-a386-4f25-b88e-d5db49a1473a
-# ╠═6fb7e314-c5cc-4c90-90c0-9b9db04cfe1b
+# ╟─6fb7e314-c5cc-4c90-90c0-9b9db04cfe1b
 # ╠═fe263281-fdd2-4025-a75c-11701059ea78
 # ╠═2ee67d3b-b2a7-4605-9bbb-06caa5c888e2
 # ╠═b040556f-5afe-4539-be19-ef5eaecb8448
-# ╠═ca315565-2e7f-435a-be3f-05d4893cfcce
+# ╟─ca315565-2e7f-435a-be3f-05d4893cfcce
 # ╠═164dd82f-47bd-4255-9507-f0386cd94b40
-# ╠═35fa87bb-ce0e-4505-b667-6de69e3641ed
+# ╟─35fa87bb-ce0e-4505-b667-6de69e3641ed
 # ╠═48ce3652-c8ef-4fcc-b284-1cb8bb720da8
 # ╠═f1a0c8a1-b79d-435f-907d-64b5671e65c2
 # ╠═7e7d92bb-d74a-470a-a0f2-e48b62ae56e0
-# ╠═e3c667a9-b3ff-494f-943e-8c797f31bd91
+# ╟─e3c667a9-b3ff-494f-943e-8c797f31bd91
 # ╠═4c7c4aeb-2f16-4aa8-acc9-1e9be473b57f
 # ╠═b6c84ed9-573b-472b-be9b-fe4b91bbf40b
 # ╠═f1f32ea8-2a17-478c-9ca1-c5ce7afe3912
-# ╠═b315f712-7630-4f5f-af85-bdfc46d4d5f7
+# ╟─b315f712-7630-4f5f-af85-bdfc46d4d5f7
 # ╠═47e47506-08de-4991-90fa-35e3e6b18c65
 # ╠═c8756384-6c90-4819-b0dc-2798eca244a8
 # ╠═55a9dfbf-6f8a-40ab-9e23-5fe5231a250f
-# ╠═c10d0942-ba67-4c71-ae53-1e2ed5020dae
+# ╟─c10d0942-ba67-4c71-ae53-1e2ed5020dae
 # ╠═c384cf03-98fb-4c5e-b426-487b688e1e69
 # ╠═23189d22-61e7-4c30-b7ac-50d20692ecd5
 # ╠═75b50ca5-f1f5-494a-85f1-33881db475b3
 # ╠═4233274a-f1ec-4cd9-b68f-c68f2f10dfa0
 # ╠═976fc996-2620-45a7-aacc-da7da24bfc0b
-# ╠═76e2b877-4ebf-4550-b796-52dfbf55d361
+# ╟─76e2b877-4ebf-4550-b796-52dfbf55d361
 # ╠═3b7ddaa4-4e99-4710-b2fe-26be6288edbc
 # ╠═eb3bbceb-2198-438a-9f25-18e074b1423e
 # ╠═0fbac767-2689-435e-a123-a3ea84f0a294
-# ╠═8b4ba108-bea3-4850-a1fc-0fad0cd7a6ea
+# ╟─8b4ba108-bea3-4850-a1fc-0fad0cd7a6ea
 # ╠═4a6bd3b1-53ed-48f4-916f-e1665aab1664
 # ╠═ac73fe19-8ad0-44a7-bb95-95af48f170d5
 # ╠═14e7d218-b103-413a-9ce3-51f051243c56
-# ╠═4ba64fcd-b8d3-4045-8a47-86d1705d19ff
-# ╠═fa08de3f-27b6-4ff3-917e-73ea692296b0
+# ╟─4ba64fcd-b8d3-4045-8a47-86d1705d19ff
+# ╟─fa08de3f-27b6-4ff3-917e-73ea692296b0
 # ╠═dc3ae6f7-8fa7-42ca-b2f2-75e42befa5ce
 # ╠═8162eea8-e609-490c-8f8f-0a058a3c2d8b
 # ╠═75530e55-95e8-498f-82e0-3e4d7bac8ed4
