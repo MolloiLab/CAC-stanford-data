@@ -55,8 +55,14 @@ end
 # ╔═╡ 601c4b6d-ca82-4fb0-b66b-5b50d507fa83
 TableOfContents()
 
+# ╔═╡ 3a43e3e5-adc3-4a0d-ad98-1a7e39dc6a69
+begin
+	root_dir = dirname(pwd())
+	root = string(root_dir, "/data/simulated/combined")
+end
+
 # ╔═╡ 20e6e9ba-2d70-4d47-9187-95b903d95814
-root = "/Users/daleblack/Google Drive/Datasets/Simulated";
+# root = "/Users/daleblack/Google Drive/Datasets/Simulated/combined";
 
 # ╔═╡ 65b807a2-8e49-4065-baf7-dca0534a7f20
 md"""
@@ -590,11 +596,8 @@ function compute_CCI(dcm_array, header, slice_dict, flipped; calcium_threshold=1
     return calcium_image, slice_CCI, quality_slice, cal_rod_slice
 end
 
-# ╔═╡ 848d676f-8b8c-475d-a427-1252b7fcd0aa
-slice_dict_manual = Dict(2=>3, 3=>3, 1=>3)
-
 # ╔═╡ df4c740d-cdd8-468a-8699-3e37669f7094
-calcium_image1, slice_CCI1, quality_slice1, cal_rod_slice1 = compute_CCI(masked_array, header, slice_dict_manual, flipped);
+calcium_image1, slice_CCI1, quality_slice1, cal_rod_slice1 = compute_CCI(masked_array, header, slice_dict2, flipped);
 
 # ╔═╡ 8f91a763-3458-443a-a634-ee392ce8d130
 slice_CCI1, quality_slice1, cal_rod_slice1
@@ -619,7 +622,7 @@ md"""
 """
 
 # ╔═╡ d46f59c3-a25c-4363-8563-853748a3ee84
-function mask_rod_manual(dcm_array, header, slice_dict_manual; calcium_threshold=130)
+function mask_rod(dcm_array, header; calcium_threshold=130)
     slice_dict, large_index = get_calcium_slices(
 		dcm_array, header; 
 		calcium_threshold=calcium_threshold
@@ -628,7 +631,6 @@ function mask_rod_manual(dcm_array, header, slice_dict_manual; calcium_threshold
 		dcm_array, slice_dict, large_index
 	)
     slice_dict = poppable_keys(flipped, flipped_index, header, slice_dict)
-	slice_dict = slice_dict_manual
     calcium_image, slice_CCI, quality_slice, cal_rod_slice = compute_CCI(
 		dcm_array, header, slice_dict, flipped; calcium_threshold=calcium_threshold
 	)
@@ -636,7 +638,7 @@ function mask_rod_manual(dcm_array, header, slice_dict_manual; calcium_threshold
 end
 
 # ╔═╡ 212ed8c0-6aee-448a-aef8-6db18ea94d18
-calcium_image, slice_CCI, quality_slice, cal_rod_slice = mask_rod_manual(masked_array, header, slice_dict_manual);
+calcium_image, slice_CCI, quality_slice, cal_rod_slice = mask_rod(masked_array, header);
 
 # ╔═╡ 9e1eb1a4-5a86-4aca-9a5e-c7a75ebcc75b
 slice_CCI
@@ -845,59 +847,57 @@ function calc_centers(dcm_array, output, header, tmp_center, CCI_slice)
 	PixelSpacing = Phantoms.get_pixel_size(header)
 	center, center1, center2, center3 = center_points(dcm_array, output, header, tmp_center, CCI_slice)
     centers = Dict()
-    for size_index4 in (center1, center2, center3)
-        center_index = size_index4
+    for center_index in (center1, center2, center3)
         side_x = abs(center[1]-center_index[1])
         side_y = abs(center[2]-center_index[2])
-        
         angle = angle_calc(side_x, side_y)
         if (center_index[1] < center[1] && center_index[2] < center[2])
-			medium_calc = [center_index[1] + (12.5 / PixelSpacing[1]) * sin(angle), (center_index[2] + (12.5 / PixelSpacing[2]) * cos(angle))]
+			medium_calc = [center_index[1] + (10.5 / PixelSpacing[1]) * sin(angle), (center_index[2] + (10.5 / PixelSpacing[2]) * cos(angle))]
+			low_calc = [center_index[1] + (17 / PixelSpacing[1]) * sin(angle), (center_index[2] + (17 / PixelSpacing[2]) * cos(angle))]
 			
-			low_calc = [center_index[1] + (25 / PixelSpacing[1]) * sin(angle), (center_index[2] + (25 / PixelSpacing[2]) * cos(angle))]
 		elseif (center_index[1] < center[1] && center_index[2] > center[2])
-			medium_calc = [center_index[1] + (12.5 / PixelSpacing[1]) * sin(angle), (center_index[2] - (12.5 / PixelSpacing[2]) * cos(angle))]
+			medium_calc = [center_index[1] + (10.5 / PixelSpacing[1]) * sin(angle), (center_index[2] - (10.5 / PixelSpacing[2]) * cos(angle))]
+			low_calc = [center_index[1] + (17 / PixelSpacing[1]) * sin(angle), (center_index[2] - (17 / PixelSpacing[2]) * cos(angle))] 
 			
-			low_calc = [center_index[1] + (25 / PixelSpacing[1]) * sin(angle), (center_index[2] - (25 / PixelSpacing[2]) * cos(angle))] 
 		elseif (center_index[1] > center[1] && center_index[2] < center[2])
-			medium_calc = [center_index[1] - (12.5 / PixelSpacing[1]) * sin(angle), (center_index[2] + (12.5 / PixelSpacing[2]) * cos(angle))]
+			medium_calc = [center_index[1] - (10.5 / PixelSpacing[1]) * sin(angle), (center_index[2] + (10.5 / PixelSpacing[2]) * cos(angle))]
+			low_calc = [center_index[1] - (17 / PixelSpacing[1]) * sin(angle), (center_index[2] + (17 / PixelSpacing[2]) * cos(angle))]
 			
-			low_calc = [center_index[1] - (25 / PixelSpacing[1]) * sin(angle), (center_index[2] + (25 / PixelSpacing[2]) * cos(angle))]
 		elseif (center_index[1] > center[1] && center_index[2] > center[2])
-			medium_calc = [center_index[1] - (12.5 / PixelSpacing[1]) * sin(angle), (center_index[2] - (12.5 / PixelSpacing[2]) * cos(angle))]
+			medium_calc = [center_index[1] - (10.5 / PixelSpacing[1]) * sin(angle), (center_index[2] - (10.5 / PixelSpacing[2]) * cos(angle))]
+			low_calc = [center_index[1] - (17 / PixelSpacing[1]) * sin(angle), (center_index[2] - (17 / PixelSpacing[2]) * cos(angle))]
 			
-			low_calc = [center_index[1] - (25 / PixelSpacing[1]) * sin(angle), (center_index[2] - (25 / PixelSpacing[2]) * cos(angle))]
 		elseif (side_x == 0 && center_index[2] < center[2])
-			medium_calc = [center_index[1], center_index[2] + (12.5 / PixelSpacing[2])]
+			medium_calc = [center_index[1], center_index[2] + (10.5 / PixelSpacing[2])]
+			low_calc = [center_index[1], center_index[2] + (17 / PixelSpacing[2])]
 			
-			low_calc = [center_index[1], center_index[2] + (25 / PixelSpacing[2])]
 		elseif (side_x == 0 && center_index[2] > center[2])
-			medium_calc = [center_index[1], center_index[2] - (12.5 / PixelSpacing[2])]
+			medium_calc = [center_index[1], center_index[2] - (10.5 / PixelSpacing[2])]
+			low_calc = [center_index[1], center_index[2] - (17 / PixelSpacing[2])]
 			
-			low_calc = [center_index[1], center_index[2] - (25 / PixelSpacing[2])]
 		elseif (center_index[1] > center[1] && side_y == 0)
-            medium_calc = [center_index[1] - (12.5 / PixelSpacing[1]), center_index[2]]
+            medium_calc = [center_index[1] - (10.5 / PixelSpacing[1]), center_index[2]]
+			low_calc = [center_index[1] - (17 / PixelSpacing[1]), center_index[2]]
 			
-            low_calc = [center_index[1] - (25 / PixelSpacing[1]), center_index[2]]
 		elseif (center_index[1] > center[1] && side_y == 0)
-			medium_calc = [center_index[1] + (12.5 / PixelSpacing[1]), center_index[2]]
+			medium_calc = [center_index[1] + (10.5 / PixelSpacing[1]), center_index[2]]
+            low_calc = [(center_index[1] + (17 / PixelSpacing[1])), center_index[1]]
 			
-            low_calc = [(center_index[1] + (25 / PixelSpacing[1])), center_index[1]]
         else
 			error("unknown angle")
 		end
                 
-        if size_index4 == center1
+        if center_index == center1
             centers[:Large_HD] = Int.(round.(center_index))
             centers[:Medium_HD] = Int.(round.(medium_calc))
             centers[:Small_HD] = Int.(round.(low_calc))
         
-		elseif size_index4 == center2
+		elseif center_index == center2
             centers[:Large_MD] = Int.(round.(center_index))
             centers[:Medium_MD] = Int.(round.(medium_calc))
             centers[:Small_MD] = Int.(round.(low_calc))
         
-		elseif size_index4 == center3
+		elseif center_index == center3
             centers[:Large_LD] = Int.(round.(center_index))
             centers[:Medium_LD] = Int.(round.(medium_calc))
             centers[:Small_LD] = Int.(round.(low_calc))
@@ -959,7 +959,7 @@ end
 mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(dcm_array, masked_array, header, slice_CCI, center_insert);
 
 # ╔═╡ a98fae0f-c107-49a7-9d60-ce9e7c767ae7
-masks = mask_L_HD + mask_M_HD + mask_S_HD + mask_L_MD + mask_M_MD + mask_S_MD + mask_L_LD + mask_M_LD + mask_S_LD;
+masks = transpose(mask_L_HD + mask_M_HD + mask_S_HD + mask_L_MD + mask_M_MD + mask_S_MD + mask_L_LD + mask_M_LD + mask_S_LD);
 
 # ╔═╡ 700cfd05-93f6-4133-9e3c-457b078589c7
 heatmap(transpose(masks), colormap=:grays)
@@ -1015,7 +1015,7 @@ end
 begin
 	masks_3D = Array{Bool}(undef, size(dcm_array))
 	for z in 1:size(dcm_array, 3)
-		masks_3D[:, :, z] = transpose(masks)
+		masks_3D[:, :, z] = masks
 	end
 end;
 
@@ -1028,6 +1028,7 @@ overlay_mask_plot(dcm_array, masks_3D, v1, "masks overlayed")
 # ╔═╡ Cell order:
 # ╠═946debe7-078f-4db6-a383-d0b5a973bd4c
 # ╠═601c4b6d-ca82-4fb0-b66b-5b50d507fa83
+# ╠═3a43e3e5-adc3-4a0d-ad98-1a7e39dc6a69
 # ╠═20e6e9ba-2d70-4d47-9187-95b903d95814
 # ╟─65b807a2-8e49-4065-baf7-dca0534a7f20
 # ╠═cfb8b5b9-cfaa-4b4f-81bd-3bc7b2eb30ba
@@ -1065,7 +1066,6 @@ overlay_mask_plot(dcm_array, masks_3D, v1, "masks overlayed")
 # ╠═2aa8ab66-d297-4514-a8ae-56c19dfbb27c
 # ╟─0802301f-864e-45a7-b39d-648b8fda1f03
 # ╠═29b34c30-a280-48bd-893b-4a3fe788fd20
-# ╠═848d676f-8b8c-475d-a427-1252b7fcd0aa
 # ╠═df4c740d-cdd8-468a-8699-3e37669f7094
 # ╠═8f91a763-3458-443a-a634-ee392ce8d130
 # ╟─7dd55970-fca1-4cd6-87ed-aa5578be12b5
