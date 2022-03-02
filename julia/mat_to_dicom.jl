@@ -38,37 +38,33 @@ end
 TableOfContents()
 
 # ╔═╡ 1417f262-16f4-41f7-bed6-c895fb49fa80
-# file = 3
+file = 3
 
 # ╔═╡ 3c5bfe99-3098-43b6-9d0e-0b3ed5884dea
-file_inserts = 3
+file_inserts = 6
 
 # ╔═╡ 2ae4e5ff-3cfd-4c80-a59a-e91c52480ecf
 md"""
 ## Convert .mat to Array
 """
 
-# ╔═╡ 90f1c6e8-dc60-40ac-bc09-f4ad3d98482e
-path1 = "/Users/daleblack/Desktop/r120.mat";
-
-# ╔═╡ aece3048-7d4e-4abf-8b9c-79da131fef58
-vars = matread(path1);
-
 # ╔═╡ 0fab4688-9f2c-4df6-9cff-d3f9086e7a4b
-# begin
-# 	array1 = vars["r120"]
-# 	array1 = Int16.(round.(array1))
-# 	# array2[2] = -899
-# end;
+begin
+	path = "/Users/daleblack/Desktop/s120.mat"
+	vars1 = matread(path)
+	array1 = vars1["r120"]
+	array1 = Int16.(round.(array1))
+end;
 
 # ╔═╡ a9fcf3de-496f-4ce6-8c52-5682f69cdceb
-# heatmap(transpose(array1), colormap=:grays)
+heatmap(transpose(array1), colormap=:grays)
 
 # ╔═╡ 506a5e6b-94ed-4502-af57-0092eba7d817
 begin
-	array2 = vars["s120"]
+	path2 = "/Users/daleblack/Desktop/r120.mat";
+	vars2 = matread(path2);
+	array2 = vars2["s120"]
 	array2 = Int16.(round.(array2))
-	# array2[2] = -899
 end;
 
 # ╔═╡ 65c27fd3-3959-4d87-a120-2be6a221ca87
@@ -82,29 +78,23 @@ md"""
 # ╔═╡ 7ef29728-2fd5-4c70-ae42-4d35ce6b45da
 dcm_path = "/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision/Large_rep1/96E1EB4F";
 
-# ╔═╡ 2fec4eed-1320-4ed9-bb00-8e808152fc38
-# dcm = dcm_parse(dcm_path);
-
-# ╔═╡ fb9331a9-9fe6-47cc-9e44-f1fc96a974e3
-# dcm[tag"Pixel Data"] = array1;
-
-# ╔═╡ 4b33c612-1474-4ff1-b70c-65a3a8c9a4c3
-# dcm[tag"Instance Number"] = file;
-
-# ╔═╡ 15e25dff-7a95-4c4e-a06d-1bea2f745721
-# dcm[tag"Rows"] = size(array1, 1);
-
-# ╔═╡ 86572058-be5c-481d-9e43-58cb47cb0ec2
-# dcm[tag"Columns"] = size(array1, 2);
+# ╔═╡ a70027f1-5fbf-4e9d-8d09-4dd8718fc081
+begin
+	dcm = dcm_parse(dcm_path)
+	dcm[tag"Pixel Data"] = array1
+	dcm[tag"Instance Number"] = file
+	dcm[tag"Rows"] = size(array1, 1)
+	dcm[tag"Columns"] = size(array1, 2)
+end;
 
 # ╔═╡ 4062b5d4-9fe7-41f5-92e3-fb19cb6a1274
-output_root = "/Users/daleblack/Google Drive/Datasets/Simulated";
-
-# ╔═╡ 4e91f3b7-70dd-45ca-9ffe-fbe13b902208
-# output_path = string(output_root, "/", file, ".dcm");
+begin
+	output_root_rod = "/Users/daleblack/Google Drive/Datasets/Simulated/rod"
+	output_path_rod = string(output_root_rod, "/", file, ".dcm")
+end
 
 # ╔═╡ 042bc6e8-edd2-4d56-b3e4-a0ec6ee94ffe
-# dcm_write(output_path, dcm)
+dcm_write(output_path_rod, dcm)
 
 # ╔═╡ 68ab4f72-1d54-444d-b8a8-7d9b96108f36
 md"""
@@ -112,51 +102,95 @@ md"""
 """
 
 # ╔═╡ 6b558de5-751d-4fda-b6ab-c90ca4f5a6e6
-dcm2 = dcm_parse(dcm_path);
+begin
+	dcm2 = dcm_parse(dcm_path)
+	dcm2[tag"Pixel Data"] = array2
+	dcm2[tag"Instance Number"] = file_inserts
+	dcm2[tag"Rows"] = size(array2, 1)
+	dcm2[tag"Columns"] = size(array2, 2)
+end;
 
-# ╔═╡ 935a78d3-8621-4f27-a653-721a06742800
-dcm2[tag"Pixel Data"] = array2;
-
-# ╔═╡ cae51130-b763-48f7-acdb-9c3b613cb758
-dcm2[tag"Instance Number"] = file_inserts;
-
-# ╔═╡ 38454e0b-fa6d-42af-aad7-99505a82bd8c
-dcm2[tag"Rows"] = size(array2, 1);
-
-# ╔═╡ 848d05ca-119e-4791-a535-08d6d1b92033
-dcm2[tag"Columns"] = size(array2, 2);
-
-# ╔═╡ d2d42f63-6ab3-4c28-98f4-8dc50caf8acb
-output_path2 = string(output_root, "/", file_inserts, ".dcm")
+# ╔═╡ 3371dd16-6a49-430f-afad-7d94c9bc63ad
+begin
+	output_root_inserts = "/Users/daleblack/Google Drive/Datasets/Simulated/inserts"
+	output_path_inserts = string(output_root_inserts, "/", file_inserts, ".dcm")
+end;
 
 # ╔═╡ b822d070-167e-4ce4-a876-57ba142e2751
-dcm_write(output_path2, dcm2)
+dcm_write(output_path_inserts, dcm2)
 
 # ╔═╡ f78c8cb1-6f5a-439a-873f-68c71c95516f
 md"""
 ## Check DICOM image(s)
 """
 
-# ╔═╡ b5041f5a-96e9-48ef-a0c0-71c365a12934
-# new_dcm = dcm_parse(output_path);
-
-# ╔═╡ 207b9300-90f5-4656-a89e-60475c8c88a2
-# new_array = new_dcm[tag"Pixel Data"];
-
-# ╔═╡ 7013d713-0f5d-40d7-be8d-85e8fcdc35c3
-# heatmap(transpose(new_array), colormap=:grays)
+# ╔═╡ 0ca2e61d-83be-42b4-beb1-359e8eb12793
+md"""
+### Inserts
+"""
 
 # ╔═╡ e8000d5d-1da4-4fb1-a253-de0838a50fcb
-dcmdir = dcmdir_parse(output_root);
+dcmdir_inserts = dcmdir_parse(output_root_inserts);
 
 # ╔═╡ 5e1bb447-9100-4460-a0db-b90eea55b7ce
-vol = load_dcm_array(dcmdir);
+vol_inserts = load_dcm_array(dcmdir_inserts);
 
 # ╔═╡ 0288226a-4c70-492b-b8ab-15701069f594
-@bind a PlutoUI.Slider(1:size(vol, 3); default=1, show_value=true)
+@bind a PlutoUI.Slider(1:size(vol_inserts, 3); default=1, show_value=true)
 
 # ╔═╡ dcc8ae65-713c-495a-bc2b-61bd514915f7
-heatmap(transpose(vol[:, :, a]), colormap=:grays)
+heatmap(transpose(vol_inserts[:, :, a]), colormap=:grays)
+
+# ╔═╡ 1a1ef5d1-ba40-4f96-bc48-707759ce96f4
+md"""
+### Rod
+"""
+
+# ╔═╡ 1c1ad710-da52-4f5d-835d-853ab539eeab
+dcmdir_rod = dcmdir_parse(output_root_rod);
+
+# ╔═╡ 1773556b-66e8-4786-a003-14130ad06086
+vol_rod = load_dcm_array(dcmdir_rod);
+
+# ╔═╡ a6454ba1-2082-4f93-9383-9b07c8b30798
+@bind b PlutoUI.Slider(1:size(vol_rod, 3); default=1, show_value=true)
+
+# ╔═╡ 21aaf77f-354d-43d4-83ee-743760e698f0
+heatmap(transpose(vol_rod[:, :, b]), colormap=:grays)
+
+# ╔═╡ 3467f536-fbac-4542-8da2-ab6396de541f
+md"""
+## Combined
+"""
+
+# ╔═╡ 719a8d5c-ef3a-4859-9fc9-7c02c911c71d
+# begin
+# 	pth_root = "/Users/daleblack/Google Drive/Datasets/Simulated/"
+# 	pth = string(pth_root, "combined")
+# 	if ~isdir(pth)
+# 		mkdir(pth)
+# 	end
+	
+# 	pth_inserts = string(pth_root, inserts)
+# 	files_inserts = readdir(pth_inserts)
+# 	for i in files_inserts
+# 		string(pth_inserts, )
+# end
+
+# ╔═╡ 6d32567c-6d6b-4a96-8ce1-a296eab482d4
+output_root_combined = "/Users/daleblack/Google Drive/Datasets/Simulated/combined"
+
+# ╔═╡ 93d48ee0-83e6-46cd-8567-16273bc269f9
+dcmdir_combined = dcmdir_parse(output_root_combined);
+
+# ╔═╡ 81f0b564-52ff-4078-85a7-765375ad99f0
+vol_combined = load_dcm_array(dcmdir_combined);
+
+# ╔═╡ a79b50b9-7efb-49b8-8970-ecce09a284d4
+@bind c PlutoUI.Slider(1:size(vol_combined, 3); default=1, show_value=true)
+
+# ╔═╡ ec615641-95ee-43f8-9433-587ca30f3551
+heatmap(transpose(vol_combined[:, :, c]), colormap=:grays)
 
 # ╔═╡ Cell order:
 # ╠═52c184d2-9a5e-11ec-0e10-976cdfa5f253
@@ -164,35 +198,34 @@ heatmap(transpose(vol[:, :, a]), colormap=:grays)
 # ╠═1417f262-16f4-41f7-bed6-c895fb49fa80
 # ╠═3c5bfe99-3098-43b6-9d0e-0b3ed5884dea
 # ╟─2ae4e5ff-3cfd-4c80-a59a-e91c52480ecf
-# ╠═90f1c6e8-dc60-40ac-bc09-f4ad3d98482e
-# ╠═aece3048-7d4e-4abf-8b9c-79da131fef58
-# ╟─0fab4688-9f2c-4df6-9cff-d3f9086e7a4b
-# ╟─a9fcf3de-496f-4ce6-8c52-5682f69cdceb
+# ╠═0fab4688-9f2c-4df6-9cff-d3f9086e7a4b
+# ╠═a9fcf3de-496f-4ce6-8c52-5682f69cdceb
 # ╠═506a5e6b-94ed-4502-af57-0092eba7d817
 # ╠═65c27fd3-3959-4d87-a120-2be6a221ca87
 # ╟─42bdac01-ab21-43ea-928e-04231f0428ba
 # ╠═7ef29728-2fd5-4c70-ae42-4d35ce6b45da
-# ╟─2fec4eed-1320-4ed9-bb00-8e808152fc38
-# ╟─fb9331a9-9fe6-47cc-9e44-f1fc96a974e3
-# ╟─4b33c612-1474-4ff1-b70c-65a3a8c9a4c3
-# ╟─15e25dff-7a95-4c4e-a06d-1bea2f745721
-# ╟─86572058-be5c-481d-9e43-58cb47cb0ec2
+# ╠═a70027f1-5fbf-4e9d-8d09-4dd8718fc081
 # ╠═4062b5d4-9fe7-41f5-92e3-fb19cb6a1274
-# ╠═4e91f3b7-70dd-45ca-9ffe-fbe13b902208
-# ╟─042bc6e8-edd2-4d56-b3e4-a0ec6ee94ffe
+# ╠═042bc6e8-edd2-4d56-b3e4-a0ec6ee94ffe
 # ╟─68ab4f72-1d54-444d-b8a8-7d9b96108f36
 # ╠═6b558de5-751d-4fda-b6ab-c90ca4f5a6e6
-# ╠═935a78d3-8621-4f27-a653-721a06742800
-# ╠═cae51130-b763-48f7-acdb-9c3b613cb758
-# ╠═38454e0b-fa6d-42af-aad7-99505a82bd8c
-# ╠═848d05ca-119e-4791-a535-08d6d1b92033
-# ╠═d2d42f63-6ab3-4c28-98f4-8dc50caf8acb
+# ╠═3371dd16-6a49-430f-afad-7d94c9bc63ad
 # ╠═b822d070-167e-4ce4-a876-57ba142e2751
 # ╟─f78c8cb1-6f5a-439a-873f-68c71c95516f
-# ╠═b5041f5a-96e9-48ef-a0c0-71c365a12934
-# ╠═207b9300-90f5-4656-a89e-60475c8c88a2
-# ╠═7013d713-0f5d-40d7-be8d-85e8fcdc35c3
+# ╟─0ca2e61d-83be-42b4-beb1-359e8eb12793
 # ╠═e8000d5d-1da4-4fb1-a253-de0838a50fcb
 # ╠═5e1bb447-9100-4460-a0db-b90eea55b7ce
 # ╟─0288226a-4c70-492b-b8ab-15701069f594
 # ╠═dcc8ae65-713c-495a-bc2b-61bd514915f7
+# ╟─1a1ef5d1-ba40-4f96-bc48-707759ce96f4
+# ╠═1c1ad710-da52-4f5d-835d-853ab539eeab
+# ╠═1773556b-66e8-4786-a003-14130ad06086
+# ╟─a6454ba1-2082-4f93-9383-9b07c8b30798
+# ╠═21aaf77f-354d-43d4-83ee-743760e698f0
+# ╟─3467f536-fbac-4542-8da2-ab6396de541f
+# ╠═719a8d5c-ef3a-4859-9fc9-7c02c911c71d
+# ╠═6d32567c-6d6b-4a96-8ce1-a296eab482d4
+# ╠═93d48ee0-83e6-46cd-8567-16273bc269f9
+# ╠═81f0b564-52ff-4078-85a7-765375ad99f0
+# ╟─a79b50b9-7efb-49b8-8970-ecce09a284d4
+# ╠═ec615641-95ee-43f8-9433-587ca30f3551
