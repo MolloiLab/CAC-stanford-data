@@ -127,7 +127,7 @@ function overlay_mask_plot(array, mask, var, title::AbstractString)
 	ax = Makie.Axis(fig[1, 1])
 	ax.title = title
 	heatmap!(array[:, :, zs[var]], colormap=:grays)
-	scatter!(label_array[:, 1][indices_lbl], label_array[:, 2][indices_lbl], markersize=1, color=:red)
+	scatter!(label_array[:, 1][indices_lbl], label_array[:, 2][indices_lbl], markersize=0.5, color=:red)
 	fig
 end
 
@@ -1345,11 +1345,11 @@ CSV.write(output_path, df_final)
 # ╠═e3280173-b6ac-4cc1-945b-ec1c394c9260
 # ╠═559669c9-8539-4d83-ac0b-3135b127028b
 # ╠═b883f972-ce50-4400-8bc5-edce46a6689d
-# ╠═f0e695a3-eb78-47ba-8e4a-6af332e1b496
+# ╟─f0e695a3-eb78-47ba-8e4a-6af332e1b496
 # ╠═069d2662-24c6-49af-be33-8d269b05bc9b
-# ╠═bbaff240-af5c-4621-97ba-613040420f6e
+# ╟─bbaff240-af5c-4621-97ba-613040420f6e
 # ╠═da33cf36-6c3d-4c94-a1f1-59a71ae06acb
-# ╠═a48fc90b-f99d-4408-be54-d170977e394f
+# ╟─a48fc90b-f99d-4408-be54-d170977e394f
 # ╠═2563b25a-a386-4f25-b88e-d5db49a1473a
 # ╟─6fb7e314-c5cc-4c90-90c0-9b9db04cfe1b
 # ╠═fe263281-fdd2-4025-a75c-11701059ea78
