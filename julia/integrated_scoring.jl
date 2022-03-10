@@ -62,7 +62,7 @@ All you need to do is set `base_path` once and leave it. After that, the only th
 
 # ╔═╡ 857ea37f-58dd-45d4-96e5-8238718d9a3a
 begin
-	SCAN_NUMBER = 5
+	SCAN_NUMBER = 10
 	VENDER = "Canon_Aquilion_One_Vision"
 	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 end
@@ -197,153 +197,6 @@ md"""
 ## Segment Calcium Inserts
 """
 
-# ╔═╡ 374a6962-fe99-4d23-9e37-5d67034cb869
-function calc_centers(dcm_array, output, header, tmp_center, CCI_slice)
-    PixelSpacing = Phantoms.get_pixel_size(header)
-    center, center1, center2, center3 = center_points(
-        dcm_array, output, header, tmp_center, CCI_slice
-    )
-    centers = Dict()
-    for size_index4 in (center1, center2, center3)
-        center_index = size_index4
-        side_x = abs(center[1] - center_index[1])
-        side_y = abs(center[2] - center_index[2])
-
-        angle = angle_calc(side_x, side_y)
-        if (center_index[1] < center[1] && center_index[2] < center[2])
-            medium_calc = [
-                center_index[1] + (12.5 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] + (12.5 / PixelSpacing[2]) * cos(angle)),
-            ]
-            low_calc = [
-                center_index[1] + (25 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] + (25 / PixelSpacing[2]) * cos(angle)),
-            ]
-        elseif (center_index[1] < center[1] && center_index[2] > center[2])
-            medium_calc = [
-                center_index[1] + (12.5 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] - (12.5 / PixelSpacing[2]) * cos(angle)),
-            ]
-            low_calc = [
-                center_index[1] + (25 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] - (25 / PixelSpacing[2]) * cos(angle)),
-            ]
-        elseif (center_index[1] > center[1] && center_index[2] < center[2])
-            medium_calc = [
-                center_index[1] - (12.5 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] + (12.5 / PixelSpacing[2]) * cos(angle)),
-            ]
-            low_calc = [
-                center_index[1] - (25 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] + (25 / PixelSpacing[2]) * cos(angle)),
-            ]
-        elseif (center_index[1] > center[1] && center_index[2] > center[2])
-            medium_calc = [
-                center_index[1] - (12.5 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] - (12.5 / PixelSpacing[2]) * cos(angle)),
-            ]
-            low_calc = [
-                center_index[1] - (25 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] - (25 / PixelSpacing[2]) * cos(angle)),
-            ]
-        elseif (side_x == 0 && center_index[2] < center[2])
-            medium_calc = [center_index[1], center_index[2] + (12.5 / PixelSpacing[2])]
-            low_calc = [center_index[1], center_index[2] + (25 / PixelSpacing[2])]
-        elseif (side_x == 0 && center_index[2] > center[2])
-            medium_calc = [center_index[1], center_index[2] - (12.5 / PixelSpacing[2])]
-            low_calc = [center_index[1], center_index[2] - (25 / PixelSpacing[2])]
-        elseif (center_index[1] > center[1] && side_y == 0)
-            medium_calc = [center_index[1] - (12.5 / PixelSpacing[1]), center_index[2]]
-            low_calc = [center_index[1] - (25 / PixelSpacing[1]), center_index[2]]
-        elseif (center_index[1] > center[1] && side_y == 0)
-            medium_calc = [center_index[1] + (12.5 / PixelSpacing[1]), center_index[2]]
-            low_calc = [(center_index[1] + (25 / PixelSpacing[1])), center_index[1]]
-        else
-            error("unknown angle")
-        end
-
-        if size_index4 == center1
-            centers[:Large_HD] = Int.(round.(center_index))
-            centers[:Medium_HD] = Int.(round.(medium_calc))
-            centers[:Small_HD] = Int.(round.(low_calc))
-
-        elseif size_index4 == center2
-            centers[:Large_MD] = Int.(round.(center_index))
-            centers[:Medium_MD] = Int.(round.(medium_calc))
-            centers[:Small_MD] = Int.(round.(low_calc))
-
-        elseif size_index4 == center3
-            centers[:Large_LD] = Int.(round.(center_index))
-            centers[:Medium_LD] = Int.(round.(medium_calc))
-            centers[:Small_LD] = Int.(round.(low_calc))
-
-        else
-            nothing
-        end
-    end
-    return centers
-end
-
-# ╔═╡ 52dfcdb4-8eb7-4126-854c-c6f038741f64
-function mask_inserts(
-    dcm_array,
-    masked_array,
-    header,
-    CCI_slice,
-    center_insert;
-    calcium_threshold=130,
-    comp_connect=trues(3, 3),
-)
-    output = calc_output(
-        masked_array, header, CCI_slice, calcium_threshold, comp_connect
-    )
-    insert_centers = calc_centers(dcm_array, output, header, center_insert, CCI_slice)
-
-    PixelSpacing = Phantoms.get_pixel_size(header)
-    rows, cols = Int(header[(0x0028, 0x0010)]), Int(header[(0x0028, 0x0011)])
-
-    mask_L_HD = create_circular_mask(
-        cols, rows, insert_centers[:Large_HD], (round(5 / PixelSpacing[1], RoundUp) / 2) + 1
-    )
-    mask_L_MD = create_circular_mask(
-        cols, rows, insert_centers[:Large_MD], (round(5 / PixelSpacing[1], RoundUp) / 2) + 1
-    )
-    mask_L_LD = create_circular_mask(
-        cols, rows, insert_centers[:Large_LD], (round(5 / PixelSpacing[1], RoundUp) / 2) + 1
-    )
-    mask_M_HD = create_circular_mask(
-        cols,
-        rows,
-        insert_centers[:Medium_HD],
-        (round(3 / PixelSpacing[1], RoundUp) / 2) + 1,
-    )
-    mask_M_MD = create_circular_mask(
-        cols,
-        rows,
-        insert_centers[:Medium_MD],
-        (round(3 / PixelSpacing[1], RoundUp) / 2) + 1,
-    )
-    mask_M_LD = create_circular_mask(
-        cols,
-        rows,
-        insert_centers[:Medium_LD],
-        (round(3 / PixelSpacing[1], RoundUp) / 2) + 1,
-    )
-    mask_S_HD = create_circular_mask(
-        cols, rows, insert_centers[:Small_HD], (round(1 / PixelSpacing[1], RoundUp) / 2) + 1
-    )
-    mask_S_MD = create_circular_mask(
-        cols, rows, insert_centers[:Small_MD], (round(1 / PixelSpacing[1], RoundUp) / 2) + 1
-    )
-    mask_S_LD = create_circular_mask(
-        cols, rows, insert_centers[:Small_LD], (round(1 / PixelSpacing[1], RoundUp) / 2) + 1
-    )
-
-    return mask_L_HD,
-    mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD,
-    mask_S_LD
-end
-
 # ╔═╡ e52b6fdf-9e0c-42e4-9d16-d7a2260dcbb5
 mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(
             dcm_array, masked_array, header, slice_CCI, center_insert
@@ -415,7 +268,7 @@ md"""
 begin
 	mask_L_HD_3D = Array{Bool}(undef, size(arr))
 	for z in 1:size(arr, 3)
-		mask_L_HD_3D[:, :, z] = transpose(mask_L_HD)
+		mask_L_HD_3D[:, :, z] = mask_L_HD
 	end
 end;
 
@@ -777,7 +630,7 @@ md"""
 begin
 	mask_S_HD_3D = Array{Bool}(undef, size(arr))
 	for z in 1:size(arr, 3)
-		mask_S_HD_3D[:, :, z] = transpose(mask_S_HD)
+		mask_S_HD_3D[:, :, z] = mask_S_HD
 	end
 end;
 
@@ -1126,8 +979,6 @@ CSV.write(output_path, df)
 # ╠═d8a9ae7c-65ba-45ca-8a19-69caa28c5118
 # ╠═17aebaec-09f1-4db8-a976-69e4e507f809
 # ╟─c3dc7106-3c24-4c6e-b668-e0a35dc85db4
-# ╠═374a6962-fe99-4d23-9e37-5d67034cb869
-# ╠═52dfcdb4-8eb7-4126-854c-c6f038741f64
 # ╠═e52b6fdf-9e0c-42e4-9d16-d7a2260dcbb5
 # ╠═0339c27f-ad59-4db0-a383-92440f2d49ee
 # ╠═2fc1d0ff-58bc-4dbf-af7e-a38585b1359d
