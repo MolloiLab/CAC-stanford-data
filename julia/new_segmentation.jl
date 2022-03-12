@@ -1190,8 +1190,35 @@ end;
 # ╔═╡ d9bf252a-6249-46d3-81df-ed72a9e0065a
 @bind v1 overlay_mask_bind(masks_3D)
 
+# ╔═╡ 393954fc-4598-49a6-b8ce-24e7c1ed6568
+function overlay_mask_plot_t(array, mask, var, title::AbstractString)
+	indices = findall(x -> x == 1, mask)
+	indices = Tuple.(indices)
+	label_array = collect_tuple(indices)
+	zs = unique(label_array[:,3])
+	indices_lbl = findall(x -> x == zs[var], label_array[:,3])
+	
+	fig = Figure()
+	ax = Makie.Axis(fig[1, 1])
+	ax.title = title
+	heatmap!(transpose(array[:, :, zs[var]]), colormap=:grays)
+	scatter!(label_array[:, 1][indices_lbl], label_array[:, 2][indices_lbl], markersize=0.5, color=:red)
+	fig
+end
+
+# ╔═╡ 723917fd-79fc-45b9-9129-68f537ab0b78
+begin
+	masks_3Dt = Array{Bool}(undef, size(dcm_array))
+	for z in 1:size(dcm_array, 3)
+		masks_3Dt[:, :, z] = transpose(masks)
+	end
+end;
+
 # ╔═╡ ce6d8cc8-24c9-4792-9baa-b79e43865343
-overlay_mask_plot(dcm_array, masks_3D, v1, "masks overlayed")
+f = overlay_mask_plot_t(dcm_array, masks_3Dt, v1, "masks overlayed")
+
+# ╔═╡ 8e6a02ce-de72-4a34-bfe2-a136a0638af5
+save("physical_figure.png", f, px_per_unit = 2)
 
 # ╔═╡ 96d9a243-1d85-4ef1-b4be-90f25c3e7cea
 md"""
@@ -1295,5 +1322,8 @@ md"""
 # ╠═c97d23e4-1c41-4e81-8f6e-61ad7ff0396b
 # ╠═4f49aca7-ae33-4195-8b7e-0c715e6a69d6
 # ╠═d9bf252a-6249-46d3-81df-ed72a9e0065a
+# ╠═393954fc-4598-49a6-b8ce-24e7c1ed6568
+# ╠═723917fd-79fc-45b9-9129-68f537ab0b78
 # ╠═ce6d8cc8-24c9-4792-9baa-b79e43865343
+# ╠═8e6a02ce-de72-4a34-bfe2-a136a0638af5
 # ╠═96d9a243-1d85-4ef1-b4be-90f25c3e7cea
