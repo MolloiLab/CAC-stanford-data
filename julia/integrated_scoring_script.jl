@@ -43,7 +43,7 @@ TableOfContents()
 
 # ╔═╡ ff0a6e93-9c5e-4ac2-af02-ce253b535c6b
 begin
-	VENDER = "GE_Revolution"
+	VENDER = "Siemens_SOMATOM_Force"
 	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 end;
 
