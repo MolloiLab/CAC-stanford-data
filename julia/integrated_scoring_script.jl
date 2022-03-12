@@ -43,7 +43,7 @@ TableOfContents()
 
 # ╔═╡ ff0a6e93-9c5e-4ac2-af02-ce253b535c6b
 begin
-	VENDER = "Canon_Aquilion_One_Vision"
+	VENDER = "GE_Revolution"
 	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 end;
 
