@@ -1,0 +1,4 @@
+inserts,ground_truth_mass_large,calculated_mass_large,ground_truth_mass_medium,calculated_mass_medium,ground_truth_mass_small,calculated_mass_small
+Low Density,19.6,19.457023457599593,4.2,3.5846981298110863,0.2,0.13190655202492213
+Medium Density,39.3,41.21543598380175,8.5,8.16295847474203,0.3,0.09212315426545535
+High Density,78.5,88.81678251183381,17.0,17.502523350563227,0.6,0.9443710386554621

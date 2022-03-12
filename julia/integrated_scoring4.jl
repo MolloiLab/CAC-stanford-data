@@ -126,9 +126,6 @@ md"""
 ## Calibration Prep
 """
 
-# ╔═╡ ab09d0f1-f072-4f77-9889-a2beb852dc48
-# cal_insert_mean = mean(c_img[mask_cal_3D])
-
 # ╔═╡ 9f5b80aa-afb7-4c0c-829f-30171360a87e
 md"""
 # Score Large Inserts
@@ -149,11 +146,6 @@ md"""
 #### Ring (background) mask
 """
 
-# ╔═╡ 2adf0d6a-9066-4785-8876-773a0f8fa7f0
-md"""
-### Calculations
-"""
-
 # ╔═╡ acfcb465-10e7-417a-9fe3-4231c86c5293
 md"""
 ## Medium Density
@@ -169,11 +161,6 @@ md"""
 #### Ring (background) mask
 """
 
-# ╔═╡ e3ec7564-5964-4dfa-94d3-4581a7717510
-md"""
-### Calculations
-"""
-
 # ╔═╡ 7ad75365-cb12-4db1-8354-956540204ee8
 md"""
 ## Low Density
@@ -187,11 +174,6 @@ md"""
 # ╔═╡ eb213bf2-bbd4-48dc-9834-ca4d3b650bfd
 md"""
 #### Ring (background) mask
-"""
-
-# ╔═╡ 47c85232-a399-47bd-96bc-1d7db2c84f82
-md"""
-### Calculations
 """
 
 # ╔═╡ 0ca2ffa3-01a2-4484-a324-5d55e5609d10
@@ -214,11 +196,6 @@ md"""
 #### Ring (background) mask
 """
 
-# ╔═╡ 5db837c8-6b57-4a39-ae35-251a856bfeb6
-md"""
-### Calculations
-"""
-
 # ╔═╡ 0cda89b7-c4c3-4b8c-b2f5-332a90f92831
 md"""
 ## Medium Density
@@ -234,11 +211,6 @@ md"""
 #### Ring (background) mask
 """
 
-# ╔═╡ 2a1c272d-d4b7-4090-a4f0-8c70bcd31883
-md"""
-### Calculations
-"""
-
 # ╔═╡ 27e50773-d747-4451-8546-16d5c014f37a
 md"""
 ## Low Density
@@ -252,11 +224,6 @@ md"""
 # ╔═╡ e15c09f2-0a07-4af6-9c17-44ba50393383
 md"""
 #### Ring (background) mask
-"""
-
-# ╔═╡ 5930f752-e6fe-4034-bbb0-8b24c355104b
-md"""
-### Calculations
 """
 
 # ╔═╡ 4ad89eca-ce15-43bd-bcd2-dd36ea759c7c
@@ -279,11 +246,6 @@ md"""
 #### Ring (background) mask
 """
 
-# ╔═╡ f69e4f76-928b-48a0-bc57-2ef1a400e2fc
-md"""
-### Calculations
-"""
-
 # ╔═╡ 82bbbd01-7a15-438c-b317-22b9511e8895
 md"""
 ## Medium Density
@@ -299,11 +261,6 @@ md"""
 #### Ring (background) mask
 """
 
-# ╔═╡ 1f5896b8-0d87-405b-b364-de8116e31c6d
-md"""
-### Calculations
-"""
-
 # ╔═╡ 15bee139-54fd-43ff-a761-8464f1d9d15b
 md"""
 ## Low Density
@@ -317,11 +274,6 @@ md"""
 # ╔═╡ 97ae0d1b-0903-4096-bf62-660c0733d094
 md"""
 #### Ring (background) mask
-"""
-
-# ╔═╡ 27d5302b-5c97-4330-8234-b60c9a58d01f
-md"""
-### Calculations
 """
 
 # ╔═╡ b9d9c618-45e2-4538-92ec-450bc96a2bbb
@@ -362,7 +314,7 @@ ground_truth_mass_small = [
 
 # ╔═╡ 34cdbadf-edfa-4708-be18-03e40f6e00fe
 begin
-	SCAN_NUMBER = 10
+	SCAN_NUMBER = 2
 	VENDER = "Canon_Aquilion_One_Vision"
 	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 end
@@ -465,6 +417,9 @@ end;
 # ╔═╡ 1666956f-1417-45ae-945c-7f58b98cfe9e
 hist(c_img[mask_cal_3D])
 
+# ╔═╡ ab09d0f1-f072-4f77-9889-a2beb852dc48
+cal_insert_mean2 = mean(c_img[mask_cal_3D])
+
 # ╔═╡ f12cf6c5-9e82-4572-8321-fc848f1c866e
 cal_insert_mean = quantile!(c_img[mask_cal_3D], 0.7)
 
@@ -477,166 +432,32 @@ single_arr = masked_array[:, :, slice_CCI];
 # ╔═╡ c30c8fd9-93b5-404b-a1c4-5cdeda48845f
 pixel_size = DICOMUtils.get_pixel_size(header)
 
-# ╔═╡ 6734f98d-a015-47c7-a67b-7631dbac4386
-"""
-	calc_centers(dcm_array, output, header, tmp_center, CCI_slice)
+# ╔═╡ b84bf3a0-a41a-40f8-a865-81038d6ac334
+# angles = collect(-10:2:10)
 
-Function ...
-"""
-function calc_centers_new(dcm_array, output, header, tmp_center, CCI_slice)
-    PixelSpacing = Phantoms.get_pixel_size(header)
-    center, center1, center2, center3 = center_points(
-        dcm_array, output, header, tmp_center, CCI_slice
-    )
-    centers = Dict()
-    for size_index4 in (center1, center2, center3)
-        center_index = size_index4
-        side_x = abs(center[1] - center_index[1]) - 5
-        side_y = abs(center[2] - center_index[2]) - 5
+# ╔═╡ 90238982-4e93-4b44-8860-2cccb41e57da
+# angle_factor = -7.5
 
-        angle = angle_calc(side_x, side_y)
-        if (center_index[1] < center[1] && center_index[2] < center[2])
-            medium_calc = [
-                center_index[1] + (12.5 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] + (12.5 / PixelSpacing[2]) * cos(angle)),
-            ]
-            low_calc = [
-                center_index[1] + (25 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] + (25 / PixelSpacing[2]) * cos(angle)),
-            ]
-        elseif (center_index[1] < center[1] && center_index[2] > center[2])
-            medium_calc = [
-                center_index[1] + (12.5 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] - (12.5 / PixelSpacing[2]) * cos(angle)),
-            ]
-            low_calc = [
-                center_index[1] + (25 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] - (25 / PixelSpacing[2]) * cos(angle)),
-            ]
-        elseif (center_index[1] > center[1] && center_index[2] < center[2])
-            medium_calc = [
-                center_index[1] - (12.5 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] + (12.5 / PixelSpacing[2]) * cos(angle)),
-            ]
-            low_calc = [
-                center_index[1] - (25 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] + (25 / PixelSpacing[2]) * cos(angle)),
-            ]
-        elseif (center_index[1] > center[1] && center_index[2] > center[2])
-            medium_calc = [
-                center_index[1] - (12.5 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] - (12.5 / PixelSpacing[2]) * cos(angle)),
-            ]
-            low_calc = [
-                center_index[1] - (25 / PixelSpacing[1]) * sin(angle),
-                (center_index[2] - (25 / PixelSpacing[2]) * cos(angle)),
-            ]
-        elseif (side_x == 0 && center_index[2] < center[2])
-            medium_calc = [center_index[1], center_index[2] + (12.5 / PixelSpacing[2])]
-            low_calc = [center_index[1], center_index[2] + (25 / PixelSpacing[2])]
-        elseif (side_x == 0 && center_index[2] > center[2])
-            medium_calc = [center_index[1], center_index[2] - (12.5 / PixelSpacing[2])]
-            low_calc = [center_index[1], center_index[2] - (25 / PixelSpacing[2])]
-        elseif (center_index[1] > center[1] && side_y == 0)
-            medium_calc = [center_index[1] - (12.5 / PixelSpacing[1]), center_index[2]]
-            low_calc = [center_index[1] - (25 / PixelSpacing[1]), center_index[2]]
-        elseif (center_index[1] > center[1] && side_y == 0)
-            medium_calc = [center_index[1] + (12.5 / PixelSpacing[1]), center_index[2]]
-            low_calc = [(center_index[1] + (25 / PixelSpacing[1])), center_index[1]]
-        else
-            error("unknown angle")
-        end
-
-        if size_index4 == center1
-            centers[:Large_HD] = Int.(round.(center_index))
-            centers[:Medium_HD] = Int.(round.(medium_calc))
-            centers[:Small_HD] = Int.(round.(low_calc))
-
-        elseif size_index4 == center2
-            centers[:Large_MD] = Int.(round.(center_index))
-            centers[:Medium_MD] = Int.(round.(medium_calc))
-            centers[:Small_MD] = Int.(round.(low_calc))
-
-        elseif size_index4 == center3
-            centers[:Large_LD] = Int.(round.(center_index))
-            centers[:Medium_LD] = Int.(round.(medium_calc))
-            centers[:Small_LD] = Int.(round.(low_calc))
-
-        else
-            nothing
-        end
-    end
-    return centers
-end
-
-# ╔═╡ d3a46283-d7ed-431b-96d4-8a7c575460d0
-function mask_inserts(
-    dcm_array,
-    masked_array,
-    header,
-    CCI_slice,
-    center_insert;
-    calcium_threshold=130,
-    comp_connect=trues(3, 3),
-)
-    output = calc_output(masked_array, header, CCI_slice, calcium_threshold, comp_connect)
-    insert_centers = calc_centers_new(dcm_array, output, header, center_insert, CCI_slice)
-
-    PixelSpacing = Phantoms.get_pixel_size(header)
-    rows, cols = Int(header[(0x0028, 0x0010)]), Int(header[(0x0028, 0x0011)])
-
-    mask_L_HD = create_circular_mask(
-        cols, rows, insert_centers[:Large_HD], (round(5 / PixelSpacing[1], RoundUp) / 2) + 1
-    )
-    mask_L_MD = create_circular_mask(
-        cols, rows, insert_centers[:Large_MD], (round(5 / PixelSpacing[1], RoundUp) / 2) + 1
-    )
-    mask_L_LD = create_circular_mask(
-        cols, rows, insert_centers[:Large_LD], (round(5 / PixelSpacing[1], RoundUp) / 2) + 1
-    )
-    mask_M_HD = create_circular_mask(
-        cols,
-        rows,
-        insert_centers[:Medium_HD],
-        (round(3 / PixelSpacing[1], RoundUp) / 2) + 1,
-    )
-    mask_M_MD = create_circular_mask(
-        cols,
-        rows,
-        insert_centers[:Medium_MD],
-        (round(3 / PixelSpacing[1], RoundUp) / 2) + 1,
-    )
-    mask_M_LD = create_circular_mask(
-        cols,
-        rows,
-        insert_centers[:Medium_LD],
-        (round(3 / PixelSpacing[1], RoundUp) / 2) + 1,
-    )
-    mask_S_HD = create_circular_mask(
-        cols, rows, insert_centers[:Small_HD], (round(1 / PixelSpacing[1], RoundUp) / 2) + 1
-    )
-    mask_S_MD = create_circular_mask(
-        cols, rows, insert_centers[:Small_MD], (round(1 / PixelSpacing[1], RoundUp) / 2) + 1
-    )
-    mask_S_LD = create_circular_mask(
-        cols, rows, insert_centers[:Small_LD], (round(1 / PixelSpacing[1], RoundUp) / 2) + 1
-    )
-
-    return transpose(mask_L_HD),
-    transpose(mask_M_HD),
-    transpose(mask_S_HD),
-    transpose(mask_L_MD),
-    transpose(mask_M_MD),
-    transpose(mask_S_MD),
-    transpose(mask_L_LD),
-    transpose(mask_M_LD),
-    transpose(mask_S_LD)
-end
+# ╔═╡ 20b4c1ac-8133-4268-9005-8c41d7ff561f
+# for angle in angles
+# 	global angle_factor = angle
+# end
 
 # ╔═╡ 760bb7c5-066b-40bd-926d-cfda7f6899cb
+# 
+
+# ╔═╡ 1e0f62cd-6540-41f5-8574-639c10604906
+# 
+
+# ╔═╡ df23f6d9-0b19-4b17-b19f-cc49eddce587
+angles = collect(-10:2:10)
+
+# ╔═╡ 6f078eda-1fa3-4c9b-81d5-10909a9c9387
+angle_factor = -7.5
+
+# ╔═╡ 53f711d7-7ec2-41ea-b609-3146c01fa030
 mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(
-            dcm_array, masked_array, header, slice_CCI, center_insert
-);
+		dcm_array, masked_array, header, slice_CCI, center_insert; angle_factor=angle_factor)
 
 # ╔═╡ 95948083-8209-426e-ac12-2d7e925a6c30
 masks = mask_L_HD + mask_M_HD + mask_S_HD + mask_L_MD + mask_M_MD + mask_S_MD + mask_L_LD + mask_M_LD + mask_S_LD;
@@ -1013,12 +834,72 @@ begin
 	mass_s_ld
 end
 
-# ╔═╡ fcdb1348-8498-40c2-a83a-843a195c89da
+# ╔═╡ 700d8ca0-3f41-498a-bd22-42a0324bfe55
 calculated_mass_small = [
 	mass_s_ld,
 	mass_s_md,
 	mass_s_hd
 ]
+
+# ╔═╡ 4fc49945-b471-4977-92de-7b3eafeca425
+# begin
+# 	angle_factor = -12
+# 	RMSE_Dict = Dict()
+	# mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(
+	# 	dcm_array, masked_array, header, slice_CCI, center_insert; angle_factor=angle_factor
+	# )
+# 	for angle in angles
+# 		angle_factor = angle
+# 		mask_S_HD_3D = Array{Bool}(undef, size(arr))
+# 		for z in 1:size(arr, 3)
+# 			mask_S_HD_3D[:, :, z] = mask_S_HD
+# 		end
+# 		begin
+# 		mask_S_MD_3D = Array{Bool}(undef, size(arr))
+# 		for z in 1:size(arr, 3)
+# 				mask_S_MD_3D[:, :, z] = mask_S_MD
+# 			end
+# 		end
+# 		begin
+# 		mask_S_LD_3D = Array{Bool}(undef, size(arr))
+# 		for z in 1:size(arr, 3)
+# 			mask_S_LD_3D[:, :, z] = mask_S_LD
+# 		end
+# 		end
+# 		calculated_mass_small = [
+# 			mass_s_ld,
+# 			mass_s_md,
+# 			mass_s_hd
+# 		]
+# 		RMSE_check = sqrt(sum((ground_truth_mass_small .- calculated_mass_small)).^2 / 3)
+# 		if haskey(RMSE_Dict, "value") == false
+# 			RMSE_Dict["value"] = RMSE_check
+# 			RMSE_Dict["factor"] = angle_factor
+# 		end
+# 		if RMSE_check < RMSE_Dict["value"]
+# 			RMSE_Dict["value"] = RMSE_check
+# 			RMSE_Dict["factor"] = angle_factor
+# 		end
+# 		@info RMSE_check
+# 		RMSE_Dict
+# 	end
+# end
+
+# ╔═╡ b1444b64-1f80-4068-8592-4669e1af4c9e
+# begin
+# 	RMSE_Dict = Dict()
+# 	RMSE_check = sqrt(sum((ground_truth_mass_small .- calculated_mass_small)).^2 / 3)
+# 	if haskey(RMSE_Dict, "value") == false
+# 		RMSE_Dict["value"] = RMSE_check
+# 		RMSE_Dict["factor"] = angle_factor
+# 	end
+# 	if RMSE_check < RMSE_Dict["value"]
+# 		RMSE_Dict[:value] = RMSE_check
+# 		RMSE_Dict[:factor] = angle_factor
+# 	end
+# 	@info RMSE_check
+# 	RMSE_Dict
+# end
 
 # ╔═╡ 64e72733-a646-415d-a4cd-c2497ed6cd33
 df = DataFrame(
@@ -1110,35 +991,33 @@ CSV.write(output_path, df)
 # ╔═╡ Cell order:
 # ╠═8f0a533f-fdb6-4c1f-bc76-6d1b0f15192c
 # ╠═9cff9635-f4f4-4d59-81a6-92390c09526c
-# ╠═f5090527-3372-48ea-8239-f51bf20fbba7
-# ╠═383f5377-0435-4ea4-96d9-6413fcce1ee0
+# ╟─f5090527-3372-48ea-8239-f51bf20fbba7
+# ╟─383f5377-0435-4ea4-96d9-6413fcce1ee0
 # ╠═8feec48a-9ea2-4aa5-96a1-544ef298a3ac
 # ╠═1c7739dc-6615-4aab-b9fa-a4664c858070
 # ╠═752cfdd4-f2cf-45fb-8f70-959d145264f6
 # ╠═96fc1811-ab0f-41e6-8857-31b850a03199
 # ╠═ff90198d-14e0-4404-813f-40dd35cc1f47
 # ╠═b58a6353-8574-44bc-8312-603b9b30d672
-# ╠═60cc7eea-8314-4f41-bf5d-8375a2c996e0
-# ╠═555426d7-4584-41eb-a577-53a5a506e97a
-# ╠═aa688492-bafb-4623-af4b-a744ca59335e
-# ╠═d16e857c-654a-48fa-81dd-b53c7092cc86
-# ╠═d6b6104a-df14-4cb0-96e6-e07be85255ad
+# ╟─60cc7eea-8314-4f41-bf5d-8375a2c996e0
+# ╟─555426d7-4584-41eb-a577-53a5a506e97a
+# ╟─aa688492-bafb-4623-af4b-a744ca59335e
+# ╟─d16e857c-654a-48fa-81dd-b53c7092cc86
+# ╟─d6b6104a-df14-4cb0-96e6-e07be85255ad
 # ╠═91243a6c-ce6f-4fc1-b28c-792e8c71dd53
-# ╠═343815f2-6b33-4408-81eb-d4b1fddf60ac
+# ╟─343815f2-6b33-4408-81eb-d4b1fddf60ac
 # ╠═127344d7-38d6-4338-9ae8-edd92090b5cf
-# ╠═fc3bbc09-e993-4f1d-838d-72041cb0f579
-# ╠═865f42c6-ca98-498a-89a3-d4c9986237d3
-# ╠═0a2563dd-d104-4f1b-b178-f77ca30e96b3
-# ╠═db231239-5a21-402f-8eb5-b2e44e03b312
+# ╟─fc3bbc09-e993-4f1d-838d-72041cb0f579
+# ╟─865f42c6-ca98-498a-89a3-d4c9986237d3
+# ╟─0a2563dd-d104-4f1b-b178-f77ca30e96b3
+# ╟─db231239-5a21-402f-8eb5-b2e44e03b312
 # ╠═ef56f1b2-150f-4608-944d-b5785a46e77c
-# ╠═252d8c09-fcef-435e-9785-ec7ef607f108
+# ╟─252d8c09-fcef-435e-9785-ec7ef607f108
 # ╠═cf330459-0792-48fb-9346-f87b3019a0f6
 # ╟─eb4494c0-003d-4967-85fa-b20d8e7f9763
-# ╠═d3a46283-d7ed-431b-96d4-8a7c575460d0
-# ╠═760bb7c5-066b-40bd-926d-cfda7f6899cb
 # ╠═95948083-8209-426e-ac12-2d7e925a6c30
 # ╠═bf3853ea-0b3b-476f-b9b5-b969cbcc9827
-# ╠═23e10eee-6022-4b31-bbc2-9ddbcbda0b52
+# ╟─23e10eee-6022-4b31-bbc2-9ddbcbda0b52
 # ╠═ed57792e-beb4-45af-a710-e0f6268ddac3
 # ╠═f7c31a75-39c7-4be7-acbe-c36db4c252cb
 # ╠═9fcdac1c-4307-4f27-a924-b8887406fcd7
@@ -1149,130 +1028,121 @@ CSV.write(output_path, df)
 # ╠═1666956f-1417-45ae-945c-7f58b98cfe9e
 # ╠═ab09d0f1-f072-4f77-9889-a2beb852dc48
 # ╠═f12cf6c5-9e82-4572-8321-fc848f1c866e
-# ╠═9f5b80aa-afb7-4c0c-829f-30171360a87e
+# ╟─9f5b80aa-afb7-4c0c-829f-30171360a87e
 # ╠═3e7253c2-b6df-4dab-8405-08ed93c03f10
 # ╠═1f40f903-4c8b-48bc-bb8a-fa16bc6fc297
-# ╠═c7f433f7-c12f-41eb-be35-97997d5142b7
+# ╟─c7f433f7-c12f-41eb-be35-97997d5142b7
 # ╠═32085083-902c-444b-9384-b79769c6acd2
-# ╠═b0f14232-0be1-4a0e-b336-3cc3a8aaff6d
+# ╟─b0f14232-0be1-4a0e-b336-3cc3a8aaff6d
 # ╠═0e31733e-a36f-4d70-970e-7b44accb2b99
-# ╠═0d2e8726-4829-46ce-b85b-fc36b5a651dc
+# ╟─0d2e8726-4829-46ce-b85b-fc36b5a651dc
 # ╠═75830069-109b-474c-9c4a-448ee6b19728
-# ╠═3834b0e8-85c4-4cea-bb74-6350bb3e9e7d
+# ╟─3834b0e8-85c4-4cea-bb74-6350bb3e9e7d
 # ╠═ccb3a71e-8669-4371-b37d-1d2e38166239
-# ╠═afeb1614-5476-45db-aca2-bf3dbf9de6da
+# ╟─afeb1614-5476-45db-aca2-bf3dbf9de6da
 # ╠═73e0c981-e3b0-4a33-810d-04e6767428de
-# ╠═2adf0d6a-9066-4785-8876-773a0f8fa7f0
 # ╠═6542d34b-89f8-42d9-9448-7d0503d35477
 # ╠═c30c8fd9-93b5-404b-a1c4-5cdeda48845f
 # ╠═8fbd3e9c-0195-4483-92c6-9a47e6e26a9b
-# ╠═acfcb465-10e7-417a-9fe3-4231c86c5293
+# ╟─acfcb465-10e7-417a-9fe3-4231c86c5293
 # ╠═6e794c8a-0341-4a0c-9d96-192f5b77a8ab
-# ╠═fa2a052f-452a-4325-a428-8db343d560ec
+# ╟─fa2a052f-452a-4325-a428-8db343d560ec
 # ╠═d9987a6f-b8d8-4ace-8b40-234d5dde2619
-# ╠═6facfb53-1b86-4d66-9f86-0e6e1186c415
+# ╟─6facfb53-1b86-4d66-9f86-0e6e1186c415
 # ╠═338b6552-5845-4257-aa74-5fb3f8933239
-# ╠═7741dcb3-e433-4612-aaf5-eabb2d8aa3aa
+# ╟─7741dcb3-e433-4612-aaf5-eabb2d8aa3aa
 # ╠═23839ac8-1f79-4621-afd9-9ae3ff572c62
-# ╠═dc71ee51-82fb-4367-ba3f-2ef6599c6808
+# ╟─dc71ee51-82fb-4367-ba3f-2ef6599c6808
 # ╠═11a32a9f-d66a-46f2-bafe-dd032b9db1b0
-# ╠═e3ec7564-5964-4dfa-94d3-4581a7717510
 # ╠═e88c694a-f3ae-4114-8a2c-1d20bba7f1bd
 # ╠═c2aba951-9e13-40de-8a80-3e38ed800a01
-# ╠═7ad75365-cb12-4db1-8354-956540204ee8
+# ╟─7ad75365-cb12-4db1-8354-956540204ee8
 # ╠═5be373b4-7d52-446d-a39c-3aed2aeb762c
-# ╠═2d04c8c8-b652-410b-8357-b123b488c579
+# ╟─2d04c8c8-b652-410b-8357-b123b488c579
 # ╠═f02480d0-a373-4a32-bdf2-c40055ed2ab9
-# ╠═7ac3b056-a9a8-44c0-a8c4-e5e89062f28c
+# ╟─7ac3b056-a9a8-44c0-a8c4-e5e89062f28c
 # ╠═03a74421-7912-49af-92d6-56ba38b8b7ad
-# ╠═eb213bf2-bbd4-48dc-9834-ca4d3b650bfd
+# ╟─eb213bf2-bbd4-48dc-9834-ca4d3b650bfd
 # ╠═12e7a90b-27df-4cdb-99aa-c9aa8e1aec05
 # ╠═fee22a56-26bb-4dd8-a500-e973a117dbeb
 # ╠═ce557f39-f2d0-4b48-9e58-f232f3056b9b
-# ╠═47c85232-a399-47bd-96bc-1d7db2c84f82
 # ╠═c1809d80-7c49-43e4-bff2-d6e14a7d9f97
 # ╠═fa89795c-a6f5-4d9e-8d33-7cf42f4530d6
-# ╠═0ca2ffa3-01a2-4484-a324-5d55e5609d10
-# ╠═5779ee2f-5821-4475-aaba-c7aac7bb1d5e
+# ╟─0ca2ffa3-01a2-4484-a324-5d55e5609d10
+# ╟─5779ee2f-5821-4475-aaba-c7aac7bb1d5e
 # ╠═ab8473c4-85a9-4c66-83b1-6b8822afc855
-# ╠═dca948cb-f537-49b6-bc69-771cae751e94
+# ╟─dca948cb-f537-49b6-bc69-771cae751e94
 # ╠═821240b4-19e6-4214-8b1e-cfe69c574ae4
-# ╠═9df3801d-8984-4eb9-bc82-46e9e7c458e2
+# ╟─9df3801d-8984-4eb9-bc82-46e9e7c458e2
 # ╠═d78f713a-1c6c-48c5-b1f8-ec8d89a3931c
-# ╠═1cbd7214-11e9-4266-8fa1-7363d46b2de2
+# ╟─1cbd7214-11e9-4266-8fa1-7363d46b2de2
 # ╠═625402e5-5191-493a-b428-a4ee442a327d
-# ╠═49ea60a3-61df-4b8d-97f0-5ad4c238b4ff
+# ╟─49ea60a3-61df-4b8d-97f0-5ad4c238b4ff
 # ╠═828585e7-bc8d-40f4-a76a-624f2513db55
-# ╠═5db837c8-6b57-4a39-ae35-251a856bfeb6
 # ╠═dba099fe-7f13-4f61-b5ff-a4d65b7a19e2
 # ╠═55740593-5f41-441e-b3b8-dcbfb83eceb5
-# ╠═0cda89b7-c4c3-4b8c-b2f5-332a90f92831
+# ╟─0cda89b7-c4c3-4b8c-b2f5-332a90f92831
 # ╠═8f0af863-52ee-4e6d-8d70-e50432720501
-# ╠═39019b75-c629-4e04-970b-2813af45cdcd
+# ╟─39019b75-c629-4e04-970b-2813af45cdcd
 # ╠═412c307e-e323-4832-9815-98e475f4b5b3
-# ╠═1a9af931-7f46-4c71-a753-8eb0b9bfc64b
+# ╟─1a9af931-7f46-4c71-a753-8eb0b9bfc64b
 # ╠═5d63180c-930c-464e-a8d0-3b2ea572f7cc
-# ╠═231e9c7b-9d7c-48e5-a39e-b60e7c846889
+# ╟─231e9c7b-9d7c-48e5-a39e-b60e7c846889
 # ╠═a79df362-4832-4f98-8bf9-e410df17bf71
-# ╠═ddcde058-5c8b-40d9-8244-4fe99ec7c9a6
+# ╟─ddcde058-5c8b-40d9-8244-4fe99ec7c9a6
 # ╠═ed112bd8-4af6-4522-a24b-47b39f3a7865
-# ╠═2a1c272d-d4b7-4090-a4f0-8c70bcd31883
 # ╠═5c777b1a-6b33-4b69-8797-6931a9d07a44
 # ╠═0d22d7e4-8519-4652-b794-83756671aa87
-# ╠═27e50773-d747-4451-8546-16d5c014f37a
+# ╟─27e50773-d747-4451-8546-16d5c014f37a
 # ╠═4168a9e9-6d44-401b-85f1-d80d6a2eeff8
-# ╠═7a5c44ea-baf4-4b93-924e-f8624fe051ff
+# ╟─7a5c44ea-baf4-4b93-924e-f8624fe051ff
 # ╠═fb8dfcff-5c15-4c30-b843-fa6db9e34e91
-# ╠═3c6f8e72-a699-491e-b87d-0e0ee385d470
+# ╟─3c6f8e72-a699-491e-b87d-0e0ee385d470
 # ╠═02c01e40-d271-40eb-945f-60212dc1758e
-# ╠═e15c09f2-0a07-4af6-9c17-44ba50393383
+# ╟─e15c09f2-0a07-4af6-9c17-44ba50393383
 # ╠═76f15b22-a7f6-4d8d-9911-1c072e493589
-# ╠═3723dee8-a78b-4c17-944d-c393c7ab92ad
+# ╟─3723dee8-a78b-4c17-944d-c393c7ab92ad
 # ╠═32956aa9-4338-43f2-bba7-d520716609ec
-# ╠═5930f752-e6fe-4034-bbb0-8b24c355104b
 # ╠═3fe8e26e-0152-4869-b8ba-7e67d1e5d101
 # ╠═c4252a6c-878a-493f-abc1-b8c56cda2319
-# ╠═4ad89eca-ce15-43bd-bcd2-dd36ea759c7c
-# ╠═70597737-ace4-4676-836f-44fdab22a798
+# ╟─4ad89eca-ce15-43bd-bcd2-dd36ea759c7c
+# ╟─70597737-ace4-4676-836f-44fdab22a798
 # ╠═d5a8ba59-f167-48f3-954f-1b5a661456d5
-# ╠═fa1c77f9-5f01-47b5-aef7-d885ddae8029
+# ╟─fa1c77f9-5f01-47b5-aef7-d885ddae8029
 # ╠═799cec3a-953d-4fe2-bc06-351f5d6f4890
-# ╠═c2c9bd13-f56b-44e7-97ed-be2e06d63ba3
+# ╟─c2c9bd13-f56b-44e7-97ed-be2e06d63ba3
 # ╠═fac87764-f188-4058-ae48-7aa36ac3b3bf
-# ╠═c8bff4a0-a2a1-4e19-9d35-aceb00b365ff
+# ╟─c8bff4a0-a2a1-4e19-9d35-aceb00b365ff
 # ╠═ad67881f-9085-46dc-a645-c3f111738c94
-# ╠═0710d8ef-aac6-4d6d-983a-2d650502c180
+# ╟─0710d8ef-aac6-4d6d-983a-2d650502c180
 # ╠═ba1db1c1-47c8-4c25-b650-67cb8c5c4e1b
-# ╠═f69e4f76-928b-48a0-bc57-2ef1a400e2fc
 # ╠═ff7731cc-5933-4312-919e-e4703254a622
 # ╠═54e24ee8-a0f8-452a-ac2d-1379174fb56d
-# ╠═82bbbd01-7a15-438c-b317-22b9511e8895
+# ╟─82bbbd01-7a15-438c-b317-22b9511e8895
 # ╠═61025c8f-d189-4ad0-bbe1-bb24e13083d4
-# ╠═4ae034d0-b3fa-46ca-acf7-b93062bdb5a2
+# ╟─4ae034d0-b3fa-46ca-acf7-b93062bdb5a2
 # ╠═6e544d17-f156-43c2-9255-58bd6b0c1888
-# ╠═50333385-e60d-4dd2-92e1-bcd2d9007355
+# ╟─50333385-e60d-4dd2-92e1-bcd2d9007355
 # ╠═c3f5fc15-60f5-457f-8353-9e10926d5a7d
-# ╠═f66110c6-f501-4a55-8719-fc752b838de3
+# ╟─f66110c6-f501-4a55-8719-fc752b838de3
 # ╠═2427ac81-bbb4-49ec-9897-d4fa59e4259b
-# ╠═65722ef0-fbe9-4259-93f2-f5265e6ac3ba
+# ╟─65722ef0-fbe9-4259-93f2-f5265e6ac3ba
 # ╠═5c64cf04-7406-46cd-8650-05b8d7ab0964
-# ╠═1f5896b8-0d87-405b-b364-de8116e31c6d
 # ╠═02a578df-5c60-47ad-8e75-967794f32668
 # ╠═e80d2548-83e8-40be-be6c-7a0156cc61a8
-# ╠═15bee139-54fd-43ff-a761-8464f1d9d15b
+# ╟─15bee139-54fd-43ff-a761-8464f1d9d15b
 # ╠═706a167f-1cff-46ba-9142-5385c68a5f5f
-# ╠═abbdd826-41be-481c-87a6-b09864fc9d4f
+# ╟─abbdd826-41be-481c-87a6-b09864fc9d4f
 # ╠═332b0566-9e06-4d6b-b606-68d2f65bddec
-# ╠═a3728f4f-fb4e-4056-9276-c55dd7f202c8
+# ╟─a3728f4f-fb4e-4056-9276-c55dd7f202c8
 # ╠═9c48c322-279f-4ec9-9fa7-f7fc0bfdc8ad
-# ╠═97ae0d1b-0903-4096-bf62-660c0733d094
+# ╟─97ae0d1b-0903-4096-bf62-660c0733d094
 # ╠═01596aa1-cc2b-4c5c-86cb-8b1e624518ba
-# ╠═627d6568-c714-418b-8640-0a58057dfbce
+# ╟─627d6568-c714-418b-8640-0a58057dfbce
 # ╠═bf2fd448-0413-4fea-b742-cf3e3594cb4a
-# ╠═27d5302b-5c97-4330-8234-b60c9a58d01f
 # ╠═9e061274-32f9-40d3-9501-bf2ef3df8d03
 # ╠═a9c9dff8-8c55-4cb0-9059-69c76df0dbfb
-# ╠═b9d9c618-45e2-4538-92ec-450bc96a2bbb
+# ╟─b9d9c618-45e2-4538-92ec-450bc96a2bbb
 # ╠═c8a07078-ae5f-423f-abde-6ac495cf32b1
 # ╠═2c71a78a-0eb3-46d8-a625-9c886ca71450
 # ╠═ee64e181-80d8-4076-a2a5-42d2b1e98214
@@ -1280,14 +1150,23 @@ CSV.write(output_path, df)
 # ╠═91739e5e-1e27-4f53-94ab-b63b2dd65dce
 # ╠═26380cc4-947f-4f22-9fc5-ac748abdac4a
 # ╠═3933fc50-4f7e-4e71-9911-b9013377543e
-# ╠═fcdb1348-8498-40c2-a83a-843a195c89da
+# ╠═700d8ca0-3f41-498a-bd22-42a0324bfe55
 # ╠═34cdbadf-edfa-4708-be18-03e40f6e00fe
-# ╠═6734f98d-a015-47c7-a67b-7631dbac4386
+# ╠═b84bf3a0-a41a-40f8-a865-81038d6ac334
+# ╠═90238982-4e93-4b44-8860-2cccb41e57da
+# ╠═20b4c1ac-8133-4268-9005-8c41d7ff561f
+# ╠═760bb7c5-066b-40bd-926d-cfda7f6899cb
+# ╠═1e0f62cd-6540-41f5-8574-639c10604906
+# ╠═df23f6d9-0b19-4b17-b19f-cc49eddce587
+# ╠═6f078eda-1fa3-4c9b-81d5-10909a9c9387
+# ╠═53f711d7-7ec2-41ea-b609-3146c01fa030
+# ╠═4fc49945-b471-4977-92de-7b3eafeca425
+# ╠═b1444b64-1f80-4068-8592-4669e1af4c9e
 # ╠═64e72733-a646-415d-a4cd-c2497ed6cd33
-# ╠═98edd7ca-a6c2-45b9-9f59-0a084316028f
-# ╠═406c4f4f-aea9-45dd-8947-b4c503ec66ad
-# ╠═9c95ca40-8ace-4228-8216-bea0cd99c084
-# ╠═0bae0ce4-c0be-46ca-821f-a34bb7cd7e87
+# ╟─98edd7ca-a6c2-45b9-9f59-0a084316028f
+# ╟─406c4f4f-aea9-45dd-8947-b4c503ec66ad
+# ╟─9c95ca40-8ace-4228-8216-bea0cd99c084
+# ╟─0bae0ce4-c0be-46ca-821f-a34bb7cd7e87
 # ╠═01b4f8ad-96af-4cfc-9b29-be3aa02f7b84
 # ╠═20724345-3b87-4298-ab0f-22357e8f5169
 # ╠═68c98c61-11fc-4658-bed7-3491b46d063d
