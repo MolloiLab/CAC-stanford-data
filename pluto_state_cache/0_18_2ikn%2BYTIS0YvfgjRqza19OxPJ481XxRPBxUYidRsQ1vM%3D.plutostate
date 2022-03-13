@@ -1,4 +1,4 @@
-¥bonds€¬cell_results…Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b‰¦queuedÂ¤logs§runningÂ¦output†¤body °persist_js_stateÂ¤mimeªtext/plain²last_run_timestampËAØ‹KümkÏ·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b¹depends_on_disabled_cellsÂ§runtimeÍRµpublished_object_keys§erroredÂÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792‰¦queuedÂ¤logs§runningÂ¦output†¤bodyÚ™<script>const getParentCell = el => el.closest("pluto-cell")
+¥bonds€¬cell_results…Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b‰¦queuedÂ¤logs§runningÂ¦output†¤body °persist_js_stateÂ¤mimeªtext/plain²last_run_timestampËAØ‹L¶9¬·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b¹depends_on_disabled_cellsÂ§runtimeÍCùµpublished_object_keys§erroredÂÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792‰¦queuedÂ¤logs§runningÂ¦output†¤bodyÚ™<script>const getParentCell = el => el.closest("pluto-cell")
 
 const getHeaders = () => {
 	const depth = Math.max(1, Math.min(6, 3)) // should be in range 1:6
@@ -229,13 +229,13 @@ return tocNode
 .plutoui-toc.indent section a.H6 {
 	padding-left: 50px;
 }
-</style>°persist_js_stateÂ¤mime©text/html²last_run_timestampËAØ‹KüaD•·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792¹depends_on_disabled_cellsÂ§runtimeÍÕJµpublished_object_keys§erroredÂÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06‰¦queuedÂ¤logs§runningÂ¦output†¤body‚£msgÙlIOError: readdir("/Users/daleblack/Google Drive/Datasets/GE_Revolution"): no such file or directory (ENOENT)ªstacktrace—…¤call³check_channel_state§inlinedÃ¤file«channels.jl¤lineÌª¤path­./channels.jl…¤callÙItake_unbuffered(::Channel{Tuple{String, Vector{String}, Vector{String}}})§inlinedÂ¤file«channels.jl¤lineÍ“¤path­./channels.jl…¤call¥take!§inlinedÃ¤file«channels.jl¤lineÍ¤path­./channels.jl…¤callÙLiterate(::Channel{Tuple{String, Vector{String}, Vector{String}}}, ::Nothing)§inlinedÂ¤file«channels.jl¤lineÍÑ¤path­./channels.jl…¤call§iterate§inlinedÃ¤file«channels.jl¤lineÍĞ¤path­./channels.jl…¤callºdcm_list_builder(::String)§inlinedÂ¤file§load.jl¤line¤pathÙ9/home/runner/.julia/packages/DICOMUtils/y9sLG/src/load.jl…¤call¯top-level scope§inlinedÂ¤fileÙDintegrated_scoring_script.jl#==#60fe5916-a1a6-11ec-1fbe-8952690e9d06¤line¤pathÙ€/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl#==#60fe5916-a1a6-11ec-1fbe-8952690e9d06°persist_js_stateÂ¤mimeÙ'application/vnd.pluto.stacktrace+object²last_run_timestampËAØ‹Kı9¬·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06¹depends_on_disabled_cellsÂ§runtimeÀµpublished_object_keys§erroredÃÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92‰¦queuedÂ¤logs§runningÂ¦output†¤body…¦prefix¥Int64¨elementsš’’¡1ªtext/plain’’¡2ªtext/plain’’¡3ªtext/plain’’¡4ªtext/plain’’¡5ªtext/plain’’¡6ªtext/plain’’¡7ªtext/plain’’¡8ªtext/plain’	’¡9ªtext/plain’
-’¢10ªtext/plain¤type¥Array¬prefix_short ¨objectid°44a90dc0d7c367dc°persist_js_stateÂ¤mimeÙ!application/vnd.pluto.tree+object²last_run_timestampËAØ‹Kü¥s·has_pluto_hook_featuresÂ¬rootassignee¥scans§cell_idÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92¹depends_on_disabled_cellsÂ§runtimeÍ@uµpublished_object_keys§erroredÂÙ$34a6ee83-5c46-4661-910e-925ea33ef625‰¦queuedÂ¤logs‘ˆ¤lineÿ£msg’Ú2³  Activating new environment at `/tmp/jl_tmxnvh/Project.toml`
+</style>°persist_js_stateÂ¤mime©text/html²last_run_timestampËAØ‹L¶->ÿ·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792¹depends_on_disabled_cellsÂ§runtimeÍšNµpublished_object_keys§erroredÂÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06‰¦queuedÂ¤logs§runningÂ¦output†¤body‚£msgÙtIOError: readdir("/Users/daleblack/Google Drive/Datasets/Siemens_SOMATOM_Force"): no such file or directory (ENOENT)ªstacktrace—…¤call³check_channel_state§inlinedÃ¤file«channels.jl¤lineÌª¤path­./channels.jl…¤callÙItake_unbuffered(::Channel{Tuple{String, Vector{String}, Vector{String}}})§inlinedÂ¤file«channels.jl¤lineÍ“¤path­./channels.jl…¤call¥take!§inlinedÃ¤file«channels.jl¤lineÍ¤path­./channels.jl…¤callÙLiterate(::Channel{Tuple{String, Vector{String}, Vector{String}}}, ::Nothing)§inlinedÂ¤file«channels.jl¤lineÍÑ¤path­./channels.jl…¤call§iterate§inlinedÃ¤file«channels.jl¤lineÍĞ¤path­./channels.jl…¤callºdcm_list_builder(::String)§inlinedÂ¤file§load.jl¤line¤pathÙ9/home/runner/.julia/packages/DICOMUtils/y9sLG/src/load.jl…¤call¯top-level scope§inlinedÂ¤fileÙDintegrated_scoring_script.jl#==#60fe5916-a1a6-11ec-1fbe-8952690e9d06¤line¤pathÙ€/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl#==#60fe5916-a1a6-11ec-1fbe-8952690e9d06°persist_js_stateÂ¤mimeÙ'application/vnd.pluto.stacktrace+object²last_run_timestampËAØ‹L¶×{B·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06¹depends_on_disabled_cellsÂ§runtimeÀµpublished_object_keys§erroredÃÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92‰¦queuedÂ¤logs§runningÂ¦output†¤body…¦prefix¥Int64¨elementsš’’¡1ªtext/plain’’¡2ªtext/plain’’¡3ªtext/plain’’¡4ªtext/plain’’¡5ªtext/plain’’¡6ªtext/plain’’¡7ªtext/plain’’¡8ªtext/plain’	’¡9ªtext/plain’
+’¢10ªtext/plain¤type¥Array¬prefix_short ¨objectid°ff576314006a61f8°persist_js_stateÂ¤mimeÙ!application/vnd.pluto.tree+object²last_run_timestampËAØ‹L¶lòú·has_pluto_hook_featuresÂ¬rootassignee¥scans§cell_idÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92¹depends_on_disabled_cellsÂ§runtimeÍDÁµpublished_object_keys§erroredÂÙ$34a6ee83-5c46-4661-910e-925ea33ef625‰¦queuedÂ¤logs‘ˆ¤lineÿ£msg’Ú2³  Activating new environment at `/tmp/jl_yGZRnP/Project.toml`
     Updating registry at `~/.julia/registries/General`
    Resolving package versions...
-    Updating `/tmp/jl_tmxnvh/Project.toml`
+    Updating `/tmp/jl_yGZRnP/Project.toml`
   [7f904dfe] + PlutoUI v0.7.37
-    Updating `/tmp/jl_tmxnvh/Manifest.toml`
+    Updating `/tmp/jl_yGZRnP/Manifest.toml`
   [6e696c72] + AbstractPlutoDingetjes v1.1.4
   [3da002f7] + ColorTypes v0.11.0
   [53c48c17] + FixedPointNumbers v0.8.4
@@ -282,13 +282,13 @@ return tocNode
   [8e850ede] + nghttp2_jll
   [3f19e933] + p7zip_jll
    Resolving package versions...
-    Updating `/tmp/jl_tmxnvh/Project.toml`
+    Updating `/tmp/jl_yGZRnP/Project.toml`
   [10745b16] + Statistics
-  No Changes to `/tmp/jl_tmxnvh/Manifest.toml`
+  No Changes to `/tmp/jl_yGZRnP/Manifest.toml`
    Resolving package versions...
-    Updating `/tmp/jl_tmxnvh/Project.toml`
+    Updating `/tmp/jl_yGZRnP/Project.toml`
   [2913bbd2] + StatsBase v0.33.16
-    Updating `/tmp/jl_tmxnvh/Manifest.toml`
+    Updating `/tmp/jl_yGZRnP/Manifest.toml`
   [d360d2e6] + ChainRulesCore v1.13.0
   [9e997f8a] + ChangesOfVariables v0.1.2
   [34da2185] + Compat v3.42.0
@@ -307,9 +307,9 @@ return tocNode
   [8ba89e20] + Distributed
   [1a1011a3] + SharedArrays
    Resolving package versions...
-    Updating `/tmp/jl_tmxnvh/Project.toml`
+    Updating `/tmp/jl_yGZRnP/Project.toml`
   [787d08f9] + ImageMorphology v0.3.1
-    Updating `/tmp/jl_tmxnvh/Manifest.toml`
+    Updating `/tmp/jl_yGZRnP/Manifest.toml`
   [621f4979] + AbstractFFTs v1.1.0
   [79e6a3ab] + Adapt v3.3.3
   [c3611d14] + ColorVectorSpace v0.9.8
@@ -333,9 +333,9 @@ return tocNode
   [e66e0078] + CompilerSupportLibraries_jll
   [05823500] + OpenLibm_jll
    Resolving package versions...
-    Updating `/tmp/jl_tmxnvh/Project.toml`
+    Updating `/tmp/jl_yGZRnP/Project.toml`
   [6a3955dd] + ImageFiltering v0.7.1
-    Updating `/tmp/jl_tmxnvh/Manifest.toml`
+    Updating `/tmp/jl_yGZRnP/Manifest.toml`
   [aafaddc9] + CatIndices v0.2.2
   [ed09eef8] + ComputationalResources v0.3.2
   [dc8bdbbb] + CustomUnitRanges v1.0.2
@@ -349,15 +349,15 @@ return tocNode
   [856f044c] + MKL_jll v2022.0.0+0
   [4af54fe1] + LazyArtifacts
    Resolving package versions...
-   Installed CodecZlib â”€â”€â”€â”€â”€â”€ v0.7.0
    Installed SentinelArrays â”€ v1.3.12
+   Installed CodecZlib â”€â”€â”€â”€â”€â”€ v0.7.0
    Installed InlineStrings â”€â”€ v1.1.2
    Installed WeakRefStrings â”€ v1.4.2
    Installed FilePathsBase â”€â”€ v0.9.17
    Installed CSV â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ v0.10.3
-    Updating `/tmp/jl_tmxnvh/Project.toml`
+    Updating `/tmp/jl_yGZRnP/Project.toml`
   [336ed68f] + CSV v0.10.3
-    Updating `/tmp/jl_tmxnvh/Manifest.toml`
+    Updating `/tmp/jl_yGZRnP/Manifest.toml`
   [336ed68f] + CSV v0.10.3
   [944b1d66] + CodecZlib v0.7.0
   [e2d170a0] + DataValueInterfaces v1.0.0
@@ -380,9 +380,9 @@ Precompiling project...
 [32m  âœ“ [39mCSV
   6 dependencies successfully precompiled in 8 seconds (66 already precompiled)
    Resolving package versions...
-    Updating `/tmp/jl_tmxnvh/Project.toml`
+    Updating `/tmp/jl_yGZRnP/Project.toml`
   [a93c6f00] + DataFrames v1.3.2
-    Updating `/tmp/jl_tmxnvh/Manifest.toml`
+    Updating `/tmp/jl_yGZRnP/Manifest.toml`
   [a8cc5b0e] + Crayons v4.1.1
   [a93c6f00] + DataFrames v1.3.2
   [59287772] + Formatting v0.4.2
@@ -392,9 +392,9 @@ Precompiling project...
    Installed ShiftedArrays â”€ v1.0.0
    Installed GLM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ v1.6.1
    Installed StatsModels â”€â”€â”€ v0.6.29
-    Updating `/tmp/jl_tmxnvh/Project.toml`
+    Updating `/tmp/jl_yGZRnP/Project.toml`
   [38e38edf] + GLM v1.6.1
-    Updating `/tmp/jl_tmxnvh/Manifest.toml`
+    Updating `/tmp/jl_yGZRnP/Manifest.toml`
   [49dc2e85] + Calculus v0.5.1
   [b429d917] + DensityInterface v0.4.0
   [31c24e10] + Distributions v0.25.49
@@ -417,25 +417,25 @@ Precompiling project...
   3 dependencies successfully precompiled in 4 seconds (88 already precompiled)
     Updating git-repo `https://github.com/JuliaHealth/DICOM.jl`
    Resolving package versions...
-    Updating `/tmp/jl_tmxnvh/Project.toml`
+    Updating `/tmp/jl_yGZRnP/Project.toml`
   [a26e6606] + DICOM v0.10.1 `https://github.com/JuliaHealth/DICOM.jl#master`
-    Updating `/tmp/jl_tmxnvh/Manifest.toml`
+    Updating `/tmp/jl_yGZRnP/Manifest.toml`
   [a26e6606] + DICOM v0.10.1 `https://github.com/JuliaHealth/DICOM.jl#master`
     Updating git-repo `https://github.com/Dale-Black/DICOMUtils.jl`
    Resolving package versions...
-    Updating `/tmp/jl_tmxnvh/Project.toml`
+    Updating `/tmp/jl_yGZRnP/Project.toml`
   [d427e4c1] + DICOMUtils v0.1.0 `https://github.com/Dale-Black/DICOMUtils.jl#master`
-    Updating `/tmp/jl_tmxnvh/Manifest.toml`
+    Updating `/tmp/jl_yGZRnP/Manifest.toml`
   [d427e4c1] + DICOMUtils v0.1.0 `https://github.com/Dale-Black/DICOMUtils.jl#master`
   [ab62b9b5] + DeepDiffs v1.2.0
   [98d24dd4] + TestSetExtensions v2.0.0
     Updating git-repo `https://github.com/Dale-Black/Phantoms.jl`
    Resolving package versions...
    Installed ImageFiltering â”€ v0.6.22
-    Updating `/tmp/jl_tmxnvh/Project.toml`
+    Updating `/tmp/jl_yGZRnP/Project.toml`
   [6a3955dd] â†“ ImageFiltering v0.7.1 â‡’ v0.6.22
   [9bf6ac95] + Phantoms v0.1.0 `https://github.com/Dale-Black/Phantoms.jl#main`
-    Updating `/tmp/jl_tmxnvh/Manifest.toml`
+    Updating `/tmp/jl_yGZRnP/Manifest.toml`
   [1520ce14] + AbstractTrees v0.3.4
   [ec485272] + ArnoldiMethod v0.2.0
   [aaaa29a8] + Clustering v0.14.2
@@ -466,15 +466,15 @@ Precompiling project...
 [32m  âœ“ [39m[90mImageComponentAnalysis[39m
 [32m  âœ“ [39m[90mImageSegmentation[39m
 [32m  âœ“ [39mPhantoms
-  4 dependencies successfully precompiled in 37 seconds (112 already precompiled)
+  4 dependencies successfully precompiled in 38 seconds (112 already precompiled)
      Cloning git-repo `https://github.com/Dale-Black/CalciumScoring.jl`
     Updating git-repo `https://github.com/Dale-Black/CalciumScoring.jl`
    Resolving package versions...
-    Updating `/tmp/jl_tmxnvh/Project.toml`
+    Updating `/tmp/jl_yGZRnP/Project.toml`
   [9c0cb1da] + CalciumScoring v0.1.0 `https://github.com/Dale-Black/CalciumScoring.jl#master`
   [6a3955dd] â†“ ImageFiltering v0.6.22 â‡’ v0.6.21
   [787d08f9] â†“ ImageMorphology v0.3.1 â‡’ v0.2.11
-    Updating `/tmp/jl_tmxnvh/Manifest.toml`
+    Updating `/tmp/jl_yGZRnP/Manifest.toml`
   [ec485272] â†“ ArnoldiMethod v0.2.0 â‡’ v0.1.0
   [4fba245c] + ArrayInterface v4.0.4
   [13072b0f] + AxisAlgorithms v1.0.1
@@ -526,7 +526,7 @@ Precompiling project...
   [b53b4c65] + libpng_jll v1.6.38+0
 Precompiling project...
 [91m  âœ— [39mCalciumScoring
-  0 dependencies successfully precompiled in 6 seconds (158 already precompiled)
+  0 dependencies successfully precompiled in 5 seconds (158 already precompiled)
   [91m1[39m dependency errored. To see a full report either run `import Pkg; Pkg.precompile()` or load the package
 ERROR: LoadError: SystemError: opening file "/home/runner/.julia/packages/CalciumScoring/IVb83/src/integrated.jl": No such file or directory
 Stacktrace:
@@ -567,8 +567,8 @@ Stacktrace:
  [18] top-level scope
     @ none:1
 in expression starting at /home/runner/.julia/packages/CalciumScoring/IVb83/src/CalciumScoring.jl:1
-ªtext/plain§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625¦kwargs¢id¹Main_PlutoRunner_80680cb1¤fileÙB/home/runner/.julia/packages/Pluto/G8U2c/src/runner/PlutoRunner.jl¥group«PlutoRunner¥level®LogLevel(-555)§runningÂ¦output†¤body‚£msgÙ‰Failed to precompile CalciumScoring [9c0cb1da-21b1-4615-967b-153e03110a28] to /home/runner/.julia/compiled/v1.6/CalciumScoring/jl_3ITgCj.ªstacktrace—…¤call¯error(::String)§inlinedÂ¤file¨error.jl¤line!¤pathª./error.jl…¤callÙlcompilecache(::Base.PkgId, ::String, ::IOContext{Base.PipeEndpoint}, ::IOContext{Base.PipeEndpoint}, ::Bool)§inlinedÂ¤fileªloading.jl¤lineÍi¤path¬./loading.jl…¤callÙ$compilecache(::Base.PkgId, ::String)§inlinedÂ¤fileªloading.jl¤lineÍ1¤path¬./loading.jl…¤call¶_require(::Base.PkgId)§inlinedÂ¤fileªloading.jl¤lineÍ¤path¬./loading.jl…¤callµrequire(::Base.PkgId)§inlinedÂ¤fileªloading.jl¤lineÍ¨¤path¬./loading.jl…¤call»require(::Module, ::Symbol)§inlinedÂ¤fileªloading.jl¤lineÍ›¤path¬./loading.jl…¤call¯top-level scope§inlinedÂ¤fileÙDintegrated_scoring_script.jl#==#34a6ee83-5c46-4661-910e-925ea33ef625¤line¤pathÙ€/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl#==#34a6ee83-5c46-4661-910e-925ea33ef625°persist_js_stateÂ¤mimeÙ'application/vnd.pluto.stacktrace+object²last_run_timestampËAØ‹Kú†.²·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625¹depends_on_disabled_cellsÂ§runtimeÀµpublished_object_keys§erroredÃ±cell_dependencies…Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b„´precedence_heuristic	§cell_idÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b´downstream_cells_map‚©BASE_PATH‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06¦VENDER‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06²upstream_cells_map€Ù$c34ae2e3-466f-4280-8786-b0e92dbb2792„´precedence_heuristic	§cell_idÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792´downstream_cells_map€²upstream_cells_map¯TableOfContentsÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06„´precedence_heuristic	§cell_idÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06´downstream_cells_map€²upstream_cells_mapŞ 3¥mkdir£CSV‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625¡>¦isless¦VENDER‘Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b¦length¡<¬mask_inserts£pwd¡/¥scans‘Ù$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92©DataFrame¤mean°dcm_list_builder£abs£div§collect¦haskey¦median§findallªDICOMUtils‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625¡-¢Ã·¹DICOMUtils.get_pixel_size¡+¥Array¨mask_rodªIntegrated©BASE_PATH‘Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b¢cd£sum¦string¤Dict¤sqrtªmask_heart¦dilate¡^¢==¡:ªdcm_reader¥isdir¨basename¤Bool¤size©quantile!‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625©mapwindow©CSV.write¥score¡~¥undef¥erodeÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92„´precedence_heuristic	§cell_idÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92´downstream_cells_map¥scans‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06²upstream_cells_map‚¡:§collectÙ$34a6ee83-5c46-4661-910e-925ea33ef625„´precedence_heuristic§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625´downstream_cells_map£CSV‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06£Pkg‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625ªStatistics®CalciumScoring§PlutoUI¨Phantoms¯ImageMorphology¥DICOM©quantile!‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06ªDICOMUtils‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06ªDataFrames®ImageFiltering£GLM²upstream_cells_map…§Pkg.add£Pkg‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625¬Pkg.activate³Pkg.Registry.update©mktempdir´cell_execution_order•Ù$34a6ee83-5c46-4661-910e-925ea33ef625Ù$c34ae2e3-466f-4280-8786-b0e92dbb2792Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6bÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06´last_hot_reload_timeË        ©shortpath¼integrated_scoring_script.jl®process_status¥ready¤pathÙX/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl®last_save_timeËAØ‹Ká•ƒwªcell_order•Ù$34a6ee83-5c46-4661-910e-925ea33ef625Ù$c34ae2e3-466f-4280-8786-b0e92dbb2792Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6bÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06±published_objects€¥nbpkg‡²installed_versions€°terminal_outputs€§enabledÂ·restart_recommended_msgÀ´restart_required_msgÀ­busy_packages¬instantiatedÂ«cell_inputs…Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b„§cell_idÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b°running_disabledÂ¤codeÙ[begin
-	VENDER = "GE_Revolution"
+ªtext/plain§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625¦kwargs¢id¹Main_PlutoRunner_80680cb1¤fileÙB/home/runner/.julia/packages/Pluto/G8U2c/src/runner/PlutoRunner.jl¥group«PlutoRunner¥level®LogLevel(-555)§runningÂ¦output†¤body‚£msgÙ‰Failed to precompile CalciumScoring [9c0cb1da-21b1-4615-967b-153e03110a28] to /home/runner/.julia/compiled/v1.6/CalciumScoring/jl_poNLlS.ªstacktrace—…¤call¯error(::String)§inlinedÂ¤file¨error.jl¤line!¤pathª./error.jl…¤callÙlcompilecache(::Base.PkgId, ::String, ::IOContext{Base.PipeEndpoint}, ::IOContext{Base.PipeEndpoint}, ::Bool)§inlinedÂ¤fileªloading.jl¤lineÍi¤path¬./loading.jl…¤callÙ$compilecache(::Base.PkgId, ::String)§inlinedÂ¤fileªloading.jl¤lineÍ1¤path¬./loading.jl…¤call¶_require(::Base.PkgId)§inlinedÂ¤fileªloading.jl¤lineÍ¤path¬./loading.jl…¤callµrequire(::Base.PkgId)§inlinedÂ¤fileªloading.jl¤lineÍ¨¤path¬./loading.jl…¤call»require(::Module, ::Symbol)§inlinedÂ¤fileªloading.jl¤lineÍ›¤path¬./loading.jl…¤call¯top-level scope§inlinedÂ¤fileÙDintegrated_scoring_script.jl#==#34a6ee83-5c46-4661-910e-925ea33ef625¤line¤pathÙ€/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl#==#34a6ee83-5c46-4661-910e-925ea33ef625°persist_js_stateÂ¤mimeÙ'application/vnd.pluto.stacktrace+object²last_run_timestampËAØ‹L´Bn“·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625¹depends_on_disabled_cellsÂ§runtimeÀµpublished_object_keys§erroredÃ±cell_dependencies…Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b„´precedence_heuristic	§cell_idÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b´downstream_cells_map‚©BASE_PATH‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06¦VENDER‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06²upstream_cells_map€Ù$c34ae2e3-466f-4280-8786-b0e92dbb2792„´precedence_heuristic	§cell_idÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792´downstream_cells_map€²upstream_cells_map¯TableOfContentsÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06„´precedence_heuristic	§cell_idÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06´downstream_cells_map€²upstream_cells_mapŞ 3¥mkdir£CSV‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625¡>¦isless¦VENDER‘Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b¦length¡<¬mask_inserts£pwd¡/¥scans‘Ù$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92©DataFrame¤mean°dcm_list_builder£abs£div§collect¦haskey¦median§findallªDICOMUtils‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625¡-¢Ã·¹DICOMUtils.get_pixel_size¡+¥Array¨mask_rodªIntegrated©BASE_PATH‘Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b¢cd£sum¦string¤Dict¤sqrtªmask_heart¦dilate¡^¢==¡:ªdcm_reader¥isdir¨basename¤Bool¤size©quantile!‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625©mapwindow©CSV.write¥score¡~¥undef¥erodeÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92„´precedence_heuristic	§cell_idÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92´downstream_cells_map¥scans‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06²upstream_cells_map‚¡:§collectÙ$34a6ee83-5c46-4661-910e-925ea33ef625„´precedence_heuristic§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625´downstream_cells_map£CSV‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06£Pkg‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625ªStatistics®CalciumScoring§PlutoUI¨Phantoms¯ImageMorphology¥DICOM©quantile!‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06ªDICOMUtils‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06ªDataFrames®ImageFiltering£GLM²upstream_cells_map…§Pkg.add£Pkg‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625¬Pkg.activate³Pkg.Registry.update©mktempdir´cell_execution_order•Ù$34a6ee83-5c46-4661-910e-925ea33ef625Ù$c34ae2e3-466f-4280-8786-b0e92dbb2792Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6bÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06´last_hot_reload_timeË        ©shortpath¼integrated_scoring_script.jl®process_status¥ready¤pathÙX/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl®last_save_timeËAØ‹Lš¨u2ªcell_order•Ù$34a6ee83-5c46-4661-910e-925ea33ef625Ù$c34ae2e3-466f-4280-8786-b0e92dbb2792Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6bÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06±published_objects€¥nbpkg‡²installed_versions€°terminal_outputs€§enabledÂ·restart_recommended_msgÀ´restart_required_msgÀ­busy_packages¬instantiatedÂ«cell_inputs…Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b„§cell_idÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b°running_disabledÂ¤codeÙcbegin
+	VENDER = "Siemens_SOMATOM_Force"
 	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 end;«code_foldedÂÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792„§cell_idÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792°running_disabledÂ¤code±TableOfContents()«code_foldedÂÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06„§cell_idÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06°running_disabledÂ¤codeÚ7±for s in scans
 	SCAN_NUMBER = s
@@ -1006,4 +1006,4 @@ end«code_foldedÂÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92„§cell_idÙ$7d8366d8-9cc5-4
 	using DICOMUtils
 	using Phantoms
 	using CalciumScoring
-end«code_foldedÂ«notebook_idÙ$dbb47b38-a25d-11ec-0412-eff9132d071d«in_temp_dirÂ
+end«code_foldedÂ«notebook_idÙ$94f4a5f4-a25f-11ec-1a3c-2f2b0d622347«in_temp_dirÂ
