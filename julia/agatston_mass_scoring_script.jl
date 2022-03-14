@@ -22,6 +22,7 @@ begin
 		Pkg.add(url="https://github.com/Dale-Black/DICOMUtils.jl")
 		Pkg.add(url="https://github.com/Dale-Black/Phantoms.jl")
 		Pkg.add(url="https://github.com/Dale-Black/CalciumScoring.jl")
+		Pkg.add("CairoMakie")
 	end
 	
 	using PlutoUI
@@ -36,11 +37,12 @@ begin
 	using DICOMUtils
 	using Phantoms
 	using CalciumScoring
+	using CairoMakie
 end
 
 # ╔═╡ 61d478bf-7bde-4184-9231-fd4a8bb1e6a1
 begin
-	VENDER = "Canon_Aquilion_One_Vision"
+	VENDER = "GE_Revolution"
 	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 end
 
@@ -74,7 +76,7 @@ end
 # ╔═╡ b8afde9f-a02a-4165-908e-41afe98109e8
 begin
 	dfs = []
-	for s in scans
+	for s in 6:10
 		SCAN_NUMBER = s
 		root_path = string(BASE_PATH, VENDER)
 		dcm_path_list = dcm_list_builder(root_path)
@@ -87,7 +89,7 @@ begin
 	
 		# Segment Calcium Rod
 		calcium_image, slice_CCI, quality_slice, cal_rod_slice = mask_rod(masked_array, header)
-	
+
 		# Segment Calcium Inserts
 		mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(
 	            dcm_array, masked_array, header, slice_CCI, center_insert
@@ -265,7 +267,7 @@ begin
 end
 
 # ╔═╡ 94bd4f44-cd03-4602-8dd5-b3f0ba99e2ed
-new_df = vcat(dfs[1:10]...)
+new_df = vcat(dfs[1:4]...)
 
 # ╔═╡ ef536a67-d206-4c42-ae09-bfc8c9e1abfc
 CSV.write(output_path, new_df)
