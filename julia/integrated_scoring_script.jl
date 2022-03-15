@@ -43,7 +43,7 @@ TableOfContents()
 
 # ╔═╡ ff0a6e93-9c5e-4ac2-af02-ce253b535c6b
 begin
-	VENDER = "Philips_Brilliance_iCT"
+	VENDER = "GE_Revolution"
 	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 end;
 
@@ -443,6 +443,7 @@ begin
 		]
 		
 		df = DataFrame(
+			scan = scan,
 			inserts = inserts,
 			ground_truth_mass_large = ground_truth_mass_large,
 			calculated_mass_large = calculated_mass_large,
