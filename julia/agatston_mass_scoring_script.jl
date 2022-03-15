@@ -46,9 +46,6 @@ begin
 	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 end
 
-# ╔═╡ 58c19e43-0003-4a8c-8e16-c34cfe76a56f
-scans = collect(1:10)
-
 # ╔═╡ 64eb1515-c69e-41f0-8fdb-f93389a7003f
 md"""
 # Save results
@@ -76,7 +73,7 @@ end
 # ╔═╡ b8afde9f-a02a-4165-908e-41afe98109e8
 begin
 	dfs = []
-	for s in 6:10
+	for s in 1:10
 		SCAN_NUMBER = s
 		root_path = string(BASE_PATH, VENDER)
 		dcm_path_list = dcm_list_builder(root_path)
@@ -267,7 +264,7 @@ begin
 end
 
 # ╔═╡ 94bd4f44-cd03-4602-8dd5-b3f0ba99e2ed
-new_df = vcat(dfs[1:4]...)
+new_df = vcat(dfs[1:10]...)
 
 # ╔═╡ ef536a67-d206-4c42-ae09-bfc8c9e1abfc
 CSV.write(output_path, new_df)
@@ -275,7 +272,6 @@ CSV.write(output_path, new_df)
 # ╔═╡ Cell order:
 # ╠═2df34aa4-a3c7-11ec-3508-61f14f475394
 # ╠═61d478bf-7bde-4184-9231-fd4a8bb1e6a1
-# ╠═58c19e43-0003-4a8c-8e16-c34cfe76a56f
 # ╠═b8afde9f-a02a-4165-908e-41afe98109e8
 # ╟─64eb1515-c69e-41f0-8fdb-f93389a7003f
 # ╠═94bd4f44-cd03-4602-8dd5-b3f0ba99e2ed
