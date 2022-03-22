@@ -20,7 +20,7 @@ begin
 		Pkg.add("GLM")
 		Pkg.add(url="https://github.com/JuliaHealth/DICOM.jl")
 		Pkg.add(url="https://github.com/Dale-Black/DICOMUtils.jl")
-		Pkg.add(url="https://github.com/Dale-Black/Phantoms.jl")
+		Pkg.add(url="https://github.com/Dale-Black/PhantomSegmentation.jl")
 		Pkg.add(url="https://github.com/Dale-Black/CalciumScoring.jl")
 		Pkg.add("CairoMakie")
 		Pkg.add("HypothesisTests")
@@ -37,7 +37,7 @@ begin
 	using GLM
 	using DICOM
 	using DICOMUtils
-	using Phantoms
+	using PhantomSegmentation
 	using CalciumScoring
 	using CairoMakie
 	using HypothesisTests
@@ -66,81 +66,6 @@ df_i_canon = CSV.read(string(canon_path, "/output.csv"), DataFrame);
 # ╔═╡ 33a88630-0059-496f-ab43-6f5a62dd672f
 inserts = repeat([200, 400, 800], 10)
 
-# ╔═╡ 561909aa-a311-46a3-a60e-b0111f919195
-md"""
-#### Integrated Score (Large)
-"""
-
-# ╔═╡ 29af4213-a61a-4155-8893-62a38ce5a2e4
-begin
-	f1 = Figure()
-	ax1 = Axis(f1[1, 1])
-
-	scatter!(inserts, df_i_canon[!, :calculated_mass_large], label="calculated_mass_large")
-	scatter!(inserts, df_i_canon[!, :ground_truth_mass_large], label="ground_truth_mass_large")
-	
-	ax1.title = "Mass Measurements (Large Inserts, 10 Different Scans)"
-	ax1.ylabel = "Mass (mm^3)"
-	ax1.xlabel = "Inserts"
-
-	ylims!(ax1, 0, 100)
-	
-	f1[1, 2] = Legend(f1, ax1, framevisible = false)
-	
-	f1
-end
-
-# ╔═╡ 7f164ba2-950a-42ea-9735-64ad162de1dc
-
-
-# ╔═╡ 56ac7ed7-15fa-4201-a95a-910b85090928
-md"""
-#### Integrated Score (Medium)
-"""
-
-# ╔═╡ 6413dc05-fc92-45a7-b092-a144807d0ca9
-begin
-	f2 = Figure()
-	ax2 = Axis(f2[1, 1])
-
-	scatter!(inserts, df_i_canon[!, :calculated_mass_medium], label="calculated_mass_medium")
-	scatter!(inserts, df_i_canon[!, :ground_truth_mass_medium], label="ground_truth_mass_medium")
-	
-	ax2.title = "Mass Measurements (Medium Inserts, 10 Different Scans)"
-	ax2.ylabel = "Mass (mm^3)"
-	ax2.xlabel = "Inserts"
-
-	ylims!(ax2, 0, 25)
-	
-	f2[1, 2] = Legend(f2, ax2, framevisible = false)
-	
-	f2
-end
-
-# ╔═╡ 75d31c39-7335-4a6a-9f49-98b2883e63ba
-md"""
-#### Integrated Score (Small)
-"""
-
-# ╔═╡ 93587e10-4654-4980-a66d-895797488f99
-begin
-	f3 = Figure()
-	ax3 = Axis(f3[1, 1])
-
-	scatter!(inserts, df_i_canon[!, :calculated_mass_small], label="calculated_mass_small")
-	scatter!(inserts, df_i_canon[!, :ground_truth_mass_small], label="ground_truth_mass_small")
-	
-	ax3.title = "Mass Measurements (Small Inserts, 10 Different Scans)"
-	ax3.ylabel = "Mass (mm^3)"
-	ax3.xlabel = "Inserts"
-
-	ylims!(ax3, 0, 2)
-	
-	f3[1, 2] = Legend(f3, ax3, framevisible = false)
-	
-	f3
-end
-
 # ╔═╡ 8bdc88e6-a8da-408f-ba72-76ccb0dea5ea
 md"""
 ## GE
@@ -152,63 +77,6 @@ ge_path = "/Users/daleblack/Google Drive/dev/MolloiLab/CAC-stanford-data/data/ou
 # ╔═╡ 9877afc3-c563-4b52-a472-c64abd201848
 df_i_ge = CSV.read(string(ge_path, "/output.csv"), DataFrame);
 
-# ╔═╡ df01bb07-dd05-453d-98ca-a77a595c5b05
-begin
-	f1g = Figure()
-	ax1g = Axis(f1g[1, 1])
-
-	scatter!(inserts, df_i_ge[!, :calculated_mass_large], label="calculated_mass_large")
-	scatter!(inserts, df_i_ge[!, :ground_truth_mass_large], label="ground_truth_mass_large")
-	
-	ax1g.title = "Mass Measurements (Large Inserts, 10 Different Scans)"
-	ax1g.ylabel = "Mass (mm^3)"
-	ax1g.xlabel = "Inserts"
-
-	ylims!(ax1g, 0, 100)
-	
-	f1g[1, 2] = Legend(f1g, ax1g, framevisible = false)
-	
-	f1g
-end
-
-# ╔═╡ 9adf6759-64c0-4f6a-a28a-8115eb7ec89a
-begin
-	f2g = Figure()
-	ax2g = Axis(f2g[1, 1])
-
-	scatter!(inserts, df_i_ge[!, :calculated_mass_medium], label="calculated_mass_medium")
-	scatter!(inserts, df_i_ge[!, :ground_truth_mass_medium], label="ground_truth_mass_medium")
-	
-	ax2g.title = "Mass Measurements (Medium Inserts, 10 Different Scans)"
-	ax2g.ylabel = "Mass (mm^3)"
-	ax2g.xlabel = "Inserts"
-
-	ylims!(ax2g, 0, 25)
-	
-	f2g[1, 2] = Legend(f2g, ax2g, framevisible = false)
-	
-	f2g
-end
-
-# ╔═╡ 6524302f-04bc-4b75-a80b-dd19438e3f3b
-begin
-	f3g = Figure()
-	ax3g = Axis(f3g[1, 1])
-
-	scatter!(inserts, df_i_ge[!, :calculated_mass_small], label="calculated_mass_small")
-	scatter!(inserts, df_i_ge[!, :ground_truth_mass_small], label="ground_truth_mass_small")
-	
-	ax3g.title = "Mass Measurements (Small Inserts, 10 Different Scans)"
-	ax3g.ylabel = "Mass (mm^3)"
-	ax3g.xlabel = "Inserts"
-
-	ylims!(ax3g, 0, 2)
-	
-	f3g[1, 2] = Legend(f3g, ax3g, framevisible = false)
-	
-	f3g
-end
-
 # ╔═╡ 667bf5e4-b73f-41e3-a429-6e72a5a913eb
 md"""
 ## Philips
@@ -219,63 +87,6 @@ p_path = "/Users/daleblack/Google Drive/dev/MolloiLab/CAC-stanford-data/data/out
 
 # ╔═╡ d65feef0-e76d-4904-a1dd-fe17ce690823
 df_i_p = CSV.read(string(p_path, "/output.csv"), DataFrame);
-
-# ╔═╡ d45a032b-c4a0-40af-aa1f-ce3157ceee60
-begin
-	f1p = Figure()
-	ax1p = Axis(f1p[1, 1])
-
-	scatter!(inserts, df_i_p[!, :calculated_mass_large], label="calculated_mass_large")
-	scatter!(inserts, df_i_p[!, :ground_truth_mass_large], label="ground_truth_mass_large")
-	
-	ax1p.title = "Mass Measurements (Large Inserts, 10 Different Scans)"
-	ax1p.ylabel = "Mass (mm^3)"
-	ax1p.xlabel = "Inserts"
-
-	ylims!(ax1p, 0, 100)
-	
-	f1p[1, 2] = Legend(f1p, ax1p, framevisible = false)
-	
-	f1p
-end
-
-# ╔═╡ ebaf35b0-27d6-464c-b8c5-1b0b8f68153f
-begin
-	f2p = Figure()
-	ax2p = Axis(f2p[1, 1])
-
-	scatter!(inserts, df_i_p[!, :calculated_mass_medium], label="calculated_mass_medium")
-	scatter!(inserts, df_i_p[!, :ground_truth_mass_medium], label="ground_truth_mass_medium")
-	
-	ax2p.title = "Mass Measurements (Medium Inserts, 10 Different Scans)"
-	ax2p.ylabel = "Mass (mm^3)"
-	ax2p.xlabel = "Inserts"
-
-	ylims!(ax2p, 0, 25)
-	
-	f2p[1, 2] = Legend(f2p, ax2p, framevisible = false)
-	
-	f2p
-end
-
-# ╔═╡ 18272667-58d0-40b0-b5e7-b1f6d0be6b90
-begin
-	f3p = Figure()
-	ax3p = Axis(f3p[1, 1])
-
-	scatter!(inserts, df_i_p[!, :calculated_mass_small], label="calculated_mass_small")
-	scatter!(inserts, df_i_p[!, :ground_truth_mass_small], label="ground_truth_mass_small")
-	
-	ax3p.title = "Mass Measurements (Small Inserts, 10 Different Scans)"
-	ax3p.ylabel = "Mass (mm^3)"
-	ax3p.xlabel = "Inserts"
-
-	ylims!(ax3p, 0, 2)
-	
-	f3p[1, 2] = Legend(f3p, ax3p, framevisible = false)
-	
-	f3p
-end
 
 # ╔═╡ 28bcc00c-ee82-4140-93d1-fee53b30d9ff
 md"""
@@ -293,78 +104,6 @@ canon_path_agat = "/Users/daleblack/Google Drive/dev/MolloiLab/CAC-stanford-data
 # ╔═╡ 24c33f8e-adb7-4f35-b2a1-5dc0572b1ffd
 df_a_canon = CSV.read(string(canon_path_agat, "/output.csv"), DataFrame);
 
-# ╔═╡ 1e56f5e1-a850-422e-b444-d128db783d47
-md"""
-#### Agatston Score (Large)
-"""
-
-# ╔═╡ 2e2d4d21-2bbd-4041-995a-6096dd8a0751
-begin
-	f11 = Figure()
-	ax11 = Axis(f11[1, 1])
-
-	scatter!(inserts, df_a_canon[!, :calculated_mass_large], label="calculated_mass_large")
-	scatter!(inserts, df_a_canon[!, :ground_truth_mass_large], label="ground_truth_mass_large")
-	
-	ax11.title = "Mass Measurements (Large Inserts, 10 Different Scans)"
-	ax11.ylabel = "Mass (mm^3)"
-	ax11.xlabel = "Inserts"
-
-	ylims!(ax11, 0, 110)
-	
-	f11[1, 2] = Legend(f11, ax11, framevisible = false)
-	
-	f11
-end
-
-# ╔═╡ eb16850f-cb01-4e92-809d-25de9c3cc9f0
-md"""
-#### Agatston Score (Medium)
-"""
-
-# ╔═╡ de33803d-1624-4d53-a827-0de9ca2c6afe
-begin
-	f21 = Figure()
-	ax21 = Axis(f21[1, 1])
-
-	scatter!(inserts, df_a_canon[!, :calculated_mass_medium], label="calculated_mass_medium")
-	scatter!(inserts, df_a_canon[!, :ground_truth_mass_medium], label="ground_truth_mass_medium")
-	
-	ax21.title = "Mass Measurements (Medium Inserts, 10 Different Scans)"
-	ax21.ylabel = "Mass (mm^3)"
-	ax21.xlabel = "Inserts"
-
-	ylims!(ax21, 0, 25)
-	
-	f21[1, 2] = Legend(f21, ax21, framevisible = false)
-	
-	f21
-end
-
-# ╔═╡ 0b50ce7a-b06f-4c00-9578-2c710806a82f
-md"""
-#### Agatston Score (Small)
-"""
-
-# ╔═╡ 9eb70ea1-f40a-47c6-b111-0e12de134f58
-begin
-	f31 = Figure()
-	ax31 = Axis(f31[1, 1])
-
-	scatter!(inserts, df_a_canon[!, :calculated_mass_small], label="calculated_mass_small")
-	scatter!(inserts, df_a_canon[!, :ground_truth_mass_small], label="ground_truth_mass_small")
-	
-	ax31.title = "Mass Measurements (Small Inserts, 10 Different Scans)"
-	ax31.ylabel = "Mass (mm^3)"
-	ax31.xlabel = "Inserts"
-
-	ylims!(ax31, 0, 2)
-	
-	f31[1, 2] = Legend(f31, ax31, framevisible = false)
-	
-	f31
-end
-
 # ╔═╡ 23da2c11-27db-4860-8c7a-fd6406a31856
 md"""
 ## GE
@@ -376,63 +115,6 @@ ge_path_agat = "/Users/daleblack/Google Drive/dev/MolloiLab/CAC-stanford-data/da
 # ╔═╡ fc2a9ae1-95a6-49c1-91d2-58b4664af146
 df_a_ge = CSV.read(string(ge_path_agat, "/output.csv"), DataFrame);
 
-# ╔═╡ 33fdd422-3320-4b46-ad43-3d26c1725fda
-begin
-	f11g = Figure()
-	ax11g = Axis(f11g[1, 1])
-
-	scatter!(inserts, df_a_ge[!, :calculated_mass_large], label="calculated_mass_large")
-	scatter!(inserts, df_a_ge[!, :ground_truth_mass_large], label="ground_truth_mass_large")
-	
-	ax11g.title = "Mass Measurements (Large Inserts, 10 Different Scans)"
-	ax11g.ylabel = "Mass (mm^3)"
-	ax11g.xlabel = "Inserts"
-
-	ylims!(ax11g, 0, 110)
-	
-	f11g[1, 2] = Legend(f11g, ax11g, framevisible = false)
-	
-	f11g
-end
-
-# ╔═╡ 2615cd37-abe9-4dde-aea4-84268adb0add
-begin
-	f21g = Figure()
-	ax21g = Axis(f21g[1, 1])
-
-	scatter!(inserts, df_a_ge[!, :calculated_mass_medium], label="calculated_mass_medium")
-	scatter!(inserts, df_a_ge[!, :ground_truth_mass_medium], label="ground_truth_mass_medium")
-	
-	ax21g.title = "Mass Measurements (Medium Inserts, 10 Different Scans)"
-	ax21g.ylabel = "Mass (mm^3)"
-	ax21g.xlabel = "Inserts"
-
-	ylims!(ax21g, 0, 25)
-	
-	f21g[1, 2] = Legend(f21g, ax21g, framevisible = false)
-	
-	f21g
-end
-
-# ╔═╡ 021048c6-09fe-4d73-b88d-ff3947282507
-begin
-	f31g = Figure()
-	ax31g = Axis(f31g[1, 1])
-
-	scatter!(inserts, df_a_ge[!, :calculated_mass_small], label="calculated_mass_small")
-	scatter!(inserts, df_a_ge[!, :ground_truth_mass_small], label="ground_truth_mass_small")
-	
-	ax31g.title = "Mass Measurements (Small Inserts, 10 Different Scans)"
-	ax31g.ylabel = "Mass (mm^3)"
-	ax31g.xlabel = "Inserts"
-
-	ylims!(ax31g, 0, 2)
-	
-	f31g[1, 2] = Legend(f31g, ax31g, framevisible = false)
-	
-	f31g
-end
-
 # ╔═╡ 1cb3defe-9b63-4aa5-92ac-4f4deb2e3c20
 md"""
 ## Philips
@@ -443,63 +125,6 @@ p_path_agat = "/Users/daleblack/Google Drive/dev/MolloiLab/CAC-stanford-data/dat
 
 # ╔═╡ 63e9dbbb-8add-4de1-8d30-d871eaa311c0
 df_a_p = CSV.read(string(p_path_agat, "/output.csv"), DataFrame);
-
-# ╔═╡ 75f861ae-3a76-4f41-bc2d-7dac75a372a7
-begin
-	f11p = Figure()
-	ax11p = Axis(f11p[1, 1])
-
-	scatter!(inserts, df_a_p[!, :calculated_mass_large], label="calculated_mass_large")
-	scatter!(inserts, df_a_p[!, :ground_truth_mass_large], label="ground_truth_mass_large")
-	
-	ax11p.title = "Mass Measurements (Large Inserts, 10 Different Scans)"
-	ax11p.ylabel = "Mass (mm^3)"
-	ax11p.xlabel = "Inserts"
-
-	ylims!(ax11p, 0, 110)
-	
-	f11p[1, 2] = Legend(f11p, ax11p, framevisible = false)
-	
-	f11p
-end
-
-# ╔═╡ 3fcbabcd-d788-478a-b081-cb2efbdfc998
-begin
-	f21p = Figure()
-	ax21p = Axis(f21p[1, 1])
-
-	scatter!(inserts, df_a_p[!, :calculated_mass_medium], label="calculated_mass_medium")
-	scatter!(inserts, df_a_p[!, :ground_truth_mass_medium], label="ground_truth_mass_medium")
-	
-	ax21p.title = "Mass Measurements (Medium Inserts, 10 Different Scans)"
-	ax21p.ylabel = "Mass (mm^3)"
-	ax21p.xlabel = "Inserts"
-
-	ylims!(ax21p, 0, 25)
-	
-	f21p[1, 2] = Legend(f21p, ax21p, framevisible = false)
-	
-	f21p
-end
-
-# ╔═╡ dc0f668b-ea03-4fbb-bafb-6943ccaadb51
-begin
-	f31p = Figure()
-	ax31p = Axis(f31p[1, 1])
-
-	scatter!(inserts, df_a_p[!, :calculated_mass_small], label="calculated_mass_small")
-	scatter!(inserts, df_a_p[!, :ground_truth_mass_small], label="ground_truth_mass_small")
-	
-	ax31p.title = "Mass Measurements (Small Inserts, 10 Different Scans)"
-	ax31p.ylabel = "Mass (mm^3)"
-	ax31p.xlabel = "Inserts"
-
-	ylims!(ax31p, 0, 2)
-	
-	f31p[1, 2] = Legend(f31p, ax31p, framevisible = false)
-	
-	f31p
-end
 
 # ╔═╡ b7e2164b-063c-49e2-b3b8-ac561df22eb0
 md"""
@@ -769,7 +394,7 @@ begin
 end
 
 # ╔═╡ eedbec30-34e2-4f1a-8e81-733fdef72302
-save("larger.pdf", f1a, pt_per_unit = 2)
+# save("larger.pdf", f1a, pt_per_unit = 2)
 
 # ╔═╡ b818b581-e36f-413a-a16c-1783f88c1fb9
 md"""
@@ -837,92 +462,6 @@ md"""
 ## IHS/AS vs Known Mass
 """
 
-# ╔═╡ 0c876c9c-7c5c-40a2-aa9c-3eb9b639e181
-# begin
-# 	fbar2 = Figure()
-# 	axbar2 = Axis(fbar2[1, 1])
-
-# 	barplot!(axbar2, x, height2, dodge = grp, color =  [colors[1], colors[2], colors[1], colors[2]])
-
-# 	axbar2.xticks = (1:2, ["CAC = 0", "CAC > 0"])
-# 	axbar2.ylabel = "Number of Inserts"
-# 	axbar2.title = "Calcium Scores (All Inserts)"
-
-# 	labels2 = ["Integrated Score", "Agatston Score"]
-# 	elements2 = [PolyElement(polycolor = colors[i]) for i in 1:length(labels)]
-# 	title2 = "Scoring Techniques"
-	
-# 	Legend(fbar2[1,2], elements2, labels2, title2)
-	
-# 	fbar2
-	
-# end
-
-# ╔═╡ ee383752-a02e-420e-b261-1959286b91f9
-# begin
-# 	fbar1 = Figure()
-# 	axbar1 = Axis(fbar1[1, 1])
-
-# 	barplot!(axbar1, x, height, dodge = grp, color =  [colors[1], colors[2], colors[1], colors[2]])
-
-# 	axbar1.xticks = (1:2, ["CAC = 0", "CAC > 0"])
-# 	axbar1.ylabel = "Number of Inserts"
-# 	axbar1.title = "Calcium Scores (Small Inserts)"
-
-# 	labels = ["Integrated Score", "Agatston Score"]
-# 	elements = [PolyElement(polycolor = colors[i]) for i in 1:length(labels)]
-# 	title = "Scoring Techniques"
-	
-# 	Legend(fbar1[1,2], elements, labels, title)
-	
-# 	fbar1
-	
-# end
-
-# ╔═╡ 7363ab9e-bcc4-4bc1-bff3-da66d18924c6
-# begin
-# 	fInt = Figure()
-# 	axInt = Axis(fInt[1, 1])
-
-# 	scatter!(df_i_canon[!, :ground_truth_mass_large], df_i_canon[!, :calculated_mass_large], label="Mass: Large Inserts")
-# 	scatter!(df_i_canon[!, :ground_truth_mass_medium], df_i_canon[!, :calculated_mass_medium], label="Mass: Medium Inserts")
-# 	scatter!(df_i_canon[!, :ground_truth_mass_small], df_i_canon[!, :calculated_mass_small], label="Mass: Small Inserts")
-# 	lines!([0, 100], [0, 100], label="Unity Line")
-	
-# 	axInt.title = "Integrated Hounsfield Mass Score vs Known Mass"
-# 	axInt.ylabel = "Calculated Mass (mg)"
-# 	axInt.xlabel = "Known Mass (mg)"
-
-# 	xlims!(axInt, 0, 100)
-# 	ylims!(axInt, 0, 100)
-	
-# 	fInt[1, 2] = Legend(fInt, axInt, framevisible = false)
-	
-# 	fInt
-# end
-
-# ╔═╡ 20f1fdf1-51f1-4299-b642-af4d92a5cf31
-# begin
-# 	fAgat = Figure()
-# 	axAgat = Axis(fAgat[1, 1])
-
-# 	scatter!(df_a_canon[!, :ground_truth_mass_large], df_a_canon[!, :calculated_mass_large], label="Mass: Large Inserts")
-# 	scatter!(df_a_canon[!, :ground_truth_mass_medium], df_a_canon[!, :calculated_mass_medium], label="Mass: Medium Inserts")
-# 	scatter!(df_a_canon[!, :ground_truth_mass_small], df_a_canon[!, :calculated_mass_small], label="Mass: Small Inserts")
-# 	lines!([0, 100], [0, 100], label="Unity Line")
-	
-# 	axAgat.title = "Agatston Mass Score vs Known Mass"
-# 	axAgat.ylabel = "Calculated Mass (mg)"
-# 	axAgat.xlabel = "Known Mass (mg)"
-
-# 	xlims!(axAgat, 0, 100)
-# 	ylims!(axAgat, 0, 100)
-	
-# 	fAgat[1, 2] = Legend(fAgat, axAgat, framevisible = false)
-	
-# 	fAgat
-# end
-
 # ╔═╡ 0093205e-f8cf-4689-b756-823edd57a454
 begin
 	fInt = Figure()
@@ -988,7 +527,80 @@ begin
 end
 
 # ╔═╡ 7f4b8ddc-ff5c-48db-a159-3f21f8d52939
-save("scct2.png", fInt, pt_per_unit = 3)
+# save("scct2.png", fInt, pt_per_unit = 3)
+
+# ╔═╡ b1990d31-40d4-4acc-8bcf-00b6744ac8dc
+md"""
+# CANON - Calibration Types
+"""
+
+# ╔═╡ 45982b4c-4b55-40b2-b290-301cea893e4d
+md"""
+## Point Calibration
+"""
+
+# ╔═╡ 28818e58-6568-43e8-bfa9-3eba9ef9dd4b
+canon_path2 = "/Users/daleblack/Google Drive/dev/MolloiLab/CAC-stanford-data/data/output/Canon_Aquilion_One_Vision4";
+
+# ╔═╡ 29ba89eb-339e-4329-a34c-1e9737660b8b
+df_i_canon2 = CSV.read(string(canon_path2, "/full.csv"), DataFrame);
+
+# ╔═╡ 27359b10-27df-4fe6-bbac-23501958bd3b
+begin
+	fInt2 = Figure()
+	axInt2 = Axis(fInt2[1, 1])
+
+	scatter!(df_i_canon2[!, :ground_truth_mass_large], df_i_canon2[!, :calculated_mass_large], label="Large Inserts")
+	scatter!(df_i_canon2[!, :ground_truth_mass_medium], df_i_canon2[!, :calculated_mass_medium], label="Medium Inserts")
+	scatter!(df_i_canon2[!, :ground_truth_mass_small], df_i_canon2[!, :calculated_mass_small], label="Small Inserts", color=:red)
+	lines!([0, 100], [0, 100], label="Unity")
+	
+	axInt2.title = "IHU Mass vs Known Mass"
+	axInt2.ylabel = "Calculated Mass (mg)"
+	axInt2.xlabel = "Known Mass (mg)"
+	axInt2.xticks = [0, 25, 50, 75, 100]
+	axInt2.yticks = [0, 25, 50, 75, 100]
+
+	xlims!(axInt2, 0, 100)
+	ylims!(axInt2, 0, 100)
+	
+	fInt2[1, 2] = Legend(fInt2, axInt2, framevisible = false)
+	fInt2
+end
+
+# ╔═╡ 82212a13-576b-4299-92f8-434fcca599c1
+md"""
+## Line Calibration
+"""
+
+# ╔═╡ 2550f774-423a-44fa-860c-638290caf2cf
+canon_path3 = "/Users/daleblack/Google Drive/dev/MolloiLab/CAC-stanford-data/data/output/Canon_Aquilion_One_Vision3";
+
+# ╔═╡ 9a165cf4-9574-43ba-9e49-34153a473b49
+df_i_canon3 = CSV.read(string(canon_path3, "/full.csv"), DataFrame);
+
+# ╔═╡ e6ee6ed7-3f45-44d2-8aa5-2d96b8b257e8
+begin
+	fInt3 = Figure()
+	axInt3 = Axis(fInt3[1, 1])
+
+	scatter!(df_i_canon3[!, :ground_truth_mass_large], df_i_canon3[!, :calculated_mass_large], label="Large Inserts")
+	scatter!(df_i_canon3[!, :ground_truth_mass_medium], df_i_canon3[!, :calculated_mass_medium], label="Medium Inserts")
+	scatter!(df_i_canon3[!, :ground_truth_mass_small], df_i_canon3[!, :calculated_mass_small], label="Small Inserts", color=:red)
+	lines!([0, 100], [0, 100], label="Unity")
+	
+	axInt3.title = "IHU Mass vs Known Mass"
+	axInt3.ylabel = "Calculated Mass (mg)"
+	axInt3.xlabel = "Known Mass (mg)"
+	axInt3.xticks = [0, 25, 50, 75, 100]
+	axInt3.yticks = [0, 25, 50, 75, 100]
+
+	xlims!(axInt3, 0, 100)
+	ylims!(axInt3, 0, 100)
+	
+	fInt3[1, 2] = Legend(fInt3, axInt3, framevisible = false)
+	fInt3
+end
 
 # ╔═╡ Cell order:
 # ╠═d5e88f20-a3de-11ec-2c6b-350b7ea5c841
@@ -998,47 +610,22 @@ save("scct2.png", fInt, pt_per_unit = 3)
 # ╠═fec52734-5ec4-42e6-9257-494ebe0ae3a7
 # ╠═3b0b0d7d-7551-4116-b570-92840e4747cb
 # ╠═33a88630-0059-496f-ab43-6f5a62dd672f
-# ╟─561909aa-a311-46a3-a60e-b0111f919195
-# ╠═29af4213-a61a-4155-8893-62a38ce5a2e4
-# ╠═7f164ba2-950a-42ea-9735-64ad162de1dc
-# ╟─56ac7ed7-15fa-4201-a95a-910b85090928
-# ╟─6413dc05-fc92-45a7-b092-a144807d0ca9
-# ╟─75d31c39-7335-4a6a-9f49-98b2883e63ba
-# ╟─93587e10-4654-4980-a66d-895797488f99
 # ╟─8bdc88e6-a8da-408f-ba72-76ccb0dea5ea
 # ╠═55940006-c781-4fa1-b2e9-5d60dd2a27cb
 # ╠═9877afc3-c563-4b52-a472-c64abd201848
-# ╟─df01bb07-dd05-453d-98ca-a77a595c5b05
-# ╟─9adf6759-64c0-4f6a-a28a-8115eb7ec89a
-# ╟─6524302f-04bc-4b75-a80b-dd19438e3f3b
 # ╟─667bf5e4-b73f-41e3-a429-6e72a5a913eb
 # ╠═3cbc7db2-c0bd-43e3-9e14-a1582f14f260
 # ╠═d65feef0-e76d-4904-a1dd-fe17ce690823
-# ╟─d45a032b-c4a0-40af-aa1f-ce3157ceee60
-# ╟─ebaf35b0-27d6-464c-b8c5-1b0b8f68153f
-# ╟─18272667-58d0-40b0-b5e7-b1f6d0be6b90
 # ╟─28bcc00c-ee82-4140-93d1-fee53b30d9ff
 # ╟─fbf02079-6286-42c7-a4b4-010acce061d5
 # ╠═50e90e4d-e584-4628-9577-a29eb83acacc
 # ╠═24c33f8e-adb7-4f35-b2a1-5dc0572b1ffd
-# ╟─1e56f5e1-a850-422e-b444-d128db783d47
-# ╟─2e2d4d21-2bbd-4041-995a-6096dd8a0751
-# ╟─eb16850f-cb01-4e92-809d-25de9c3cc9f0
-# ╟─de33803d-1624-4d53-a827-0de9ca2c6afe
-# ╟─0b50ce7a-b06f-4c00-9578-2c710806a82f
-# ╟─9eb70ea1-f40a-47c6-b111-0e12de134f58
 # ╟─23da2c11-27db-4860-8c7a-fd6406a31856
 # ╠═7e0af03c-0ffc-4762-ac6e-624791c5f286
 # ╠═fc2a9ae1-95a6-49c1-91d2-58b4664af146
-# ╟─33fdd422-3320-4b46-ad43-3d26c1725fda
-# ╟─2615cd37-abe9-4dde-aea4-84268adb0add
-# ╟─021048c6-09fe-4d73-b88d-ff3947282507
 # ╟─1cb3defe-9b63-4aa5-92ac-4f4deb2e3c20
 # ╠═526bf7c0-bf2f-43fc-aca5-c46c99eff6de
 # ╠═63e9dbbb-8add-4de1-8d30-d871eaa311c0
-# ╟─75f861ae-3a76-4f41-bc2d-7dac75a372a7
-# ╟─3fcbabcd-d788-478a-b081-cb2efbdfc998
-# ╠═dc0f668b-ea03-4fbb-bafb-6943ccaadb51
 # ╟─b7e2164b-063c-49e2-b3b8-ac561df22eb0
 # ╟─b7a2b1bb-1bcd-4ee8-9577-a8634b980944
 # ╠═18c64198-b1f4-47b4-a08d-552a1b99e715
@@ -1086,7 +673,7 @@ save("scct2.png", fInt, pt_per_unit = 3)
 # ╟─119a83d5-c016-4282-941d-faffc1c57f90
 # ╠═79a62129-c9ea-430a-862a-d6bc86658bb3
 # ╟─54d0e363-f838-4712-b46f-423291bf58a8
-# ╠═d5f64fac-e9c7-4137-a43a-a1588e001f08
+# ╟─d5f64fac-e9c7-4137-a43a-a1588e001f08
 # ╠═eedbec30-34e2-4f1a-8e81-733fdef72302
 # ╟─b818b581-e36f-413a-a16c-1783f88c1fb9
 # ╟─35d577a7-be59-4524-b7a1-630ad8c9515d
@@ -1106,9 +693,14 @@ save("scct2.png", fInt, pt_per_unit = 3)
 # ╠═f2834ca0-967e-4896-ae1d-1e5bf908089b
 # ╠═54c5a455-1521-40ef-acca-28a9ef276bac
 # ╟─383214b7-8b7e-47e1-8bca-da6a5d737c2e
-# ╠═0c876c9c-7c5c-40a2-aa9c-3eb9b639e181
-# ╠═ee383752-a02e-420e-b261-1959286b91f9
-# ╠═7363ab9e-bcc4-4bc1-bff3-da66d18924c6
-# ╠═20f1fdf1-51f1-4299-b642-af4d92a5cf31
 # ╟─0093205e-f8cf-4689-b756-823edd57a454
 # ╠═7f4b8ddc-ff5c-48db-a159-3f21f8d52939
+# ╟─b1990d31-40d4-4acc-8bcf-00b6744ac8dc
+# ╟─45982b4c-4b55-40b2-b290-301cea893e4d
+# ╠═28818e58-6568-43e8-bfa9-3eba9ef9dd4b
+# ╠═29ba89eb-339e-4329-a34c-1e9737660b8b
+# ╟─27359b10-27df-4fe6-bbac-23501958bd3b
+# ╟─82212a13-576b-4299-92f8-434fcca599c1
+# ╠═2550f774-423a-44fa-860c-638290caf2cf
+# ╠═9a165cf4-9574-43ba-9e49-34153a473b49
+# ╟─e6ee6ed7-3f45-44d2-8aa5-2d96b8b257e8
