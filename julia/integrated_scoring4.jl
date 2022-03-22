@@ -31,7 +31,7 @@ begin
 		Pkg.add("GLM")
 		Pkg.add(url="https://github.com/JuliaHealth/DICOM.jl")
 		Pkg.add(url="https://github.com/Dale-Black/DICOMUtils.jl")
-		Pkg.add(url="https://github.com/Dale-Black/Phantoms.jl")
+		Pkg.add(url="https://github.com/Dale-Black/PhantomSegmentation.jl")
 		Pkg.add(url="https://github.com/Dale-Black/CalciumScoring.jl")
 	end
 	
@@ -46,7 +46,7 @@ begin
 	using GLM
 	using DICOM
 	using DICOMUtils
-	using Phantoms
+	using PhantomSegmentation
 	using CalciumScoring
 end
 

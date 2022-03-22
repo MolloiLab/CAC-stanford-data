@@ -568,6 +568,15 @@ begin
 	fInt2
 end
 
+# ╔═╡ 859a8590-57fb-49c4-b193-01fb94c4fa7d
+int2_rms_large_c = rmsd(df_i_canon2[!, :calculated_mass_large], df_i_canon2[!, :ground_truth_mass_large])
+
+# ╔═╡ 2fbaa17a-4294-4e42-98ee-f630af062fe1
+int2_rms_medium_c = rmsd(df_i_canon2[!, :calculated_mass_medium], df_i_canon2[!, :ground_truth_mass_medium])
+
+# ╔═╡ a9a168d7-1b34-4456-bea7-c7e3e50bbe4b
+int2_rms_small_c = rmsd(df_i_canon2[!, :calculated_mass_small], df_i_canon2[!, :ground_truth_mass_small])
+
 # ╔═╡ 82212a13-576b-4299-92f8-434fcca599c1
 md"""
 ## Line Calibration
@@ -601,6 +610,15 @@ begin
 	fInt3[1, 2] = Legend(fInt3, axInt3, framevisible = false)
 	fInt3
 end
+
+# ╔═╡ d6fe29e0-517b-4927-a73e-3bba60242214
+int3_rms_large_c = rmsd(df_i_canon3[!, :calculated_mass_large], df_i_canon3[!, :ground_truth_mass_large])
+
+# ╔═╡ e9e7132d-4381-4561-a0da-00338e5ea2f1
+int3_rms_medium_c = rmsd(df_i_canon3[!, :calculated_mass_medium], df_i_canon3[!, :ground_truth_mass_medium])
+
+# ╔═╡ bc2e84b1-f16b-480a-98a7-c7d763f60578
+int3_rms_small_c = rmsd(df_i_canon3[!, :calculated_mass_small], df_i_canon3[!, :ground_truth_mass_small])
 
 # ╔═╡ Cell order:
 # ╠═d5e88f20-a3de-11ec-2c6b-350b7ea5c841
@@ -693,14 +711,20 @@ end
 # ╠═f2834ca0-967e-4896-ae1d-1e5bf908089b
 # ╠═54c5a455-1521-40ef-acca-28a9ef276bac
 # ╟─383214b7-8b7e-47e1-8bca-da6a5d737c2e
-# ╟─0093205e-f8cf-4689-b756-823edd57a454
+# ╠═0093205e-f8cf-4689-b756-823edd57a454
 # ╠═7f4b8ddc-ff5c-48db-a159-3f21f8d52939
 # ╟─b1990d31-40d4-4acc-8bcf-00b6744ac8dc
 # ╟─45982b4c-4b55-40b2-b290-301cea893e4d
 # ╠═28818e58-6568-43e8-bfa9-3eba9ef9dd4b
 # ╠═29ba89eb-339e-4329-a34c-1e9737660b8b
 # ╟─27359b10-27df-4fe6-bbac-23501958bd3b
+# ╠═859a8590-57fb-49c4-b193-01fb94c4fa7d
+# ╠═2fbaa17a-4294-4e42-98ee-f630af062fe1
+# ╠═a9a168d7-1b34-4456-bea7-c7e3e50bbe4b
 # ╟─82212a13-576b-4299-92f8-434fcca599c1
 # ╠═2550f774-423a-44fa-860c-638290caf2cf
 # ╠═9a165cf4-9574-43ba-9e49-34153a473b49
 # ╟─e6ee6ed7-3f45-44d2-8aa5-2d96b8b257e8
+# ╠═d6fe29e0-517b-4927-a73e-3bba60242214
+# ╠═e9e7132d-4381-4561-a0da-00338e5ea2f1
+# ╠═bc2e84b1-f16b-480a-98a7-c7d763f60578
