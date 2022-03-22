@@ -65,6 +65,31 @@ md"""
 **Everything below should be automatic, just scroll through to visually inspect that things make sense**
 """
 
+# ╔═╡ 34cdbadf-edfa-4708-be18-03e40f6e00fe
+begin
+	SCAN_NUMBER = 10
+	VENDER = "Canon_Aquilion_One_Vision"
+	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
+end
+
+# ╔═╡ 8feec48a-9ea2-4aa5-96a1-544ef298a3ac
+root_path = string(BASE_PATH, VENDER)
+
+# ╔═╡ 1c7739dc-6615-4aab-b9fa-a4664c858070
+dcm_path_list = dcm_list_builder(root_path)
+
+# ╔═╡ 752cfdd4-f2cf-45fb-8f70-959d145264f6
+pth = dcm_path_list[SCAN_NUMBER]
+
+# ╔═╡ 96fc1811-ab0f-41e6-8857-31b850a03199
+pth
+
+# ╔═╡ ff90198d-14e0-4404-813f-40dd35cc1f47
+scan = basename(pth)
+
+# ╔═╡ b58a6353-8574-44bc-8312-603b9b30d672
+header, dcm_array, slice_thick_ori1 = dcm_reader(pth);
+
 # ╔═╡ 60cc7eea-8314-4f41-bf5d-8375a2c996e0
 md"""
 ## Helper Functions
@@ -102,7 +127,7 @@ function overlay_mask_plot(array, mask, var, title::AbstractString)
 	ax = Makie.Axis(fig[1, 1])
 	ax.title = title
 	heatmap!(array[:, :, zs[var]], colormap=:grays)
-	scatter!(label_array[:, 1][indices_lbl], label_array[:, 2][indices_lbl], markersize=1, color=:red)
+	scatter!(label_array[:, 1][indices_lbl], label_array[:, 2][indices_lbl], markersize=0.6, color=:red)
 	fig
 end
 
@@ -111,10 +136,61 @@ md"""
 ## Segment Heart
 """
 
+# ╔═╡ 91243a6c-ce6f-4fc1-b28c-792e8c71dd53
+masked_array, center_insert, mask = mask_heart(header, dcm_array, size(dcm_array, 3)÷2);
+
+# ╔═╡ 343815f2-6b33-4408-81eb-d4b1fddf60ac
+@bind a PlutoUI.Slider(1:size(masked_array, 3), default=10, show_value=true)
+
+# ╔═╡ 127344d7-38d6-4338-9ae8-edd92090b5cf
+heatmap(masked_array[:, :, a], colormap=:grays)
+
+# ╔═╡ fc3bbc09-e993-4f1d-838d-72041cb0f579
+begin
+	fig = Figure()
+	
+	ax = Makie.Axis(fig[1, 1])
+	ax.title = "Raw DICOM Array"
+	heatmap!(transpose(dcm_array[:, :, 15]), colormap=:grays)
+	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
+	fig
+end
+
+# ╔═╡ 865f42c6-ca98-498a-89a3-d4c9986237d3
+begin
+	fig2 = Figure()
+	
+	ax2 = Makie.Axis(fig2[1, 1])
+	ax2.title = "Mask Array"
+	heatmap!(transpose(mask), colormap=:grays)
+	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
+	fig2
+end
+
+# ╔═╡ 0a2563dd-d104-4f1b-b178-f77ca30e96b3
+begin
+	fig3 = Figure()
+	
+	ax3 = Makie.Axis(fig3[1, 1])
+	ax3.title = "Masked DICOM Array"
+	heatmap!(transpose(masked_array[:, :, 23]), colormap=:grays)
+	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
+	fig3
+end
+
 # ╔═╡ db231239-5a21-402f-8eb5-b2e44e03b312
 md"""
 ## Segment Calcium Rod
 """
+
+# ╔═╡ ef56f1b2-150f-4608-944d-b5785a46e77c
+calcium_image, slice_CCI, quality_slice, cal_rod_slice = mask_rod(masked_array, header);
+
+# ╔═╡ 252d8c09-fcef-435e-9785-ec7ef607f108
+@bind c PlutoUI.Slider(1:size(calcium_image, 3), default=cal_rod_slice, show_value=true)
+
+# ╔═╡ cf330459-0792-48fb-9346-f87b3019a0f6
+heatmap(transpose(calcium_image[:, :, c]), colormap=:grays)
 
 # ╔═╡ eb4494c0-003d-4967-85fa-b20d8e7f9763
 md"""
@@ -126,10 +202,51 @@ md"""
 ## Calibration Prep
 """
 
+# ╔═╡ ed57792e-beb4-45af-a710-e0f6268ddac3
+array_filtered = abs.(mapwindow(median, calcium_image[:, :, cal_rod_slice], (3, 3)));
+
+# ╔═╡ f7c31a75-39c7-4be7-acbe-c36db4c252cb
+bool_arr = array_filtered .> 0;
+
+# ╔═╡ 9fcdac1c-4307-4f27-a924-b8887406fcd7
+bool_arr_erode = (((erode(erode(bool_arr)))));
+
+# ╔═╡ 46112e23-ce69-4130-832d-a26e7d5195f9
+heatmap(bool_arr, colormap=:grays)
+
+# ╔═╡ 45f4a72e-a74a-4db2-b144-576b3f22b1b0
+heatmap(bool_arr_erode, colormap=:grays)
+
+# ╔═╡ 84efd8af-873e-448d-b70d-1832e824fa3f
+c_img = calcium_image[:, :, cal_rod_slice-1:cal_rod_slice+1];
+
+# ╔═╡ e326a760-5795-4892-8dc7-88bfef009a52
+begin
+	mask_cal_3D = Array{Bool}(undef, size(c_img))
+	for z in 1:size(c_img, 3)
+		mask_cal_3D[:, :, z] = bool_arr_erode
+	end
+end;
+
+# ╔═╡ 1666956f-1417-45ae-945c-7f58b98cfe9e
+# hist(c_img[mask_cal_3D])
+
+# ╔═╡ ab09d0f1-f072-4f77-9889-a2beb852dc48
+# cal_insert_mean = mean(c_img[mask_cal_3D])
+
+# ╔═╡ f12cf6c5-9e82-4572-8321-fc848f1c866e
+cal_insert_mean = quantile!(c_img[mask_cal_3D], 0.7)
+
 # ╔═╡ 9f5b80aa-afb7-4c0c-829f-30171360a87e
 md"""
 # Score Large Inserts
 """
+
+# ╔═╡ 3e7253c2-b6df-4dab-8405-08ed93c03f10
+arr = masked_array[:, :, slice_CCI-2:slice_CCI+2];
+
+# ╔═╡ 1f40f903-4c8b-48bc-bb8a-fa16bc6fc297
+single_arr = masked_array[:, :, slice_CCI];
 
 # ╔═╡ c7f433f7-c12f-41eb-be35-97997d5142b7
 md"""
@@ -145,6 +262,9 @@ md"""
 md"""
 #### Ring (background) mask
 """
+
+# ╔═╡ c30c8fd9-93b5-404b-a1c4-5cdeda48845f
+pixel_size = DICOMUtils.get_pixel_size(header)
 
 # ╔═╡ acfcb465-10e7-417a-9fe3-4231c86c5293
 md"""
@@ -241,223 +361,12 @@ md"""
 #### Dilated mask
 """
 
-# ╔═╡ c8bff4a0-a2a1-4e19-9d35-aceb00b365ff
-md"""
-#### Ring (background) mask
-"""
-
-# ╔═╡ 82bbbd01-7a15-438c-b317-22b9511e8895
-md"""
-## Medium Density
-"""
-
-# ╔═╡ 4ae034d0-b3fa-46ca-acf7-b93062bdb5a2
-md"""
-#### Dilated mask
-"""
-
-# ╔═╡ f66110c6-f501-4a55-8719-fc752b838de3
-md"""
-#### Ring (background) mask
-"""
-
-# ╔═╡ 15bee139-54fd-43ff-a761-8464f1d9d15b
-md"""
-## Low Density
-"""
-
-# ╔═╡ abbdd826-41be-481c-87a6-b09864fc9d4f
-md"""
-#### Dilated mask
-"""
-
-# ╔═╡ 97ae0d1b-0903-4096-bf62-660c0733d094
-md"""
-#### Ring (background) mask
-"""
-
-# ╔═╡ b9d9c618-45e2-4538-92ec-450bc96a2bbb
-md"""
-# Results
-"""
-
-# ╔═╡ c8a07078-ae5f-423f-abde-6ac495cf32b1
-density_array = [0, 200, 400, 800]
-
-# ╔═╡ 2c71a78a-0eb3-46d8-a625-9c886ca71450
-inserts = [
-	"Low Density",
-	"Medium Density",
-	"High Density"
-]
-
-# ╔═╡ ee64e181-80d8-4076-a2a5-42d2b1e98214
-ground_truth_mass_large = [
-	19.6,
-	39.3,
-	78.5
-] # mg
-
-# ╔═╡ 91739e5e-1e27-4f53-94ab-b63b2dd65dce
-ground_truth_mass_medium = [
-	4.2,
-	8.5,
-	17.0
-]
-
-# ╔═╡ 3933fc50-4f7e-4e71-9911-b9013377543e
-ground_truth_mass_small = [
-	0.2,
-	0.3,
-	0.6
-]
-
-# ╔═╡ 34cdbadf-edfa-4708-be18-03e40f6e00fe
-begin
-	SCAN_NUMBER = 2
-	VENDER = "Canon_Aquilion_One_Vision"
-	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
-end
-
-# ╔═╡ 8feec48a-9ea2-4aa5-96a1-544ef298a3ac
-root_path = string(BASE_PATH, VENDER)
-
-# ╔═╡ 1c7739dc-6615-4aab-b9fa-a4664c858070
-dcm_path_list = dcm_list_builder(root_path)
-
-# ╔═╡ 752cfdd4-f2cf-45fb-8f70-959d145264f6
-pth = dcm_path_list[SCAN_NUMBER]
-
-# ╔═╡ 96fc1811-ab0f-41e6-8857-31b850a03199
-pth
-
-# ╔═╡ ff90198d-14e0-4404-813f-40dd35cc1f47
-scan = basename(pth)
-
-# ╔═╡ b58a6353-8574-44bc-8312-603b9b30d672
-header, dcm_array, slice_thick_ori1 = dcm_reader(pth);
-
-# ╔═╡ 91243a6c-ce6f-4fc1-b28c-792e8c71dd53
-masked_array, center_insert, mask = mask_heart(header, dcm_array, size(dcm_array, 3)÷2);
-
-# ╔═╡ 343815f2-6b33-4408-81eb-d4b1fddf60ac
-@bind a PlutoUI.Slider(1:size(masked_array, 3), default=10, show_value=true)
-
-# ╔═╡ 127344d7-38d6-4338-9ae8-edd92090b5cf
-heatmap(masked_array[:, :, a], colormap=:grays)
-
-# ╔═╡ 865f42c6-ca98-498a-89a3-d4c9986237d3
-begin
-	fig2 = Figure()
-	
-	ax2 = Makie.Axis(fig2[1, 1])
-	ax2.title = "Mask Array"
-	heatmap!(transpose(mask), colormap=:grays)
-	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
-	fig2
-end
-
-# ╔═╡ 0a2563dd-d104-4f1b-b178-f77ca30e96b3
-begin
-	fig3 = Figure()
-	
-	ax3 = Makie.Axis(fig3[1, 1])
-	ax3.title = "Masked DICOM Array"
-	heatmap!(transpose(masked_array[:, :, 23]), colormap=:grays)
-	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
-	fig3
-end
-
-# ╔═╡ fc3bbc09-e993-4f1d-838d-72041cb0f579
-begin
-	fig = Figure()
-	
-	ax = Makie.Axis(fig[1, 1])
-	ax.title = "Raw DICOM Array"
-	heatmap!(transpose(dcm_array[:, :, 15]), colormap=:grays)
-	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
-	fig
-end
-
-# ╔═╡ ef56f1b2-150f-4608-944d-b5785a46e77c
-calcium_image, slice_CCI, quality_slice, cal_rod_slice = mask_rod(masked_array, header);
-
-# ╔═╡ 252d8c09-fcef-435e-9785-ec7ef607f108
-@bind c PlutoUI.Slider(1:size(calcium_image, 3), default=cal_rod_slice, show_value=true)
-
-# ╔═╡ cf330459-0792-48fb-9346-f87b3019a0f6
-heatmap(transpose(calcium_image[:, :, c]), colormap=:grays)
-
-# ╔═╡ ed57792e-beb4-45af-a710-e0f6268ddac3
-array_filtered = abs.(mapwindow(median, calcium_image[:, :, cal_rod_slice], (3, 3)));
-
-# ╔═╡ f7c31a75-39c7-4be7-acbe-c36db4c252cb
-bool_arr = array_filtered .> 0;
-
-# ╔═╡ 9fcdac1c-4307-4f27-a924-b8887406fcd7
-bool_arr_erode = (((erode(erode(bool_arr)))));
-
-# ╔═╡ 45f4a72e-a74a-4db2-b144-576b3f22b1b0
-heatmap(bool_arr_erode, colormap=:grays)
-
-# ╔═╡ 46112e23-ce69-4130-832d-a26e7d5195f9
-heatmap(bool_arr, colormap=:grays)
-
-# ╔═╡ 84efd8af-873e-448d-b70d-1832e824fa3f
-c_img = calcium_image[:, :, cal_rod_slice-1:cal_rod_slice+1];
-
-# ╔═╡ e326a760-5795-4892-8dc7-88bfef009a52
-begin
-	mask_cal_3D = Array{Bool}(undef, size(c_img))
-	for z in 1:size(c_img, 3)
-		mask_cal_3D[:, :, z] = bool_arr_erode
-	end
-end;
-
-# ╔═╡ 1666956f-1417-45ae-945c-7f58b98cfe9e
-hist(c_img[mask_cal_3D])
-
-# ╔═╡ ab09d0f1-f072-4f77-9889-a2beb852dc48
-cal_insert_mean2 = mean(c_img[mask_cal_3D])
-
-# ╔═╡ f12cf6c5-9e82-4572-8321-fc848f1c866e
-cal_insert_mean = quantile!(c_img[mask_cal_3D], 0.7)
-
-# ╔═╡ 3e7253c2-b6df-4dab-8405-08ed93c03f10
-arr = masked_array[:, :, slice_CCI-2:slice_CCI+2];
-
-# ╔═╡ 1f40f903-4c8b-48bc-bb8a-fa16bc6fc297
-single_arr = masked_array[:, :, slice_CCI];
-
-# ╔═╡ c30c8fd9-93b5-404b-a1c4-5cdeda48845f
-pixel_size = DICOMUtils.get_pixel_size(header)
-
-# ╔═╡ b84bf3a0-a41a-40f8-a865-81038d6ac334
-# angles = collect(-10:2:10)
-
-# ╔═╡ 90238982-4e93-4b44-8860-2cccb41e57da
-# angle_factor = -7.5
-
-# ╔═╡ 20b4c1ac-8133-4268-9005-8c41d7ff561f
-# for angle in angles
-# 	global angle_factor = angle
-# end
-
-# ╔═╡ 760bb7c5-066b-40bd-926d-cfda7f6899cb
-# 
-
-# ╔═╡ 1e0f62cd-6540-41f5-8574-639c10604906
-# 
-
-# ╔═╡ df23f6d9-0b19-4b17-b19f-cc49eddce587
-angles = collect(-10:2:10)
-
 # ╔═╡ 6f078eda-1fa3-4c9b-81d5-10909a9c9387
-angle_factor = -7.5
+angle_factor = -4
 
 # ╔═╡ 53f711d7-7ec2-41ea-b609-3146c01fa030
 mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(
-		dcm_array, masked_array, header, slice_CCI, center_insert; angle_factor=angle_factor)
+		dcm_array, masked_array, header, slice_CCI, center_insert; angle_factor=angle_factor);
 
 # ╔═╡ 95948083-8209-426e-ac12-2d7e925a6c30
 masks = mask_L_HD + mask_M_HD + mask_S_HD + mask_L_MD + mask_M_MD + mask_S_MD + mask_L_LD + mask_M_LD + mask_S_LD;
@@ -580,13 +489,6 @@ begin
 	mass_l_ld = score(s_bkg_L_LD, cal_insert_mean, pixel_size, ρ, alg_L_LD)
 end
 
-# ╔═╡ 1b6e52cc-fdc1-48ce-bf0a-a3f729eeaf99
-calculated_mass_large = [
-	mass_l_ld,
-	mass_l_md,
-	mass_l_hd
-]
-
 # ╔═╡ ab8473c4-85a9-4c66-83b1-6b8822afc855
 begin
 	mask_M_HD_3D = Array{Bool}(undef, size(arr))
@@ -701,13 +603,6 @@ begin
 	mass_m_ld = score(s_bkg_M_LD, cal_insert_mean, pixel_size, ρ, alg_M_LD)
 end
 
-# ╔═╡ 26380cc4-947f-4f22-9fc5-ac748abdac4a
-calculated_mass_medium = [
-	mass_m_ld,
-	mass_m_md,
-	mass_m_hd
-]
-
 # ╔═╡ d5a8ba59-f167-48f3-954f-1b5a661456d5
 begin
 	mask_S_HD_3D = Array{Bool}(undef, size(arr))
@@ -724,6 +619,11 @@ dilated_mask_S_HD = dilate(dilate(dilate(dilate(dilate((mask_S_HD_3D))))));
 
 # ╔═╡ fac87764-f188-4058-ae48-7aa36ac3b3bf
 overlay_mask_plot(arr, dilated_mask_S_HD, m2, "dilated mask")
+
+# ╔═╡ c8bff4a0-a2a1-4e19-9d35-aceb00b365ff
+md"""
+#### Ring (background) mask
+"""
 
 # ╔═╡ ad67881f-9085-46dc-a645-c3f111738c94
 ring_mask_S_HD = dilate(dilate(dilate(dilate(dilate(mask_S_HD_3D))))) - dilate(dilate(dilate(dilate(mask_S_HD_3D))));
@@ -744,11 +644,16 @@ end
 begin
 	alg_S_HD = Integrated(arr[mask_S_HD_3D])
 	mass_s_hd = score(s_bkg_S_HD, cal_insert_mean, pixel_size, ρ, alg_S_HD)
-	if mass_s_hd < 0
-		mass_s_hd = 0
-	end
-	mass_s_hd
+	# if mass_s_hd < 0
+	# 	mass_s_hd = 0
+	# end
+	# mass_s_hd
 end
+
+# ╔═╡ 82bbbd01-7a15-438c-b317-22b9511e8895
+md"""
+## Medium Density
+"""
 
 # ╔═╡ 61025c8f-d189-4ad0-bbe1-bb24e13083d4
 begin
@@ -758,6 +663,11 @@ begin
 	end
 end;
 
+# ╔═╡ 4ae034d0-b3fa-46ca-acf7-b93062bdb5a2
+md"""
+#### Dilated mask
+"""
+
 # ╔═╡ 6e544d17-f156-43c2-9255-58bd6b0c1888
 dilated_mask_S_MD = dilate(dilate(dilate(dilate(dilate(mask_S_MD_3D)))));
 
@@ -766,6 +676,11 @@ dilated_mask_S_MD = dilate(dilate(dilate(dilate(dilate(mask_S_MD_3D)))));
 
 # ╔═╡ c3f5fc15-60f5-457f-8353-9e10926d5a7d
 overlay_mask_plot(arr, dilated_mask_S_MD, n2, "dilated mask")
+
+# ╔═╡ f66110c6-f501-4a55-8719-fc752b838de3
+md"""
+#### Ring (background) mask
+"""
 
 # ╔═╡ 2427ac81-bbb4-49ec-9897-d4fa59e4259b
 ring_mask_S_MD = dilate(dilate(dilate(dilate(dilate(mask_S_MD_3D))))) - dilate(dilate(dilate(dilate(mask_S_MD_3D))));
@@ -786,11 +701,16 @@ end
 begin
 	alg_S_MD = Integrated(arr[mask_S_MD_3D])
 	mass_s_md = score(s_bkg_S_MD, cal_insert_mean, pixel_size, ρ, alg_S_MD)
-	if mass_s_md < 0
-		mass_s_md = 0
-	end
-	mass_s_md
+	# if mass_s_md < 0
+	# 	mass_s_md = 0
+	# end
+	# mass_s_md
 end
+
+# ╔═╡ 15bee139-54fd-43ff-a761-8464f1d9d15b
+md"""
+## Low Density
+"""
 
 # ╔═╡ 706a167f-1cff-46ba-9142-5385c68a5f5f
 begin
@@ -800,6 +720,11 @@ begin
 	end
 end;
 
+# ╔═╡ abbdd826-41be-481c-87a6-b09864fc9d4f
+md"""
+#### Dilated mask
+"""
+
 # ╔═╡ 332b0566-9e06-4d6b-b606-68d2f65bddec
 dilated_mask_S_LD = dilate(dilate(dilate(dilate(dilate(mask_S_LD_3D)))));
 
@@ -808,6 +733,11 @@ dilated_mask_S_LD = dilate(dilate(dilate(dilate(dilate(mask_S_LD_3D)))));
 
 # ╔═╡ 9c48c322-279f-4ec9-9fa7-f7fc0bfdc8ad
 overlay_mask_plot(arr, dilated_mask_S_LD, o2, "dilated mask")
+
+# ╔═╡ 97ae0d1b-0903-4096-bf62-660c0733d094
+md"""
+#### Ring (background) mask
+"""
 
 # ╔═╡ 01596aa1-cc2b-4c5c-86cb-8b1e624518ba
 ring_mask_S_LD = dilate(dilate(dilate(dilate(dilate(mask_S_LD_3D))))) - dilate(dilate(dilate(dilate(mask_S_LD_3D))));
@@ -828,11 +758,61 @@ end
 begin
 	alg_S_LD = Integrated(arr[mask_S_LD_3D])
 	mass_s_ld = score(s_bkg_S_LD, cal_insert_mean, pixel_size, ρ, alg_S_LD)
-	if mass_s_ld < 0
-		mass_s_ld = 0
-	end
-	mass_s_ld
+	# if mass_s_ld < 0
+	# 	mass_s_ld = 0
+	# end
+	# mass_s_ld
 end
+
+# ╔═╡ b9d9c618-45e2-4538-92ec-450bc96a2bbb
+md"""
+# Results
+"""
+
+# ╔═╡ c8a07078-ae5f-423f-abde-6ac495cf32b1
+density_array = [0, 200, 400, 800]
+
+# ╔═╡ 2c71a78a-0eb3-46d8-a625-9c886ca71450
+inserts = [
+	"Low Density",
+	"Medium Density",
+	"High Density"
+]
+
+# ╔═╡ ee64e181-80d8-4076-a2a5-42d2b1e98214
+ground_truth_mass_large = [
+	19.6,
+	39.3,
+	78.5
+] # mg
+
+# ╔═╡ 1b6e52cc-fdc1-48ce-bf0a-a3f729eeaf99
+calculated_mass_large = [
+	mass_l_ld,
+	mass_l_md,
+	mass_l_hd
+]
+
+# ╔═╡ 91739e5e-1e27-4f53-94ab-b63b2dd65dce
+ground_truth_mass_medium = [
+	4.2,
+	8.5,
+	17.0
+]
+
+# ╔═╡ 26380cc4-947f-4f22-9fc5-ac748abdac4a
+calculated_mass_medium = [
+	mass_m_ld,
+	mass_m_md,
+	mass_m_hd
+]
+
+# ╔═╡ 3933fc50-4f7e-4e71-9911-b9013377543e
+ground_truth_mass_small = [
+	0.2,
+	0.3,
+	0.6
+]
 
 # ╔═╡ 700d8ca0-3f41-498a-bd22-42a0324bfe55
 calculated_mass_small = [
@@ -841,68 +821,9 @@ calculated_mass_small = [
 	mass_s_hd
 ]
 
-# ╔═╡ 4fc49945-b471-4977-92de-7b3eafeca425
-# begin
-# 	angle_factor = -12
-# 	RMSE_Dict = Dict()
-	# mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(
-	# 	dcm_array, masked_array, header, slice_CCI, center_insert; angle_factor=angle_factor
-	# )
-# 	for angle in angles
-# 		angle_factor = angle
-# 		mask_S_HD_3D = Array{Bool}(undef, size(arr))
-# 		for z in 1:size(arr, 3)
-# 			mask_S_HD_3D[:, :, z] = mask_S_HD
-# 		end
-# 		begin
-# 		mask_S_MD_3D = Array{Bool}(undef, size(arr))
-# 		for z in 1:size(arr, 3)
-# 				mask_S_MD_3D[:, :, z] = mask_S_MD
-# 			end
-# 		end
-# 		begin
-# 		mask_S_LD_3D = Array{Bool}(undef, size(arr))
-# 		for z in 1:size(arr, 3)
-# 			mask_S_LD_3D[:, :, z] = mask_S_LD
-# 		end
-# 		end
-# 		calculated_mass_small = [
-# 			mass_s_ld,
-# 			mass_s_md,
-# 			mass_s_hd
-# 		]
-# 		RMSE_check = sqrt(sum((ground_truth_mass_small .- calculated_mass_small)).^2 / 3)
-# 		if haskey(RMSE_Dict, "value") == false
-# 			RMSE_Dict["value"] = RMSE_check
-# 			RMSE_Dict["factor"] = angle_factor
-# 		end
-# 		if RMSE_check < RMSE_Dict["value"]
-# 			RMSE_Dict["value"] = RMSE_check
-# 			RMSE_Dict["factor"] = angle_factor
-# 		end
-# 		@info RMSE_check
-# 		RMSE_Dict
-# 	end
-# end
-
-# ╔═╡ b1444b64-1f80-4068-8592-4669e1af4c9e
-# begin
-# 	RMSE_Dict = Dict()
-# 	RMSE_check = sqrt(sum((ground_truth_mass_small .- calculated_mass_small)).^2 / 3)
-# 	if haskey(RMSE_Dict, "value") == false
-# 		RMSE_Dict["value"] = RMSE_check
-# 		RMSE_Dict["factor"] = angle_factor
-# 	end
-# 	if RMSE_check < RMSE_Dict["value"]
-# 		RMSE_Dict[:value] = RMSE_check
-# 		RMSE_Dict[:factor] = angle_factor
-# 	end
-# 	@info RMSE_check
-# 	RMSE_Dict
-# end
-
 # ╔═╡ 64e72733-a646-415d-a4cd-c2497ed6cd33
 df = DataFrame(
+	scan = scan,
 	inserts = inserts,
 	ground_truth_mass_large = ground_truth_mass_large,
 	calculated_mass_large = calculated_mass_large,
@@ -986,13 +907,32 @@ end
 output_path = string(cd(pwd, "..") , "/data/output/", VENDER, "4", "/", scan, ".csv")
 
 # ╔═╡ 68c98c61-11fc-4658-bed7-3491b46d063d
-CSV.write(output_path, df)
+# CSV.write(output_path, df)
+
+# ╔═╡ 7d5d27e8-15a3-419f-93dc-37134740ee29
+md"""
+### Save full df
+"""
+
+# ╔═╡ 38f890c1-6e5d-48c7-aec1-e3971ce2bc2b
+dfs = []
+
+# ╔═╡ e9eb7218-54d1-4131-a3c9-cc19e1104166
+push!(dfs, df)
+
+# ╔═╡ 1dc38db1-ad2b-436d-9ac5-4065bedacaf3
+if length(dfs) == 10
+	global new_df = vcat(dfs[1:10]...)
+	output_path_new = string(cd(pwd, "..") , "/data/output/", VENDER, "4", "/full.csv")
+	CSV.write(output_path_new, new_df)
+end
 
 # ╔═╡ Cell order:
 # ╠═8f0a533f-fdb6-4c1f-bc76-6d1b0f15192c
 # ╠═9cff9635-f4f4-4d59-81a6-92390c09526c
 # ╟─f5090527-3372-48ea-8239-f51bf20fbba7
 # ╟─383f5377-0435-4ea4-96d9-6413fcce1ee0
+# ╠═34cdbadf-edfa-4708-be18-03e40f6e00fe
 # ╠═8feec48a-9ea2-4aa5-96a1-544ef298a3ac
 # ╠═1c7739dc-6615-4aab-b9fa-a4664c858070
 # ╠═752cfdd4-f2cf-45fb-8f70-959d145264f6
@@ -1002,7 +942,7 @@ CSV.write(output_path, df)
 # ╟─60cc7eea-8314-4f41-bf5d-8375a2c996e0
 # ╟─555426d7-4584-41eb-a577-53a5a506e97a
 # ╟─aa688492-bafb-4623-af4b-a744ca59335e
-# ╟─d16e857c-654a-48fa-81dd-b53c7092cc86
+# ╠═d16e857c-654a-48fa-81dd-b53c7092cc86
 # ╟─d6b6104a-df14-4cb0-96e6-e07be85255ad
 # ╠═91243a6c-ce6f-4fc1-b28c-792e8c71dd53
 # ╟─343815f2-6b33-4408-81eb-d4b1fddf60ac
@@ -1015,6 +955,7 @@ CSV.write(output_path, df)
 # ╟─252d8c09-fcef-435e-9785-ec7ef607f108
 # ╠═cf330459-0792-48fb-9346-f87b3019a0f6
 # ╟─eb4494c0-003d-4967-85fa-b20d8e7f9763
+# ╠═53f711d7-7ec2-41ea-b609-3146c01fa030
 # ╠═95948083-8209-426e-ac12-2d7e925a6c30
 # ╠═bf3853ea-0b3b-476f-b9b5-b969cbcc9827
 # ╟─23e10eee-6022-4b31-bbc2-9ddbcbda0b52
@@ -1111,6 +1052,7 @@ CSV.write(output_path, df)
 # ╟─fa1c77f9-5f01-47b5-aef7-d885ddae8029
 # ╠═799cec3a-953d-4fe2-bc06-351f5d6f4890
 # ╟─c2c9bd13-f56b-44e7-97ed-be2e06d63ba3
+# ╠═6f078eda-1fa3-4c9b-81d5-10909a9c9387
 # ╠═fac87764-f188-4058-ae48-7aa36ac3b3bf
 # ╟─c8bff4a0-a2a1-4e19-9d35-aceb00b365ff
 # ╠═ad67881f-9085-46dc-a645-c3f111738c94
@@ -1151,22 +1093,15 @@ CSV.write(output_path, df)
 # ╠═26380cc4-947f-4f22-9fc5-ac748abdac4a
 # ╠═3933fc50-4f7e-4e71-9911-b9013377543e
 # ╠═700d8ca0-3f41-498a-bd22-42a0324bfe55
-# ╠═34cdbadf-edfa-4708-be18-03e40f6e00fe
-# ╠═b84bf3a0-a41a-40f8-a865-81038d6ac334
-# ╠═90238982-4e93-4b44-8860-2cccb41e57da
-# ╠═20b4c1ac-8133-4268-9005-8c41d7ff561f
-# ╠═760bb7c5-066b-40bd-926d-cfda7f6899cb
-# ╠═1e0f62cd-6540-41f5-8574-639c10604906
-# ╠═df23f6d9-0b19-4b17-b19f-cc49eddce587
-# ╠═6f078eda-1fa3-4c9b-81d5-10909a9c9387
-# ╠═53f711d7-7ec2-41ea-b609-3146c01fa030
-# ╠═4fc49945-b471-4977-92de-7b3eafeca425
-# ╠═b1444b64-1f80-4068-8592-4669e1af4c9e
 # ╠═64e72733-a646-415d-a4cd-c2497ed6cd33
 # ╟─98edd7ca-a6c2-45b9-9f59-0a084316028f
 # ╟─406c4f4f-aea9-45dd-8947-b4c503ec66ad
-# ╟─9c95ca40-8ace-4228-8216-bea0cd99c084
+# ╠═9c95ca40-8ace-4228-8216-bea0cd99c084
 # ╟─0bae0ce4-c0be-46ca-821f-a34bb7cd7e87
 # ╠═01b4f8ad-96af-4cfc-9b29-be3aa02f7b84
 # ╠═20724345-3b87-4298-ab0f-22357e8f5169
 # ╠═68c98c61-11fc-4658-bed7-3491b46d063d
+# ╟─7d5d27e8-15a3-419f-93dc-37134740ee29
+# ╠═38f890c1-6e5d-48c7-aec1-e3971ce2bc2b
+# ╠═e9eb7218-54d1-4131-a3c9-cc19e1104166
+# ╠═1dc38db1-ad2b-436d-9ac5-4065bedacaf3

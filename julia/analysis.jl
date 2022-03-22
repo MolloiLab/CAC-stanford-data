@@ -24,6 +24,7 @@ begin
 		Pkg.add(url="https://github.com/Dale-Black/CalciumScoring.jl")
 		Pkg.add("CairoMakie")
 		Pkg.add("HypothesisTests")
+		Pkg.add("Colors")
 	end
 	
 	using PlutoUI
@@ -40,6 +41,7 @@ begin
 	using CalciumScoring
 	using CairoMakie
 	using HypothesisTests
+	using Colors
 end
 
 # ╔═╡ ada1a311-b8cc-4376-9811-104737119f81
@@ -87,6 +89,9 @@ begin
 	
 	f1
 end
+
+# ╔═╡ 7f164ba2-950a-42ea-9735-64ad162de1dc
+
 
 # ╔═╡ 56ac7ed7-15fa-4201-a95a-910b85090928
 md"""
@@ -659,6 +664,17 @@ small_std_i = std(df_i_canon[!, :calculated_mass_small])
 # ╔═╡ f94b1309-a68f-48f1-88d2-30112224450c
 small_std_a = std(df_a_canon[!, :calculated_mass_small])
 
+# ╔═╡ 174cc8bc-1a74-43eb-aee7-8a3a629e1eb9
+md"""
+## Total
+"""
+
+# ╔═╡ 25f30d11-2e53-43f0-a565-70a33ed357d4
+rmsd_tot_i = mean([int_rms_large_c, int_rms_medium_c, int_rms_small_c])
+
+# ╔═╡ 1181f896-0491-43d0-bce1-44a9314faa65
+rmsd_tot_a = mean([agat_rms_large_c, agat_rms_medium_c, agat_rms_small_c])
+
 # ╔═╡ 119a83d5-c016-4282-941d-faffc1c57f90
 md"""
 # Canon Only
@@ -755,6 +771,225 @@ end
 # ╔═╡ eedbec30-34e2-4f1a-8e81-733fdef72302
 save("larger.pdf", f1a, pt_per_unit = 2)
 
+# ╔═╡ b818b581-e36f-413a-a16c-1783f88c1fb9
+md"""
+## Bar chart
+"""
+
+# ╔═╡ 35d577a7-be59-4524-b7a1-630ad8c9515d
+md"""
+### Small Only
+"""
+
+# ╔═╡ 11cfb2cf-4159-4a1c-b651-21f432de0117
+num_nonzero_i = length(findall(x -> x != 0, df_i_canon[!, :calculated_mass_small]))
+
+# ╔═╡ c73cb2c4-f640-4822-9f92-ca0332170b75
+num_zero_i = length(findall(x -> x == 0, df_i_canon[!, :calculated_mass_small]))
+
+# ╔═╡ 059fd708-3aca-4d90-a831-1a48c6a79f9c
+num_nonzero_a = length(findall(x -> x != 0, df_a_canon[!, :calculated_mass_small]))
+
+# ╔═╡ 819272ec-5300-47cb-bec8-46617d4b5e17
+num_zero_a = length(findall(x -> x == 0, df_a_canon[!, :calculated_mass_small]))
+
+# ╔═╡ 15e5bf9b-ae71-4523-a02e-554a312707fe
+begin
+	x = [1, 1, 2, 2]
+	height = [num_zero_i, num_zero_a, num_nonzero_i, num_nonzero_a]
+	grp = [1, 2, 1, 2]
+end
+
+# ╔═╡ b5374ee9-607d-4b03-82f6-a9bef97c272d
+colors = cgrad(:tab10)
+
+# ╔═╡ ab1445fd-9462-40ee-b105-1e0db7748f06
+md"""
+### Total
+"""
+
+# ╔═╡ e68a4a0d-b533-4484-8f50-fb752268e907
+tot_i = hcat(df_i_canon[!, :calculated_mass_small], df_i_canon[!, :calculated_mass_medium], df_i_canon[!, :calculated_mass_large]);
+
+# ╔═╡ 6c9d6fe2-9e35-46b6-acd9-61b5feb76d5e
+tot_a = hcat(df_a_canon[!, :calculated_mass_small], df_a_canon[!, :calculated_mass_medium], df_a_canon[!, :calculated_mass_large]);
+
+# ╔═╡ 5d1257f3-854a-4222-8065-ad9256f1365a
+num_nonzero_i_tot = length(findall(x -> x != 0, tot_i))
+
+# ╔═╡ c1f584cc-26a6-42af-898e-d5d9d6c1e111
+num_zero_i_tot = length(findall(x -> x == 0, tot_i))
+
+# ╔═╡ 36cd1c4b-69c0-4bb1-9d42-7cb895fac23d
+num_nonzero_a_tot = length(findall(x -> x != 0, tot_a))
+
+# ╔═╡ c3838058-b3ab-4975-b5d0-d5e7233d4d85
+num_zero_a_tot = length(findall(x -> x == 0, tot_a))
+
+# ╔═╡ f2834ca0-967e-4896-ae1d-1e5bf908089b
+height2 = [num_zero_i_tot, num_zero_a_tot, num_nonzero_i_tot, num_nonzero_a_tot]
+
+# ╔═╡ 54c5a455-1521-40ef-acca-28a9ef276bac
+
+
+# ╔═╡ 383214b7-8b7e-47e1-8bca-da6a5d737c2e
+md"""
+## IHS/AS vs Known Mass
+"""
+
+# ╔═╡ 0c876c9c-7c5c-40a2-aa9c-3eb9b639e181
+# begin
+# 	fbar2 = Figure()
+# 	axbar2 = Axis(fbar2[1, 1])
+
+# 	barplot!(axbar2, x, height2, dodge = grp, color =  [colors[1], colors[2], colors[1], colors[2]])
+
+# 	axbar2.xticks = (1:2, ["CAC = 0", "CAC > 0"])
+# 	axbar2.ylabel = "Number of Inserts"
+# 	axbar2.title = "Calcium Scores (All Inserts)"
+
+# 	labels2 = ["Integrated Score", "Agatston Score"]
+# 	elements2 = [PolyElement(polycolor = colors[i]) for i in 1:length(labels)]
+# 	title2 = "Scoring Techniques"
+	
+# 	Legend(fbar2[1,2], elements2, labels2, title2)
+	
+# 	fbar2
+	
+# end
+
+# ╔═╡ ee383752-a02e-420e-b261-1959286b91f9
+# begin
+# 	fbar1 = Figure()
+# 	axbar1 = Axis(fbar1[1, 1])
+
+# 	barplot!(axbar1, x, height, dodge = grp, color =  [colors[1], colors[2], colors[1], colors[2]])
+
+# 	axbar1.xticks = (1:2, ["CAC = 0", "CAC > 0"])
+# 	axbar1.ylabel = "Number of Inserts"
+# 	axbar1.title = "Calcium Scores (Small Inserts)"
+
+# 	labels = ["Integrated Score", "Agatston Score"]
+# 	elements = [PolyElement(polycolor = colors[i]) for i in 1:length(labels)]
+# 	title = "Scoring Techniques"
+	
+# 	Legend(fbar1[1,2], elements, labels, title)
+	
+# 	fbar1
+	
+# end
+
+# ╔═╡ 7363ab9e-bcc4-4bc1-bff3-da66d18924c6
+# begin
+# 	fInt = Figure()
+# 	axInt = Axis(fInt[1, 1])
+
+# 	scatter!(df_i_canon[!, :ground_truth_mass_large], df_i_canon[!, :calculated_mass_large], label="Mass: Large Inserts")
+# 	scatter!(df_i_canon[!, :ground_truth_mass_medium], df_i_canon[!, :calculated_mass_medium], label="Mass: Medium Inserts")
+# 	scatter!(df_i_canon[!, :ground_truth_mass_small], df_i_canon[!, :calculated_mass_small], label="Mass: Small Inserts")
+# 	lines!([0, 100], [0, 100], label="Unity Line")
+	
+# 	axInt.title = "Integrated Hounsfield Mass Score vs Known Mass"
+# 	axInt.ylabel = "Calculated Mass (mg)"
+# 	axInt.xlabel = "Known Mass (mg)"
+
+# 	xlims!(axInt, 0, 100)
+# 	ylims!(axInt, 0, 100)
+	
+# 	fInt[1, 2] = Legend(fInt, axInt, framevisible = false)
+	
+# 	fInt
+# end
+
+# ╔═╡ 20f1fdf1-51f1-4299-b642-af4d92a5cf31
+# begin
+# 	fAgat = Figure()
+# 	axAgat = Axis(fAgat[1, 1])
+
+# 	scatter!(df_a_canon[!, :ground_truth_mass_large], df_a_canon[!, :calculated_mass_large], label="Mass: Large Inserts")
+# 	scatter!(df_a_canon[!, :ground_truth_mass_medium], df_a_canon[!, :calculated_mass_medium], label="Mass: Medium Inserts")
+# 	scatter!(df_a_canon[!, :ground_truth_mass_small], df_a_canon[!, :calculated_mass_small], label="Mass: Small Inserts")
+# 	lines!([0, 100], [0, 100], label="Unity Line")
+	
+# 	axAgat.title = "Agatston Mass Score vs Known Mass"
+# 	axAgat.ylabel = "Calculated Mass (mg)"
+# 	axAgat.xlabel = "Known Mass (mg)"
+
+# 	xlims!(axAgat, 0, 100)
+# 	ylims!(axAgat, 0, 100)
+	
+# 	fAgat[1, 2] = Legend(fAgat, axAgat, framevisible = false)
+	
+# 	fAgat
+# end
+
+# ╔═╡ 0093205e-f8cf-4689-b756-823edd57a454
+begin
+	fInt = Figure()
+	axInt = Axis(fInt[1, 1])
+
+	scatter!(df_i_canon[!, :ground_truth_mass_large], df_i_canon[!, :calculated_mass_large], label="Large Inserts")
+	scatter!(df_i_canon[!, :ground_truth_mass_medium], df_i_canon[!, :calculated_mass_medium], label="Medium Inserts")
+	scatter!(df_i_canon[!, :ground_truth_mass_small], df_i_canon[!, :calculated_mass_small], label="Small Inserts", color=:red)
+	lines!([0, 100], [0, 100], label="Unity")
+	
+	axInt.title = "IHU Mass vs Known Mass"
+	axInt.ylabel = "Calculated Mass (mg)"
+	axInt.xlabel = "Known Mass (mg)"
+	axInt.xticks = [0, 25, 50, 75, 100]
+	axInt.yticks = [0, 25, 50, 75, 100]
+
+	xlims!(axInt, 0, 100)
+	ylims!(axInt, 0, 100)
+	
+	fInt[1, 3] = Legend(fInt, axInt, framevisible = false)
+
+	axAgat = Axis(fInt[1, 2])
+
+	scatter!(df_a_canon[!, :ground_truth_mass_large], df_a_canon[!, :calculated_mass_large], label="Mass: Large Inserts")
+	scatter!(df_a_canon[!, :ground_truth_mass_medium], df_a_canon[!, :calculated_mass_medium], label="Mass: Medium Inserts")
+	scatter!(df_a_canon[!, :ground_truth_mass_small], df_a_canon[!, :calculated_mass_small], label="Mass: Small Inserts", color=:red)
+	lines!([0, 100], [0, 100], label="Unity Line")
+	
+	axAgat.title = "AS Mass vs Known Mass"
+	axAgat.xlabel = "Known Mass (mg)"
+	axAgat.xticks = [0, 25, 50, 75, 100]
+	axAgat.yticks = [0, 25, 50, 75, 100]
+
+	xlims!(axAgat, 0, 100)
+	ylims!(axAgat, 0, 100)
+
+	axbar2 = Axis(fInt[2, 1])
+
+	barplot!(axbar2, x, height2, dodge = grp, color =  [colors[1], colors[2], colors[1], colors[2]])
+
+	axbar2.xticks = (1:2, ["CAC = 0", "CAC > 0"])
+	axbar2.ylabel = "Number of Inserts"
+	axbar2.title = "Calcium Scores (All Inserts)"
+
+	labels2 = ["Integrated Score", "Agatston Score"]
+	elements2 = [PolyElement(polycolor = colors[i]) for i in 1:length(labels2)]
+	title2 = "Scoring Techniques"
+
+	axbar1 = Axis(fInt[2, 2])
+
+	barplot!(axbar1, x, height, dodge = grp, color =  [colors[1], colors[2], colors[1], colors[2]])
+
+	axbar1.xticks = (1:2, ["CAC = 0", "CAC > 0"])
+	axbar1.title = "Calcium Scores (Small Inserts)"
+
+	labels = ["Integrated HU Score", "Agatston Score"]
+	elements = [PolyElement(polycolor = colors[i]) for i in 1:length(labels)]
+	title = "Scoring Techniques"
+	
+	Legend(fInt[2, 3], elements, labels, title)
+	
+	fInt
+end
+
+# ╔═╡ 7f4b8ddc-ff5c-48db-a159-3f21f8d52939
+save("scct2.png", fInt, pt_per_unit = 3)
+
 # ╔═╡ Cell order:
 # ╠═d5e88f20-a3de-11ec-2c6b-350b7ea5c841
 # ╠═ada1a311-b8cc-4376-9811-104737119f81
@@ -764,7 +999,8 @@ save("larger.pdf", f1a, pt_per_unit = 2)
 # ╠═3b0b0d7d-7551-4116-b570-92840e4747cb
 # ╠═33a88630-0059-496f-ab43-6f5a62dd672f
 # ╟─561909aa-a311-46a3-a60e-b0111f919195
-# ╟─29af4213-a61a-4155-8893-62a38ce5a2e4
+# ╠═29af4213-a61a-4155-8893-62a38ce5a2e4
+# ╠═7f164ba2-950a-42ea-9735-64ad162de1dc
 # ╟─56ac7ed7-15fa-4201-a95a-910b85090928
 # ╟─6413dc05-fc92-45a7-b092-a144807d0ca9
 # ╟─75d31c39-7335-4a6a-9f49-98b2883e63ba
@@ -802,7 +1038,7 @@ save("larger.pdf", f1a, pt_per_unit = 2)
 # ╠═63e9dbbb-8add-4de1-8d30-d871eaa311c0
 # ╟─75f861ae-3a76-4f41-bc2d-7dac75a372a7
 # ╟─3fcbabcd-d788-478a-b081-cb2efbdfc998
-# ╟─dc0f668b-ea03-4fbb-bafb-6943ccaadb51
+# ╠═dc0f668b-ea03-4fbb-bafb-6943ccaadb51
 # ╟─b7e2164b-063c-49e2-b3b8-ac561df22eb0
 # ╟─b7a2b1bb-1bcd-4ee8-9577-a8634b980944
 # ╠═18c64198-b1f4-47b4-a08d-552a1b99e715
@@ -844,8 +1080,35 @@ save("larger.pdf", f1a, pt_per_unit = 2)
 # ╠═6ac3ee1b-5365-4a3e-a2e2-1e1dfa7762f7
 # ╠═771f119b-eb79-4638-b016-ad5252fabb66
 # ╠═f94b1309-a68f-48f1-88d2-30112224450c
+# ╟─174cc8bc-1a74-43eb-aee7-8a3a629e1eb9
+# ╠═25f30d11-2e53-43f0-a565-70a33ed357d4
+# ╠═1181f896-0491-43d0-bce1-44a9314faa65
 # ╟─119a83d5-c016-4282-941d-faffc1c57f90
 # ╠═79a62129-c9ea-430a-862a-d6bc86658bb3
-# ╠═54d0e363-f838-4712-b46f-423291bf58a8
+# ╟─54d0e363-f838-4712-b46f-423291bf58a8
 # ╠═d5f64fac-e9c7-4137-a43a-a1588e001f08
 # ╠═eedbec30-34e2-4f1a-8e81-733fdef72302
+# ╟─b818b581-e36f-413a-a16c-1783f88c1fb9
+# ╟─35d577a7-be59-4524-b7a1-630ad8c9515d
+# ╠═11cfb2cf-4159-4a1c-b651-21f432de0117
+# ╠═c73cb2c4-f640-4822-9f92-ca0332170b75
+# ╠═059fd708-3aca-4d90-a831-1a48c6a79f9c
+# ╠═819272ec-5300-47cb-bec8-46617d4b5e17
+# ╠═15e5bf9b-ae71-4523-a02e-554a312707fe
+# ╠═b5374ee9-607d-4b03-82f6-a9bef97c272d
+# ╟─ab1445fd-9462-40ee-b105-1e0db7748f06
+# ╠═e68a4a0d-b533-4484-8f50-fb752268e907
+# ╠═6c9d6fe2-9e35-46b6-acd9-61b5feb76d5e
+# ╠═5d1257f3-854a-4222-8065-ad9256f1365a
+# ╠═c1f584cc-26a6-42af-898e-d5d9d6c1e111
+# ╠═36cd1c4b-69c0-4bb1-9d42-7cb895fac23d
+# ╠═c3838058-b3ab-4975-b5d0-d5e7233d4d85
+# ╠═f2834ca0-967e-4896-ae1d-1e5bf908089b
+# ╠═54c5a455-1521-40ef-acca-28a9ef276bac
+# ╟─383214b7-8b7e-47e1-8bca-da6a5d737c2e
+# ╠═0c876c9c-7c5c-40a2-aa9c-3eb9b639e181
+# ╠═ee383752-a02e-420e-b261-1959286b91f9
+# ╠═7363ab9e-bcc4-4bc1-bff3-da66d18924c6
+# ╠═20f1fdf1-51f1-4299-b642-af4d92a5cf31
+# ╟─0093205e-f8cf-4689-b756-823edd57a454
+# ╠═7f4b8ddc-ff5c-48db-a159-3f21f8d52939
