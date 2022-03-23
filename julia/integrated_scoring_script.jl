@@ -20,7 +20,7 @@ begin
 		Pkg.add("GLM")
 		Pkg.add(url="https://github.com/JuliaHealth/DICOM.jl")
 		Pkg.add(url="https://github.com/Dale-Black/DICOMUtils.jl")
-		Pkg.add(url="https://github.com/Dale-Black/Phantoms.jl")
+		Pkg.add(url="https://github.com/Dale-Black/PhantomSegmentation.jl")
 		Pkg.add(url="https://github.com/Dale-Black/CalciumScoring.jl")
 	end
 	
@@ -34,7 +34,7 @@ begin
 	using GLM
 	using DICOM
 	using DICOMUtils
-	using Phantoms
+	using PhantomSegmentation
 	using CalciumScoring
 end
 
@@ -43,7 +43,7 @@ TableOfContents()
 
 # ╔═╡ ff0a6e93-9c5e-4ac2-af02-ce253b535c6b
 begin
-	VENDER = "GE_Revolution"
+	VENDER = "Canon_Aquilion_One_Vision"
 	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 end;
 
@@ -76,208 +76,29 @@ begin
 		for z in 1:size(c_img, 3)
 			mask_cal_3D[:, :, z] = bool_arr_erode
 		end
-		cal_insert_mean2 = mean(c_img[mask_cal_3D])
-		cal_insert_mean = quantile!(c_img[mask_cal_3D], 0.7)
-	
-		# Segment Calcium Inserts
-		# Check Best Segmentation
-		angles = collect(-10:2:10)
-		RMSE_Dict = Dict()
-		for angle in angles
-			mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(
-			dcm_array, masked_array, header, slice_CCI, center_insert; angle_factor=angle)
-		
-			arr = masked_array[:, :, slice_CCI-3:slice_CCI+3]
-			single_arr = masked_array[:, :, slice_CCI]
-			pixel_size = DICOMUtils.get_pixel_size(header)
-			ρ = 0.2 # mg/mm^3
-			# Score Large InsertS
-			## High Density
-			mask_L_HD_3D = Array{Bool}(undef, size(arr))
-			for z in 1:size(arr, 3)
-				mask_L_HD_3D[:, :, z] = mask_L_HD
-			end
-			dilated_mask_L_HD = dilate(dilate(mask_L_HD_3D))
-			ring_mask_L_HD = dilate(dilate(dilate(dilate(mask_L_HD_3D)))) - dilate(dilate(dilate(mask_L_HD_3D)))
-			single_ring_mask_L_HD = Bool.(ring_mask_L_HD[:, :, 3])
-			s_bkg_L_HD = mean(single_arr[single_ring_mask_L_HD])
-			alg_L_HD = Integrated(arr[mask_L_HD_3D])
-			mass_l_hd = score(s_bkg_L_HD, cal_insert_mean, pixel_size, ρ, alg_L_HD)
-		
-			## Medium Density
-			mask_L_MD_3D = Array{Bool}(undef, size(arr))
-			for z in 1:size(arr, 3)
-				mask_L_MD_3D[:, :, z] = mask_L_MD
-			end
-			dilated_mask_L_MD = dilate(dilate(mask_L_MD_3D))
-			ring_mask_L_MD = dilate(dilate(dilate(dilate(mask_L_MD_3D)))) - dilate(dilate(dilate(mask_L_MD_3D)))
-			single_ring_mask_L_MD = Bool.(ring_mask_L_MD[:, :, 3])
-			s_bkg_L_MD = mean(single_arr[single_ring_mask_L_MD])
-			alg_L_MD = Integrated(arr[mask_L_MD_3D])
-			mass_l_md = score(s_bkg_L_MD, cal_insert_mean, pixel_size, ρ, alg_L_MD)
-		
-			## Low Density
-			mask_L_LD_3D = Array{Bool}(undef, size(arr))
-			for z in 1:size(arr, 3)
-				mask_L_LD_3D[:, :, z] = mask_L_LD
-			end
-			dilated_mask_L_LD = dilate(dilate(mask_L_LD_3D))
-			ring_mask_L_LD = dilate(dilate(dilate(dilate(mask_L_LD_3D)))) - dilate(dilate(dilate(mask_L_LD_3D)))
-			single_ring_mask_L_LD = Bool.(ring_mask_L_LD[:, :, 3])
-			s_bkg_L_LD = mean(single_arr[single_ring_mask_L_LD])
-			alg_L_LD = Integrated(arr[mask_L_LD_3D])
-			mass_l_ld = score(s_bkg_L_LD, cal_insert_mean, pixel_size, ρ, alg_L_LD)
-			
-			# Score Medium Inserts
-			## High Density
-			mask_M_HD_3D = Array{Bool}(undef, size(arr))
-			for z in 1:size(arr, 3)
-				mask_M_HD_3D[:, :, z] = mask_M_HD
-			end
-			dilated_mask_M_HD = dilate(dilate(dilate(dilate(mask_M_HD_3D))))
-			ring_mask_M_HD = dilate(dilate(dilate(dilate(dilate(mask_M_HD_3D))))) - dilate(dilate(dilate(dilate(mask_M_HD_3D))))
-			single_ring_mask_M_HD = Bool.(ring_mask_M_HD[:, :, 3])
-			s_bkg_M_HD = mean(single_arr[single_ring_mask_M_HD])
-			alg_M_HD = Integrated(arr[mask_M_HD_3D])
-			mass_m_hd = score(s_bkg_M_HD, cal_insert_mean, pixel_size, ρ, alg_M_HD)
-			
-			## Medium Density
-			mask_M_MD_3D = Array{Bool}(undef, size(arr))
-			for z in 1:size(arr, 3)
-				mask_M_MD_3D[:, :, z] = mask_M_MD
-			end
-			dilated_mask_M_MD = dilate(dilate(dilate(dilate(mask_M_MD_3D))))
-			ring_mask_M_MD = dilate(dilate(dilate(dilate(dilate(dilate(mask_M_MD_3D)))))) - dilate(dilate(dilate(dilate(dilate(mask_M_MD_3D)))))
-			single_ring_mask_M_MD = Bool.(ring_mask_M_MD[:, :, 3])
-			s_bkg_M_MD = mean(single_arr[single_ring_mask_M_MD])
-			alg_M_MD = Integrated(arr[mask_M_MD_3D])
-			mass_m_md = score(s_bkg_M_MD, cal_insert_mean, pixel_size, ρ, alg_M_MD)
-		
-			## Low Density
-			mask_M_LD_3D = Array{Bool}(undef, size(arr))
-			for z in 1:size(arr, 3)
-				mask_M_LD_3D[:, :, z] = mask_M_LD
-			end
-			dilated_mask_M_LD = dilate(dilate(dilate(dilate(dilate(mask_M_LD_3D)))))
-			ring_mask_M_LD = dilate(dilate(dilate(dilate(dilate(dilate(mask_M_LD_3D)))))) - dilate(dilate(dilate(dilate(dilate(mask_M_LD_3D)))))
-			single_ring_mask_M_LD = Bool.(ring_mask_M_LD[:, :, 3])
-			s_bkg_M_LD = mean(single_arr[single_ring_mask_M_LD])
-			alg_M_LD = Integrated(arr[mask_M_LD_3D])
-			mass_m_ld = score(s_bkg_M_LD, cal_insert_mean, pixel_size, ρ, alg_M_LD)
-			
-		
-			# Score Small Inserts
-			## High Density
-			mask_S_HD_3D = Array{Bool}(undef, size(arr))
-			for z in 1:size(arr, 3)
-				mask_S_HD_3D[:, :, z] = mask_S_HD
-			end
-			dilated_mask_S_HD = dilate(dilate(dilate(dilate(dilate((mask_S_HD_3D))))))
-			ring_mask_S_HD = dilate(dilate(dilate(dilate(dilate(mask_S_HD_3D))))) - dilate(dilate(dilate(dilate(mask_S_HD_3D))))
-			single_ring_mask_S_HD = Bool.(ring_mask_S_HD[:, :, 3])
-			s_bkg_S_HD = mean(single_arr[single_ring_mask_S_HD])
-			alg_S_HD = Integrated(arr[mask_S_HD_3D])
-			mass_s_hd = score(s_bkg_S_HD, cal_insert_mean, pixel_size, ρ, alg_S_HD)
-			if mass_s_hd < 0
-				mass_s_hd = 0
-			end
-			mass_s_hd
-		
-			## Medium Density
-			mask_S_MD_3D = Array{Bool}(undef, size(arr))
-			for z in 1:size(arr, 3)
-				mask_S_MD_3D[:, :, z] = mask_S_MD
-			end
-			dilated_mask_S_MD = dilate(dilate(dilate(dilate(dilate(mask_S_MD_3D)))))
-			ring_mask_S_MD = dilate(dilate(dilate(dilate(dilate(mask_S_MD_3D))))) - dilate(dilate(dilate(dilate(mask_S_MD_3D))))
-			single_ring_mask_S_MD = Bool.(ring_mask_S_MD[:, :, 3])
-			s_bkg_S_MD = mean(single_arr[single_ring_mask_S_MD])
-			alg_S_MD = Integrated(arr[mask_S_MD_3D])
-			mass_s_md = score(s_bkg_S_MD, cal_insert_mean, pixel_size, ρ, alg_S_MD)
-			if mass_s_md < 0
-				mass_s_md = 0
-			end
-			mass_s_md
-			
-			## Low Density
-			mask_S_LD_3D = Array{Bool}(undef, size(arr))
-			for z in 1:size(arr, 3)
-				mask_S_LD_3D[:, :, z] = mask_S_LD
-			end
-			dilated_mask_S_LD = dilate(dilate(dilate(dilate(dilate(mask_S_LD_3D)))))
-			ring_mask_S_LD = dilate(dilate(dilate(dilate(dilate(mask_S_LD_3D))))) - dilate(dilate(dilate(dilate(mask_S_LD_3D))));
-			
-			single_ring_mask_S_LD = Bool.(ring_mask_S_LD[:, :, 3])
-			s_bkg_S_LD = mean(single_arr[single_ring_mask_S_LD])
-			alg_S_LD = Integrated(arr[mask_S_LD_3D])
-			mass_s_ld = score(s_bkg_S_LD, cal_insert_mean, pixel_size, ρ, alg_S_LD)
-			if mass_s_ld < 0
-				mass_s_ld = 0
-			end
-			mass_s_ld
-			
-		
-			# Results
-			density_array = [0, 200, 400, 800]
-			inserts = [
-				"Low Density",
-				"Medium Density",
-				"High Density"
-			]
-			ground_truth_mass_large = [
-				19.6,
-				39.3,
-				78.5
-			] # mg
-			
-			calculated_mass_large = [
-				mass_l_ld,
-				mass_l_md,
-				mass_l_hd
-			]
-			ground_truth_mass_medium = [
-				4.2,
-				8.5,
-				17.0
-			]
-			calculated_mass_medium = [
-				mass_m_ld,
-				mass_m_md,
-				mass_m_hd
-			]
-			ground_truth_mass_small = [
-				0.2,
-				0.3,
-				0.6
-			]
-			calculated_mass_small = [
-				mass_s_ld,
-				mass_s_md,
-				mass_s_hd
-			]
-			RMSE_check = sqrt(sum((ground_truth_mass_small .- calculated_mass_small)).^2 / 3)
-			RMSE_check += sqrt(sum((ground_truth_mass_medium .- calculated_mass_medium)).^2 / 3)
-			num_zero = length(findall(x -> x == 0, calculated_mass_small))
-			RMSE_check += num_zero # penalize zero values heavily
-			if haskey(RMSE_Dict, "value") == false
-				RMSE_Dict["value"] = RMSE_check
-				RMSE_Dict["factor"] = angle
-			end
-			if RMSE_check < RMSE_Dict["value"]
-				RMSE_Dict["value"] = RMSE_check
-				RMSE_Dict["factor"] = angle
-			end
-		end
-	
-		# Run Top Segmentation
-		angle_factor = RMSE_Dict["factor"]
+		cal_insert_mean = mean(c_img[mask_cal_3D])
+		# cal_insert_mean = quantile!(c_img[mask_cal_3D], 0.7)
+
+		# Calibration line
+		density_array_calc = [0, 200] # mg/cc
+		intensity_array = [0, cal_insert_mean] # HU
+		df_cal = DataFrame(:density => density_array_calc, :intensity => intensity_array)
+		linearRegressor = lm(@formula(intensity ~ density), df_cal)
+		linearFit = predict(linearRegressor)
+		m = linearRegressor.model.pp.beta0[2]
+		b = linearRegressor.model.rr.mu[1]
+		density(intensity) = (intensity - b) / m
+		intensity(ρ) = m*ρ + b
+
+		# angle_factor = RMSE_Dict["factor"]
+		angle_factor = -4
 		mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(
 			dcm_array, masked_array, header, slice_CCI, center_insert; angle_factor=angle_factor)
 	
 		arr = masked_array[:, :, slice_CCI-3:slice_CCI+3]
 		single_arr = masked_array[:, :, slice_CCI]
 		pixel_size = DICOMUtils.get_pixel_size(header)
-		ρ = 0.2 # mg/mm^3
+		
 		# Score Large InsertS
 		## High Density
 		mask_L_HD_3D = Array{Bool}(undef, size(arr))
@@ -288,8 +109,10 @@ begin
 		ring_mask_L_HD = dilate(dilate(dilate(dilate(mask_L_HD_3D)))) - dilate(dilate(dilate(mask_L_HD_3D)))
 		single_ring_mask_L_HD = Bool.(ring_mask_L_HD[:, :, 3])
 		s_bkg_L_HD = mean(single_arr[single_ring_mask_L_HD])
+		S_Obj_HD = intensity(800)
+		ρ_hd = 0.8 # mg/mm^3
 		alg_L_HD = Integrated(arr[mask_L_HD_3D])
-		mass_l_hd = score(s_bkg_L_HD, cal_insert_mean, pixel_size, ρ, alg_L_HD)
+		mass_l_hd = score(s_bkg_L_HD, S_Obj_HD, pixel_size, ρ_hd, alg_L_HD)
 	
 		## Medium Density
 		mask_L_MD_3D = Array{Bool}(undef, size(arr))
@@ -300,8 +123,10 @@ begin
 		ring_mask_L_MD = dilate(dilate(dilate(dilate(mask_L_MD_3D)))) - dilate(dilate(dilate(mask_L_MD_3D)))
 		single_ring_mask_L_MD = Bool.(ring_mask_L_MD[:, :, 3])
 		s_bkg_L_MD = mean(single_arr[single_ring_mask_L_MD])
+		S_Obj_MD = intensity(400)
+		ρ_md = 0.4 # mg/mm^3
 		alg_L_MD = Integrated(arr[mask_L_MD_3D])
-		mass_l_md = score(s_bkg_L_MD, cal_insert_mean, pixel_size, ρ, alg_L_MD)
+		mass_l_md = score(s_bkg_L_MD, S_Obj_MD, pixel_size, ρ_md, alg_L_MD)
 	
 		## Low Density
 		mask_L_LD_3D = Array{Bool}(undef, size(arr))
@@ -312,8 +137,10 @@ begin
 		ring_mask_L_LD = dilate(dilate(dilate(dilate(mask_L_LD_3D)))) - dilate(dilate(dilate(mask_L_LD_3D)))
 		single_ring_mask_L_LD = Bool.(ring_mask_L_LD[:, :, 3])
 		s_bkg_L_LD = mean(single_arr[single_ring_mask_L_LD])
+		S_Obj_LD = intensity(200)
+		ρ_ld = 0.2 # mg/mm^3
 		alg_L_LD = Integrated(arr[mask_L_LD_3D])
-		mass_l_ld = score(s_bkg_L_LD, cal_insert_mean, pixel_size, ρ, alg_L_LD)
+		mass_l_ld = score(s_bkg_L_LD, S_Obj_LD, pixel_size, ρ_ld, alg_L_LD)
 		
 		# Score Medium Inserts
 		## High Density
@@ -326,7 +153,7 @@ begin
 		single_ring_mask_M_HD = Bool.(ring_mask_M_HD[:, :, 3])
 		s_bkg_M_HD = mean(single_arr[single_ring_mask_M_HD])
 		alg_M_HD = Integrated(arr[mask_M_HD_3D])
-		mass_m_hd = score(s_bkg_M_HD, cal_insert_mean, pixel_size, ρ, alg_M_HD)
+		mass_m_hd = score(s_bkg_M_HD, S_Obj_HD, pixel_size, ρ_hd, alg_M_HD)
 		
 		## Medium Density
 		mask_M_MD_3D = Array{Bool}(undef, size(arr))
@@ -338,7 +165,7 @@ begin
 		single_ring_mask_M_MD = Bool.(ring_mask_M_MD[:, :, 3])
 		s_bkg_M_MD = mean(single_arr[single_ring_mask_M_MD])
 		alg_M_MD = Integrated(arr[mask_M_MD_3D])
-		mass_m_md = score(s_bkg_M_MD, cal_insert_mean, pixel_size, ρ, alg_M_MD)
+		mass_m_md = score(s_bkg_M_MD, S_Obj_MD, pixel_size, ρ_md, alg_M_MD)
 	
 		## Low Density
 		mask_M_LD_3D = Array{Bool}(undef, size(arr))
@@ -350,7 +177,7 @@ begin
 		single_ring_mask_M_LD = Bool.(ring_mask_M_LD[:, :, 3])
 		s_bkg_M_LD = mean(single_arr[single_ring_mask_M_LD])
 		alg_M_LD = Integrated(arr[mask_M_LD_3D])
-		mass_m_ld = score(s_bkg_M_LD, cal_insert_mean, pixel_size, ρ, alg_M_LD)
+		mass_m_ld = score(s_bkg_M_LD, S_Obj_LD, pixel_size, ρ_ld, alg_M_LD)
 		
 	
 		# Score Small Inserts
@@ -364,11 +191,7 @@ begin
 		single_ring_mask_S_HD = Bool.(ring_mask_S_HD[:, :, 3])
 		s_bkg_S_HD = mean(single_arr[single_ring_mask_S_HD])
 		alg_S_HD = Integrated(arr[mask_S_HD_3D])
-		mass_s_hd = score(s_bkg_S_HD, cal_insert_mean, pixel_size, ρ, alg_S_HD)
-		if mass_s_hd < 0
-			mass_s_hd = 0
-		end
-		mass_s_hd
+		mass_s_hd = score(s_bkg_S_HD, S_Obj_HD, pixel_size, ρ_hd, alg_S_HD)
 	
 		## Medium Density
 		mask_S_MD_3D = Array{Bool}(undef, size(arr))
@@ -380,11 +203,7 @@ begin
 		single_ring_mask_S_MD = Bool.(ring_mask_S_MD[:, :, 3])
 		s_bkg_S_MD = mean(single_arr[single_ring_mask_S_MD])
 		alg_S_MD = Integrated(arr[mask_S_MD_3D])
-		mass_s_md = score(s_bkg_S_MD, cal_insert_mean, pixel_size, ρ, alg_S_MD)
-		if mass_s_md < 0
-			mass_s_md = 0
-		end
-		mass_s_md
+		mass_s_md = score(s_bkg_S_MD, S_Obj_MD, pixel_size, ρ_md, alg_S_MD)
 		
 		## Low Density
 		mask_S_LD_3D = Array{Bool}(undef, size(arr))
@@ -392,16 +211,11 @@ begin
 			mask_S_LD_3D[:, :, z] = mask_S_LD
 		end
 		dilated_mask_S_LD = dilate(dilate(dilate(dilate(dilate(mask_S_LD_3D)))))
-		ring_mask_S_LD = dilate(dilate(dilate(dilate(dilate(mask_S_LD_3D))))) - dilate(dilate(dilate(dilate(mask_S_LD_3D))));
-		
+		ring_mask_S_LD = dilate(dilate(dilate(dilate(dilate(mask_S_LD_3D))))) - dilate(dilate(dilate(dilate(mask_S_LD_3D))))
 		single_ring_mask_S_LD = Bool.(ring_mask_S_LD[:, :, 3])
 		s_bkg_S_LD = mean(single_arr[single_ring_mask_S_LD])
 		alg_S_LD = Integrated(arr[mask_S_LD_3D])
-		mass_s_ld = score(s_bkg_S_LD, cal_insert_mean, pixel_size, ρ, alg_S_LD)
-		if mass_s_ld < 0
-			mass_s_ld = 0
-		end
-		mass_s_ld
+		mass_s_ld = score(s_bkg_S_LD, S_Obj_LD, pixel_size, ρ_ld, alg_S_LD)
 		
 		# Results
 		density_array = [0, 200, 400, 800]

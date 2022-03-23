@@ -296,30 +296,6 @@ begin
 	f
 end
 
-# ╔═╡ cd1905ac-4d79-4d68-9164-0fb577577538
-md"""
-### Eroded mask HD
-"""
-
-# ╔═╡ 5121039e-358f-48bd-8dde-f524b9510c9b
-eroded_mask_L_HD = erode(erode(erode(mask_L_HD)));
-
-# ╔═╡ 010572fd-bb67-46e5-95aa-a895a9af5d74
-md"""
-### Eroded mask MD
-"""
-
-# ╔═╡ 249a2350-e634-4311-bdec-a9ba43e4e799
-eroded_mask_L_MD = erode(erode(erode(mask_L_MD)));
-
-# ╔═╡ e0920a0e-85d8-491b-8f8b-3020ceba32fd
-md"""
-### Eroded mask LD
-"""
-
-# ╔═╡ 97c71b00-b30d-416e-8954-ff4c0c170828
-eroded_mask_L_LD = erode(erode(erode(mask_L_LD)));
-
 # ╔═╡ db84d9bb-e0da-4f81-88c8-c2a20c3ce006
 md"""
 # Score Large Inserts
@@ -330,15 +306,6 @@ arr = masked_array[:, :, slice_CCI-2:slice_CCI+2];
 
 # ╔═╡ fe2ab4c6-0b7b-4d07-b84a-663d9d54aea5
 single_arr = masked_array[:, :, slice_CCI];
-
-# ╔═╡ bc36c2dc-bb93-4590-916b-158aac882b8b
-hd_mean = mean(single_arr[eroded_mask_L_HD])
-
-# ╔═╡ d7b59c29-b8ec-4738-84db-60a578b63be7
-md_mean = mean(single_arr[eroded_mask_L_MD])
-
-# ╔═╡ 9fbf528d-7122-4127-a167-48d3369fce3b
-ld_mean = mean(single_arr[eroded_mask_L_LD])
 
 # ╔═╡ 2d83f341-24e4-4f65-885b-e5852e1c5d96
 md"""
@@ -1059,15 +1026,6 @@ end
 # ╠═03e93f63-bfb4-4fdc-89ca-0a8a22c6658b
 # ╠═81be4377-f296-4bbe-86d8-fb98700f5863
 # ╟─67caa8b2-7fb7-49a0-b515-48a5da35f989
-# ╟─cd1905ac-4d79-4d68-9164-0fb577577538
-# ╠═5121039e-358f-48bd-8dde-f524b9510c9b
-# ╠═bc36c2dc-bb93-4590-916b-158aac882b8b
-# ╟─010572fd-bb67-46e5-95aa-a895a9af5d74
-# ╠═249a2350-e634-4311-bdec-a9ba43e4e799
-# ╠═d7b59c29-b8ec-4738-84db-60a578b63be7
-# ╟─e0920a0e-85d8-491b-8f8b-3020ceba32fd
-# ╠═97c71b00-b30d-416e-8954-ff4c0c170828
-# ╠═9fbf528d-7122-4127-a167-48d3369fce3b
 # ╟─db84d9bb-e0da-4f81-88c8-c2a20c3ce006
 # ╠═707b8724-4f0c-43fd-b797-3badb3c617aa
 # ╠═fe2ab4c6-0b7b-4d07-b84a-663d9d54aea5
