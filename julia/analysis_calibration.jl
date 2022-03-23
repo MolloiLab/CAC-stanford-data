@@ -87,6 +87,22 @@ begin
 	fInt1
 end
 
+# ╔═╡ 8d1452f9-032c-41df-830e-ab6459e7c5ae
+begin
+	fInt1_small = Figure()
+	axInt1_small = Axis(fInt1_small[1, 1])
+
+	scatter!(df_i_canon1[!, :ground_truth_mass_small], df_i_canon1[!, :calculated_mass_small], label="Small Inserts", color=:red)
+	lines!([0, 1], [0, 1], label="Unity")
+	
+	axInt1_small.title = "IHU Mass vs Known Mass (Small)"
+	axInt1_small.ylabel = "Calculated Mass (mg)"
+	axInt1_small.xlabel = "Known Mass (mg)"
+	
+	fInt1_small[1, 2] = Legend(fInt1_small, axInt1_small, framevisible = false)
+	fInt1_small
+end
+
 # ╔═╡ 067b9f6b-6b57-40c0-ae5f-0465400f77bb
 md"""
 ### RMSD measurements (large, medium, and small inserts)
@@ -134,6 +150,22 @@ begin
 	
 	fInt2[1, 2] = Legend(fInt2, axInt2, framevisible = false)
 	fInt2
+end
+
+# ╔═╡ 246b0e98-8325-4031-9884-751a39454e40
+begin
+	fInt2_small = Figure()
+	axInt2_small = Axis(fInt2_small[1, 1])
+	
+	scatter!(df_i_canon2[!, :ground_truth_mass_small], df_i_canon2[!, :calculated_mass_small], label="Small Inserts", color=:red)
+	lines!([0, 1], [0, 1], label="Unity")
+	
+	axInt2_small.title = "IHU Mass vs Known Mass (Small)"
+	axInt2_small.ylabel = "Calculated Mass (mg)"
+	axInt2_small.xlabel = "Known Mass (mg)"
+	
+	fInt2_small[1, 2] = Legend(fInt2_small, axInt2_small, framevisible = false)
+	fInt2_small
 end
 
 # ╔═╡ 8c4745d4-3dae-46ca-9673-9ab1cb84deb8
@@ -185,6 +217,23 @@ begin
 	fAgat
 end
 
+# ╔═╡ c4bc4b99-7adc-48a2-a3b9-114d6c5a4e3a
+begin
+	fAgat_small = Figure()
+	axAgat_small = Axis(fAgat_small[1, 1])
+
+	scatter!(df_a_canon[!, :ground_truth_mass_small], df_a_canon[!, :calculated_mass_small], label="Mass: Small Inserts", color=:red)
+	lines!([0, 1], [0, 1], label="Unity Line")
+	
+	axAgat_small.title = "AS Mass vs Known Mass (Small)"
+	axAgat_small.ylabel = "Calculated Mass (mg)"
+	axAgat_small.xlabel = "Known Mass (mg)"
+	
+	fAgat_small[1, 2] = Legend(fAgat_small, axAgat_small, framevisible = false)
+
+	fAgat_small
+end
+
 # ╔═╡ c6cd7f7d-d77b-4136-9485-913f962be85a
 agat_rms_large_c = rmsd(df_a_canon[!, :calculated_mass_large], df_a_canon[!, :ground_truth_mass_large])
 
@@ -202,6 +251,7 @@ agat_rms_small_c = rmsd(df_a_canon[!, :calculated_mass_small], df_a_canon[!, :gr
 # ╠═787dda66-c0c9-4e2f-8646-c1c5ac95feee
 # ╠═1a7206ea-4be5-4236-954e-a927f9cba993
 # ╟─955d74f0-2ee9-40e9-9275-01555e13daa2
+# ╟─8d1452f9-032c-41df-830e-ab6459e7c5ae
 # ╟─067b9f6b-6b57-40c0-ae5f-0465400f77bb
 # ╠═7f4d43df-f51e-49c2-b47e-629e3ccedc91
 # ╠═39886e68-c4ea-4b96-96fb-ba46eeb54ecd
@@ -210,6 +260,7 @@ agat_rms_small_c = rmsd(df_a_canon[!, :calculated_mass_small], df_a_canon[!, :gr
 # ╠═41ef4353-b874-4848-b266-0a5c0e79ce9f
 # ╠═4eeb61ce-9e72-433d-829a-1651cc20b196
 # ╟─9124a9c9-4553-49a2-8fbe-f9882a8b2c69
+# ╟─246b0e98-8325-4031-9884-751a39454e40
 # ╟─8c4745d4-3dae-46ca-9673-9ab1cb84deb8
 # ╠═7015f1cf-ee36-4cbe-8daa-804de3e198ec
 # ╠═65e2dca0-1835-4c1e-b492-1c3fe210663d
@@ -218,6 +269,7 @@ agat_rms_small_c = rmsd(df_a_canon[!, :calculated_mass_small], df_a_canon[!, :gr
 # ╠═09bfb23a-db24-42c8-8c34-8234da9c0d56
 # ╠═5c1bea23-972b-4867-a424-9119cbc5edbc
 # ╟─65131928-ad9a-4649-9600-e663ab5a7a28
+# ╟─c4bc4b99-7adc-48a2-a3b9-114d6c5a4e3a
 # ╠═c6cd7f7d-d77b-4136-9485-913f962be85a
 # ╠═7f8756e1-36e0-444a-a9a9-e20f763298af
 # ╠═ec955132-42a3-40cd-a031-480ee6e95545
