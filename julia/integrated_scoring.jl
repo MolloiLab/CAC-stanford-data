@@ -151,7 +151,7 @@ begin
 	
 	ax = Makie.Axis(fig[1, 1])
 	ax.title = "Raw DICOM Array"
-	heatmap!(transpose(dcm_array[:, :, 15]), colormap=:grays)
+	heatmap!(transpose(dcm_array[:, :, 25]), colormap=:grays)
 	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
 	fig
 end
@@ -992,7 +992,7 @@ end
 # ╠═4a947165-c565-4c6d-b63c-8cc714d0d039
 # ╟─f1339241-169d-40c1-becc-8f230c12e835
 # ╠═641043a6-6d00-4f20-96ad-4b588bda2893
-# ╟─ede1723d-ac8b-43a5-a6d8-6a92fcbaa2fa
+# ╠═ede1723d-ac8b-43a5-a6d8-6a92fcbaa2fa
 # ╟─13671de8-9397-422f-81a4-57781e881178
 # ╟─c07994fb-87c8-4a61-8dd9-7fe50b087b13
 # ╟─2988d4aa-a2f2-45a5-9e96-fb9c233e9430
@@ -1153,9 +1153,9 @@ end
 # ╠═60324b4b-e880-4ea3-9831-fca775eb22ab
 # ╠═7c4fe694-7343-4e87-aed4-8895802e34a9
 # ╠═9f12b7bd-ccc2-4108-9171-1902a0c75c30
-# ╠═fef2fcda-cc64-469e-9f17-946f06a3e4ae
-# ╠═4f9c5043-3485-45b8-b493-d62780134251
-# ╠═197e0479-f15a-43f9-a7cf-5b5d58b5a901
+# ╟─fef2fcda-cc64-469e-9f17-946f06a3e4ae
+# ╟─4f9c5043-3485-45b8-b493-d62780134251
+# ╟─197e0479-f15a-43f9-a7cf-5b5d58b5a901
 # ╟─b030dcf1-fc55-4e32-be9b-6cba1d3456f0
 # ╠═5a9c7e99-0e6e-4162-8ff7-bff1935fd318
 # ╠═7976fbad-ae1f-40e8-961f-2ea68f752caa

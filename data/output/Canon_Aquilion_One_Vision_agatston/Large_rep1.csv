@@ -1,0 +1,4 @@
+inserts,calculated_agat_large,calculated_agat_medium,calculated_agat_small,ground_truth_mass_large,calculated_mass_large,ground_truth_mass_medium,calculated_mass_medium,ground_truth_mass_small,calculated_mass_small,mass_cal_factor
+Low Density,137.409088,22.385536,0.0,19.6,25.179247385411855,4.2,4.6873431409529545,0.2,0.0,0.0007222519504066924
+Medium Density,236.71513599999997,69.53804799999999,0.0,39.3,49.43043454090885,8.5,10.959923991380181,0.3,0.0,0.0007222519504066924
+High Density,396.271616,89.304,6.191744,78.5,94.32684671276573,17.0,21.402879963219124,0.6,1.1398437911013954,0.0007222519504066924
