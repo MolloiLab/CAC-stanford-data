@@ -242,7 +242,7 @@ begin
 end;
 
 # ╔═╡ 0362be1a-514b-4133-8c79-b2f554d7ed9f
-# hist(c_img[mask_cal_3D])
+hist(c_img[mask_cal_3D])
 
 # ╔═╡ af9b9f22-8a65-46f1-8e14-4b8a5191f764
 cal_insert_mean = mean(c_img[mask_cal_3D])
