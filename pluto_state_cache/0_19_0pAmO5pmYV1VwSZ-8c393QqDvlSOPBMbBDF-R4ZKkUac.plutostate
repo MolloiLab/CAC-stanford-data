@@ -1,9 +1,9 @@
-¥bonds€¬cell_resultsŠÙ$34a6ee83-5c46-4661-910e-925ea33ef625‰¦queuedÂ¤logs‘ˆ¤lineÿ£msg’Ú7è  Activating new environment at `/tmp/jl_pEhX3W/Project.toml`
+¥bonds€¬cell_resultsŠÙ$34a6ee83-5c46-4661-910e-925ea33ef625‰¦queuedÂ¤logs‘ˆ¤lineÿ£msg’Ú7è  Activating new environment at `/tmp/jl_QuNPxt/Project.toml`
     Updating registry at `~/.julia/registries/General`
    Resolving package versions...
-    Updating `/tmp/jl_pEhX3W/Project.toml`
+    Updating `/tmp/jl_QuNPxt/Project.toml`
   [7f904dfe] + PlutoUI v0.7.38
-    Updating `/tmp/jl_pEhX3W/Manifest.toml`
+    Updating `/tmp/jl_QuNPxt/Manifest.toml`
   [6e696c72] + AbstractPlutoDingetjes v1.1.4
   [3da002f7] + ColorTypes v0.11.0
   [53c48c17] + FixedPointNumbers v0.8.4
@@ -50,13 +50,13 @@
   [8e850ede] + nghttp2_jll
   [3f19e933] + p7zip_jll
    Resolving package versions...
-    Updating `/tmp/jl_pEhX3W/Project.toml`
+    Updating `/tmp/jl_QuNPxt/Project.toml`
   [10745b16] + Statistics
-  No Changes to `/tmp/jl_pEhX3W/Manifest.toml`
+  No Changes to `/tmp/jl_QuNPxt/Manifest.toml`
    Resolving package versions...
-    Updating `/tmp/jl_pEhX3W/Project.toml`
+    Updating `/tmp/jl_QuNPxt/Project.toml`
   [2913bbd2] + StatsBase v0.33.16
-    Updating `/tmp/jl_pEhX3W/Manifest.toml`
+    Updating `/tmp/jl_QuNPxt/Manifest.toml`
   [d360d2e6] + ChainRulesCore v1.14.0
   [9e997f8a] + ChangesOfVariables v0.1.2
   [34da2185] + Compat v3.43.0
@@ -75,9 +75,9 @@
   [8ba89e20] + Distributed
   [1a1011a3] + SharedArrays
    Resolving package versions...
-    Updating `/tmp/jl_pEhX3W/Project.toml`
+    Updating `/tmp/jl_QuNPxt/Project.toml`
   [787d08f9] + ImageMorphology v0.3.1
-    Updating `/tmp/jl_pEhX3W/Manifest.toml`
+    Updating `/tmp/jl_QuNPxt/Manifest.toml`
   [621f4979] + AbstractFFTs v1.1.0
   [79e6a3ab] + Adapt v3.3.3
   [c3611d14] + ColorVectorSpace v0.9.8
@@ -103,11 +103,11 @@
 Precompiling project...
 [32m  âœ“ [39m[90mImageCore[39m
 [32m  âœ“ [39mImageMorphology
-  2 dependencies successfully precompiled in 33 seconds (47 already precompiled)
+  2 dependencies successfully precompiled in 35 seconds (47 already precompiled)
    Resolving package versions...
-    Updating `/tmp/jl_pEhX3W/Project.toml`
+    Updating `/tmp/jl_QuNPxt/Project.toml`
   [6a3955dd] + ImageFiltering v0.7.1
-    Updating `/tmp/jl_pEhX3W/Manifest.toml`
+    Updating `/tmp/jl_QuNPxt/Manifest.toml`
   [aafaddc9] + CatIndices v0.2.2
   [ed09eef8] + ComputationalResources v0.3.2
   [dc8bdbbb] + CustomUnitRanges v1.0.2
@@ -123,17 +123,17 @@ Precompiling project...
 Precompiling project...
 [32m  âœ“ [39m[90mStaticArrays[39m
 [32m  âœ“ [39mImageFiltering
-  2 dependencies successfully precompiled in 27 seconds (58 already precompiled)
+  2 dependencies successfully precompiled in 30 seconds (58 already precompiled)
    Resolving package versions...
-   Installed CodecZlib â”€â”€â”€â”€â”€â”€ v0.7.0
-   Installed WeakRefStrings â”€ v1.4.2
-   Installed SentinelArrays â”€ v1.3.12
    Installed InlineStrings â”€â”€ v1.1.2
+   Installed SentinelArrays â”€ v1.3.12
+   Installed WeakRefStrings â”€ v1.4.2
+   Installed CodecZlib â”€â”€â”€â”€â”€â”€ v0.7.0
    Installed FilePathsBase â”€â”€ v0.9.18
    Installed CSV â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ v0.10.4
-    Updating `/tmp/jl_pEhX3W/Project.toml`
+    Updating `/tmp/jl_QuNPxt/Project.toml`
   [336ed68f] + CSV v0.10.4
-    Updating `/tmp/jl_pEhX3W/Manifest.toml`
+    Updating `/tmp/jl_QuNPxt/Manifest.toml`
   [336ed68f] + CSV v0.10.4
   [944b1d66] + CodecZlib v0.7.0
   [e2d170a0] + DataValueInterfaces v1.0.0
@@ -149,16 +149,16 @@ Precompiling project...
   [9fa8497b] + Future
 Precompiling project...
 [32m  âœ“ [39m[90mInlineStrings[39m
-[32m  âœ“ [39m[90mSentinelArrays[39m
-[32m  âœ“ [39m[90mCodecZlib[39m
 [32m  âœ“ [39m[90mFilePathsBase[39m
+[32m  âœ“ [39m[90mCodecZlib[39m
+[32m  âœ“ [39m[90mSentinelArrays[39m
 [32m  âœ“ [39m[90mWeakRefStrings[39m
 [32m  âœ“ [39mCSV
-  6 dependencies successfully precompiled in 8 seconds (66 already precompiled)
+  6 dependencies successfully precompiled in 9 seconds (66 already precompiled)
    Resolving package versions...
-    Updating `/tmp/jl_pEhX3W/Project.toml`
+    Updating `/tmp/jl_QuNPxt/Project.toml`
   [a93c6f00] + DataFrames v1.3.3
-    Updating `/tmp/jl_pEhX3W/Manifest.toml`
+    Updating `/tmp/jl_QuNPxt/Manifest.toml`
   [a8cc5b0e] + Crayons v4.1.1
   [a93c6f00] + DataFrames v1.3.3
   [59287772] + Formatting v0.4.2
@@ -168,9 +168,9 @@ Precompiling project...
    Installed ShiftedArrays â”€ v1.0.0
    Installed GLM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ v1.7.0
    Installed StatsModels â”€â”€â”€ v0.6.29
-    Updating `/tmp/jl_pEhX3W/Project.toml`
+    Updating `/tmp/jl_QuNPxt/Project.toml`
   [38e38edf] + GLM v1.7.0
-    Updating `/tmp/jl_pEhX3W/Manifest.toml`
+    Updating `/tmp/jl_QuNPxt/Manifest.toml`
   [b429d917] + DensityInterface v0.4.0
   [31c24e10] + Distributions v0.25.53
   [1a297f60] + FillArrays v0.13.2
@@ -190,15 +190,15 @@ Precompiling project...
   3 dependencies successfully precompiled in 4 seconds (85 already precompiled)
     Updating git-repo `https://github.com/JuliaHealth/DICOM.jl`
    Resolving package versions...
-    Updating `/tmp/jl_pEhX3W/Project.toml`
+    Updating `/tmp/jl_QuNPxt/Project.toml`
   [a26e6606] + DICOM v0.10.1 `https://github.com/JuliaHealth/DICOM.jl#master`
-    Updating `/tmp/jl_pEhX3W/Manifest.toml`
+    Updating `/tmp/jl_QuNPxt/Manifest.toml`
   [a26e6606] + DICOM v0.10.1 `https://github.com/JuliaHealth/DICOM.jl#master`
     Updating git-repo `https://github.com/Dale-Black/DICOMUtils.jl`
    Resolving package versions...
-    Updating `/tmp/jl_pEhX3W/Project.toml`
+    Updating `/tmp/jl_QuNPxt/Project.toml`
   [d427e4c1] + DICOMUtils v0.1.0 `https://github.com/Dale-Black/DICOMUtils.jl#master`
-    Updating `/tmp/jl_pEhX3W/Manifest.toml`
+    Updating `/tmp/jl_QuNPxt/Manifest.toml`
   [d427e4c1] + DICOMUtils v0.1.0 `https://github.com/Dale-Black/DICOMUtils.jl#master`
   [ab62b9b5] + DeepDiffs v1.2.0
   [98d24dd4] + TestSetExtensions v2.0.0
@@ -206,10 +206,10 @@ Precompiling project...
     Updating git-repo `https://github.com/Dale-Black/PhantomSegmentation.jl`
    Resolving package versions...
    Installed ImageFiltering â”€ v0.6.22
-    Updating `/tmp/jl_pEhX3W/Project.toml`
+    Updating `/tmp/jl_QuNPxt/Project.toml`
   [6a3955dd] â†“ ImageFiltering v0.7.1 â‡’ v0.6.22
   [9bf6ac95] + PhantomSegmentation v0.1.0 `https://github.com/Dale-Black/PhantomSegmentation.jl#main`
-    Updating `/tmp/jl_pEhX3W/Manifest.toml`
+    Updating `/tmp/jl_QuNPxt/Manifest.toml`
   [1520ce14] + AbstractTrees v0.3.4
   [ec485272] + ArnoldiMethod v0.2.0
   [aaaa29a8] + Clustering v0.14.2
@@ -244,7 +244,7 @@ Precompiling project...
 [32m  âœ“ [39m[90mImageSegmentation[39m
 [32m  âœ“ [39m[90mImageComponentAnalysis[39m
 [32m  âœ“ [39mPhantomSegmentation
-  8 dependencies successfully precompiled in 32 seconds (105 already precompiled)
+  8 dependencies successfully precompiled in 36 seconds (105 already precompiled)
      Cloning git-repo `https://github.com/Dale-Black/CalciumScoring.jl`
     Updating git-repo `https://github.com/Dale-Black/CalciumScoring.jl`
    Resolving package versions...
@@ -252,11 +252,11 @@ Precompiling project...
    Installed MutableArithmetics â”€ v1.0.0
    Installed Polynomials â”€â”€â”€â”€â”€â”€â”€â”€ v3.0.0
    Installed DSP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ v0.7.5
-    Updating `/tmp/jl_pEhX3W/Project.toml`
+    Updating `/tmp/jl_QuNPxt/Project.toml`
   [9c0cb1da] + CalciumScoring v0.1.0 `https://github.com/Dale-Black/CalciumScoring.jl#master`
   [6a3955dd] â†“ ImageFiltering v0.6.22 â‡’ v0.6.21
   [787d08f9] â†“ ImageMorphology v0.3.1 â‡’ v0.2.11
-    Updating `/tmp/jl_pEhX3W/Manifest.toml`
+    Updating `/tmp/jl_QuNPxt/Manifest.toml`
   [ec485272] â†“ ArnoldiMethod v0.2.0 â‡’ v0.1.0
   [13072b0f] + AxisAlgorithms v1.0.1
   [39de3d68] + AxisArrays v0.4.5
@@ -311,11 +311,11 @@ Precompiling project...
 Precompiling project...
 [32m  âœ“ [39m[90mIntervalSets[39m
 [32m  âœ“ [39m[90mRecipesBase[39m
-[32m  âœ“ [39m[90mAxisArrays[39m
 [32m  âœ“ [39m[90mImageMagick_jll[39m
+[32m  âœ“ [39m[90mAxisArrays[39m
 [32m  âœ“ [39m[90mImageAxes[39m
-[32m  âœ“ [39m[90mMutableArithmetics[39m
 [32m  âœ“ [39m[90mImageMagick[39m
+[32m  âœ“ [39m[90mMutableArithmetics[39m
 [32m  âœ“ [39m[90mImageMetadata[39m
 [32m  âœ“ [39m[90mPolynomials[39m
 [32m  âœ“ [39m[90mImages[39m
@@ -323,7 +323,7 @@ Precompiling project...
 [32m  âœ“ [39m[90mImageSegmentation[39m
 [91m  âœ— [39mCalciumScoring
 [32m  âœ“ [39mPhantomSegmentation
-  13 dependencies successfully precompiled in 28 seconds (144 already precompiled)
+  13 dependencies successfully precompiled in 31 seconds (144 already precompiled)
   [91m1[39m dependency errored. To see a full report either run `import Pkg; Pkg.precompile()` or load the package
 ERROR: LoadError: SystemError: opening file "/home/runner/.julia/packages/CalciumScoring/kcwSX/src/integrated.jl": No such file or directory
 Stacktrace:
@@ -364,7 +364,7 @@ Stacktrace:
  [18] top-level scope
     @ none:1
 in expression starting at /home/runner/.julia/packages/CalciumScoring/kcwSX/src/CalciumScoring.jl:1
-ªtext/plain§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625¦kwargs¢id¹Main_PlutoRunner_80680cb1¤fileÙB/home/runner/.julia/packages/Pluto/4cF9Y/src/runner/PlutoRunner.jl¥group«PlutoRunner¥level®LogLevel(-555)§runningÂ¦output†¤body‚£msgÙ‰Failed to precompile CalciumScoring [9c0cb1da-21b1-4615-967b-153e03110a28] to /home/runner/.julia/compiled/v1.6/CalciumScoring/jl_C4mhKZ.ªstacktrace—…¤call¯error(::String)§inlinedÂ¤file¨error.jl¤line!¤pathª./error.jl…¤callÙlcompilecache(::Base.PkgId, ::String, ::IOContext{Base.PipeEndpoint}, ::IOContext{Base.PipeEndpoint}, ::Bool)§inlinedÂ¤fileªloading.jl¤lineÍi¤path¬./loading.jl…¤callÙ$compilecache(::Base.PkgId, ::String)§inlinedÂ¤fileªloading.jl¤lineÍ1¤path¬./loading.jl…¤call¶_require(::Base.PkgId)§inlinedÂ¤fileªloading.jl¤lineÍ¤path¬./loading.jl…¤callµrequire(::Base.PkgId)§inlinedÂ¤fileªloading.jl¤lineÍ¨¤path¬./loading.jl…¤call»require(::Module, ::Symbol)§inlinedÂ¤fileªloading.jl¤lineÍ›¤path¬./loading.jl…¤call¯top-level scope§inlinedÂ¤fileÙDintegrated_scoring_script.jl#==#34a6ee83-5c46-4661-910e-925ea33ef625¤line¤pathÙ€/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl#==#34a6ee83-5c46-4661-910e-925ea33ef625°persist_js_stateÂ¤mimeÙ'application/vnd.pluto.stacktrace+object²last_run_timestampËAØ–¾®ügõ·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625¹depends_on_disabled_cellsÂ§runtimeÀµpublished_object_keys§erroredÃÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b‰¦queuedÂ¤logs§runningÂ¦output†¤body °persist_js_stateÂ¤mimeªtext/plain²last_run_timestampËAØ–¾²h·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b¹depends_on_disabled_cellsÂ§runtimeÍN…µpublished_object_keys§erroredÂÙ$e730f5ae-ae32-4869-9a59-98933bcba510‰¦queuedÂ¤logs§runningÂ¦output†¤body °persist_js_stateÂ¤mimeªtext/plain²last_run_timestampËAØ–¾²è ı·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$e730f5ae-ae32-4869-9a59-98933bcba510¹depends_on_disabled_cellsÂ§runtimeÎ šà)µpublished_object_keys§erroredÂÙ$75e9e00c-9603-46e9-a009-7cdc76f1a2cc‰¦queuedÂ¤logs§runningÂ¦output†¤bodyÙ€"/home/runner/work/CAC-stanford-data/CAC-stanford-data/data/output/Canon_Aquilion_One_Vision_integrated_score_script/output.csv"°persist_js_stateÂ¤mimeªtext/plain²last_run_timestampËAØ–¾²ï4	·has_pluto_hook_featuresÂ¬rootassignee«output_path§cell_idÙ$75e9e00c-9603-46e9-a009-7cdc76f1a2cc¹depends_on_disabled_cellsÂ§runtimeÍÉµpublished_object_keys§erroredÂÙ$a0872982-dcbb-4278-beaf-70409400b514‰¦queuedÂ¤logs§runningÂ¦output†¤body‚£msgÙ!UndefVarError: new_df not definedªstacktrace‘…¤call¯top-level scope§inlinedÂ¤fileÙDintegrated_scoring_script.jl#==#a0872982-dcbb-4278-beaf-70409400b514¤line¤pathÙ€/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl#==#a0872982-dcbb-4278-beaf-70409400b514°persist_js_stateÂ¤mimeÙ'application/vnd.pluto.stacktrace+object²last_run_timestampËAØ–¾²óÃ3·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$a0872982-dcbb-4278-beaf-70409400b514¹depends_on_disabled_cellsÂ§runtimeÀµpublished_object_keys§erroredÃÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792‰¦queuedÂ¤logs§runningÂ¦output†¤bodyÚ™<script>const getParentCell = el => el.closest("pluto-cell")
+ªtext/plain§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625¦kwargs¢id¹Main_PlutoRunner_80680cb1¤fileÙB/home/runner/.julia/packages/Pluto/4cF9Y/src/runner/PlutoRunner.jl¥group«PlutoRunner¥level®LogLevel(-555)§runningÂ¦output†¤body‚£msgÙ‰Failed to precompile CalciumScoring [9c0cb1da-21b1-4615-967b-153e03110a28] to /home/runner/.julia/compiled/v1.6/CalciumScoring/jl_8AAMsw.ªstacktrace—…¤call¯error(::String)§inlinedÂ¤file¨error.jl¤line!¤pathª./error.jl…¤callÙlcompilecache(::Base.PkgId, ::String, ::IOContext{Base.PipeEndpoint}, ::IOContext{Base.PipeEndpoint}, ::Bool)§inlinedÂ¤fileªloading.jl¤lineÍi¤path¬./loading.jl…¤callÙ$compilecache(::Base.PkgId, ::String)§inlinedÂ¤fileªloading.jl¤lineÍ1¤path¬./loading.jl…¤call¶_require(::Base.PkgId)§inlinedÂ¤fileªloading.jl¤lineÍ¤path¬./loading.jl…¤callµrequire(::Base.PkgId)§inlinedÂ¤fileªloading.jl¤lineÍ¨¤path¬./loading.jl…¤call»require(::Module, ::Symbol)§inlinedÂ¤fileªloading.jl¤lineÍ›¤path¬./loading.jl…¤call¯top-level scope§inlinedÂ¤fileÙDintegrated_scoring_script.jl#==#34a6ee83-5c46-4661-910e-925ea33ef625¤line¤pathÙ€/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl#==#34a6ee83-5c46-4661-910e-925ea33ef625°persist_js_stateÂ¤mimeÙ'application/vnd.pluto.stacktrace+object²last_run_timestampËAØ–¾ÕUít·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625¹depends_on_disabled_cellsÂ§runtimeÀµpublished_object_keys§erroredÃÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b‰¦queuedÂ¤logs§runningÂ¦output†¤body °persist_js_stateÂ¤mimeªtext/plain²last_run_timestampËAØ–¾Øç­´·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b¹depends_on_disabled_cellsÂ§runtimeÍ\ùµpublished_object_keys§erroredÂÙ$e730f5ae-ae32-4869-9a59-98933bcba510‰¦queuedÂ¤logs§runningÂ¦output†¤body °persist_js_stateÂ¤mimeªtext/plain²last_run_timestampËAØ–¾ÙÈå·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$e730f5ae-ae32-4869-9a59-98933bcba510¹depends_on_disabled_cellsÂ§runtimeÎ ²®Iµpublished_object_keys§erroredÂÙ$75e9e00c-9603-46e9-a009-7cdc76f1a2cc‰¦queuedÂ¤logs§runningÂ¦output†¤bodyÙ€"/home/runner/work/CAC-stanford-data/CAC-stanford-data/data/output/Canon_Aquilion_One_Vision_integrated_score_script/output.csv"°persist_js_stateÂ¤mimeªtext/plain²last_run_timestampËAØ–¾ÙĞ3ô·has_pluto_hook_featuresÂ¬rootassignee«output_path§cell_idÙ$75e9e00c-9603-46e9-a009-7cdc76f1a2cc¹depends_on_disabled_cellsÂ§runtimeÍáÊµpublished_object_keys§erroredÂÙ$a0872982-dcbb-4278-beaf-70409400b514‰¦queuedÂ¤logs§runningÂ¦output†¤body‚£msgÙ!UndefVarError: new_df not definedªstacktrace‘…¤call¯top-level scope§inlinedÂ¤fileÙDintegrated_scoring_script.jl#==#a0872982-dcbb-4278-beaf-70409400b514¤line¤pathÙ€/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl#==#a0872982-dcbb-4278-beaf-70409400b514°persist_js_stateÂ¤mimeÙ'application/vnd.pluto.stacktrace+object²last_run_timestampËAØ–¾ÙÕT‹·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$a0872982-dcbb-4278-beaf-70409400b514¹depends_on_disabled_cellsÂ§runtimeÀµpublished_object_keys§erroredÃÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792‰¦queuedÂ¤logs§runningÂ¦output†¤bodyÚ™<script>const getParentCell = el => el.closest("pluto-cell")
 
 const getHeaders = () => {
 	const depth = Math.max(1, Math.min(6, 3)) // should be in range 1:6
@@ -595,9 +595,9 @@ return tocNode
 .plutoui-toc.indent section a.H6 {
 	padding-left: 50px;
 }
-</style>°persist_js_stateÂ¤mime©text/html²last_run_timestampËAØ–¾²š=·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792¹depends_on_disabled_cellsÂ§runtimeÍ’|µpublished_object_keys§erroredÂÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92‰¦queuedÂ¤logs§runningÂ¦output†¤body…¦prefix¥Int64¨elementsš’’¡1ªtext/plain’’¡2ªtext/plain’’¡3ªtext/plain’’¡4ªtext/plain’’¡5ªtext/plain’’¡6ªtext/plain’’¡7ªtext/plain’’¡8ªtext/plain’	’¡9ªtext/plain’
-’¢10ªtext/plain¤type¥Array¬prefix_short ¨objectid°a73a4c5c9b808b2b°persist_js_stateÂ¤mimeÙ!application/vnd.pluto.tree+object²last_run_timestampËAØ–¾²Xàü·has_pluto_hook_featuresÂ¬rootassignee¥scans§cell_idÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92¹depends_on_disabled_cellsÂ§runtimeÍGàµpublished_object_keys§erroredÂÙ$47dfa770-47ea-47ee-98e7-87da471ab01c‰¦queuedÂ¤logs§runningÂ¦output†¤body‚£msgÙDBoundsError: attempt to access 0-element Vector{Any} at index [1:10]ªstacktrace”…¤callÙ;throw_boundserror(::Vector{Any}, ::Tuple{UnitRange{Int64}})§inlinedÂ¤file°abstractarray.jl¤lineÍ‹¤path²./abstractarray.jl…¤call«checkbounds§inlinedÃ¤file°abstractarray.jl¤lineÍh¤path²./abstractarray.jl…¤call¨getindex§inlinedÃ¤file¨array.jl¤lineÍ+¤pathª./array.jl…¤call¯top-level scope§inlinedÃ¤fileÙDintegrated_scoring_script.jl#==#47dfa770-47ea-47ee-98e7-87da471ab01c¤line¤pathÙ€/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl#==#47dfa770-47ea-47ee-98e7-87da471ab01c°persist_js_stateÂ¤mimeÙ'application/vnd.pluto.stacktrace+object²last_run_timestampËAØ–¾²Ø^p·has_pluto_hook_featuresÂ¬rootassignee¦new_df§cell_idÙ$47dfa770-47ea-47ee-98e7-87da471ab01c¹depends_on_disabled_cellsÂ§runtimeÀµpublished_object_keys§erroredÃÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06‰¦queuedÂ¤logs§runningÂ¦output†¤body‚£msgÙxIOError: readdir("/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision"): no such file or directory (ENOENT)ªstacktrace—…¤call³check_channel_state§inlinedÃ¤file«channels.jl¤lineÌª¤path­./channels.jl…¤callÙItake_unbuffered(::Channel{Tuple{String, Vector{String}, Vector{String}}})§inlinedÂ¤file«channels.jl¤lineÍ“¤path­./channels.jl…¤call¥take!§inlinedÃ¤file«channels.jl¤lineÍ¤path­./channels.jl…¤callÙLiterate(::Channel{Tuple{String, Vector{String}, Vector{String}}}, ::Nothing)§inlinedÂ¤file«channels.jl¤lineÍÑ¤path­./channels.jl…¤call§iterate§inlinedÃ¤file«channels.jl¤lineÍĞ¤path­./channels.jl…¤callºdcm_list_builder(::String)§inlinedÂ¤file§load.jl¤line¤pathÙ9/home/runner/.julia/packages/DICOMUtils/y9sLG/src/load.jl…¤call¯top-level scope§inlinedÂ¤fileÙDintegrated_scoring_script.jl#==#60fe5916-a1a6-11ec-1fbe-8952690e9d06¤line¤pathÙ€/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl#==#60fe5916-a1a6-11ec-1fbe-8952690e9d06°persist_js_stateÂ¤mimeÙ'application/vnd.pluto.stacktrace+object²last_run_timestampËAØ–¾²³_··has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06¹depends_on_disabled_cellsÂ§runtimeÀµpublished_object_keys§erroredÃÙ$c8b89590-c7c4-4c40-93c4-9fd905eb3328‰¦queuedÂ¤logs§runningÂ¦output†¤bodyÙ2<div class="markdown"><h1>Save Results</h1>
-</div>°persist_js_stateÂ¤mime©text/html²last_run_timestampËAØ–¾€è#·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$c8b89590-c7c4-4c40-93c4-9fd905eb3328¹depends_on_disabled_cellsÂ§runtimeÎ È€µpublished_object_keys§erroredÂ±cell_dependenciesŠÙ$34a6ee83-5c46-4661-910e-925ea33ef625„´precedence_heuristic§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625´downstream_cells_map£CSV‘Ù$a0872982-dcbb-4278-beaf-70409400b514£Pkg‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625ªStatistics³PhantomSegmentation®CalciumScoring§PlutoUI¯ImageMorphology¥DICOM©quantile!ªDICOMUtils‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06ªDataFrames®ImageFiltering£GLM²upstream_cells_map…§Pkg.add£Pkg‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625¬Pkg.activate³Pkg.Registry.update©mktempdirÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b„´precedence_heuristic	§cell_idÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b´downstream_cells_map‚©BASE_PATH‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06¦VENDER“Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06Ù$e730f5ae-ae32-4869-9a59-98933bcba510Ù$75e9e00c-9603-46e9-a009-7cdc76f1a2cc²upstream_cells_map€Ù$e730f5ae-ae32-4869-9a59-98933bcba510„´precedence_heuristic	§cell_idÙ$e730f5ae-ae32-4869-9a59-98933bcba510´downstream_cells_map€²upstream_cells_map‡¥mkdir¦string¢cd£pwd¡~¥isdir¦VENDER‘Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6bÙ$75e9e00c-9603-46e9-a009-7cdc76f1a2cc„´precedence_heuristic	§cell_idÙ$75e9e00c-9603-46e9-a009-7cdc76f1a2cc´downstream_cells_map«output_path‘Ù$a0872982-dcbb-4278-beaf-70409400b514²upstream_cells_map„¢cd¦string£pwd¦VENDER‘Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6bÙ$a0872982-dcbb-4278-beaf-70409400b514„´precedence_heuristic	§cell_idÙ$a0872982-dcbb-4278-beaf-70409400b514´downstream_cells_map€²upstream_cells_map„£CSV‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625¦new_df‘Ù$47dfa770-47ea-47ee-98e7-87da471ab01c«output_path‘Ù$75e9e00c-9603-46e9-a009-7cdc76f1a2cc©CSV.writeÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792„´precedence_heuristic	§cell_idÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792´downstream_cells_map€²upstream_cells_map¯TableOfContentsÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92„´precedence_heuristic	§cell_idÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92´downstream_cells_map¥scans‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06²upstream_cells_map‚¡:§collectÙ$47dfa770-47ea-47ee-98e7-87da471ab01c„´precedence_heuristic	§cell_idÙ$47dfa770-47ea-47ee-98e7-87da471ab01c´downstream_cells_map¦new_df‘Ù$a0872982-dcbb-4278-beaf-70409400b514²upstream_cells_mapƒ¡:¤vcat£dfs‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06„´precedence_heuristic	§cell_idÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06´downstream_cells_map£dfs‘Ù$47dfa770-47ea-47ee-98e7-87da471ab01c²upstream_cells_mapŞ +¡>¦isless§predict¦VENDER‘Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b¡<¬mask_inserts¡/¥scans‘Ù$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92©DataFrame¤mean°dcm_list_builder£abs£div¢=>¨@formula¦medianªDICOMUtils‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625¥push!¡-¢Ã·¹DICOMUtils.get_pixel_size¡+¡*¨mask_rod¥ArrayªIntegrated©BASE_PATH‘Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b¦string«StatsModelsªmask_heart¦dilate¡:ªdcm_reader¨basename¢lm¤Bool¤size©mapwindow¥score¡~¥undef°StatsModels.Term¥erodeÙ$c8b89590-c7c4-4c40-93c4-9fd905eb3328„´precedence_heuristic	§cell_idÙ$c8b89590-c7c4-4c40-93c4-9fd905eb3328´downstream_cells_map€²upstream_cells_map¨getindex´cell_execution_orderšÙ$34a6ee83-5c46-4661-910e-925ea33ef625Ù$c34ae2e3-466f-4280-8786-b0e92dbb2792Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6bÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06Ù$c8b89590-c7c4-4c40-93c4-9fd905eb3328Ù$47dfa770-47ea-47ee-98e7-87da471ab01cÙ$e730f5ae-ae32-4869-9a59-98933bcba510Ù$75e9e00c-9603-46e9-a009-7cdc76f1a2ccÙ$a0872982-dcbb-4278-beaf-70409400b514´last_hot_reload_timeË        ©shortpath¼integrated_scoring_script.jl®process_status¥ready¤pathÙX/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl®last_save_timeËAØ–¾€ÛÕªcell_orderšÙ$34a6ee83-5c46-4661-910e-925ea33ef625Ù$c34ae2e3-466f-4280-8786-b0e92dbb2792Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6bÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06Ù$c8b89590-c7c4-4c40-93c4-9fd905eb3328Ù$47dfa770-47ea-47ee-98e7-87da471ab01cÙ$e730f5ae-ae32-4869-9a59-98933bcba510Ù$75e9e00c-9603-46e9-a009-7cdc76f1a2ccÙ$a0872982-dcbb-4278-beaf-70409400b514±published_objects€¥nbpkg‡²installed_versions€°terminal_outputs€§enabledÂ·restart_recommended_msgÀ´restart_required_msgÀ­busy_packages¬instantiatedÂ«cell_inputsŠÙ$34a6ee83-5c46-4661-910e-925ea33ef625„§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625¤codeÚëbegin
+</style>°persist_js_stateÂ¤mime©text/html²last_run_timestampËAØ–¾ØÜ–¢·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792¹depends_on_disabled_cellsÂ§runtimeÍª¶µpublished_object_keys§erroredÂÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92‰¦queuedÂ¤logs§runningÂ¦output†¤body…¦prefix¥Int64¨elementsš’’¡1ªtext/plain’’¡2ªtext/plain’’¡3ªtext/plain’’¡4ªtext/plain’’¡5ªtext/plain’’¡6ªtext/plain’’¡7ªtext/plain’’¡8ªtext/plain’	’¡9ªtext/plain’
+’¢10ªtext/plain¤type¥Array¬prefix_short ¨objectid°27334bba9a196d08°persist_js_stateÂ¤mimeÙ!application/vnd.pluto.tree+object²last_run_timestampËAØ–¾Ù)Sô·has_pluto_hook_featuresÂ¬rootassignee¥scans§cell_idÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92¹depends_on_disabled_cellsÂ§runtimeÍO±µpublished_object_keys§erroredÂÙ$47dfa770-47ea-47ee-98e7-87da471ab01c‰¦queuedÂ¤logs§runningÂ¦output†¤body‚£msgÙDBoundsError: attempt to access 0-element Vector{Any} at index [1:10]ªstacktrace”…¤callÙ;throw_boundserror(::Vector{Any}, ::Tuple{UnitRange{Int64}})§inlinedÂ¤file°abstractarray.jl¤lineÍ‹¤path²./abstractarray.jl…¤call«checkbounds§inlinedÃ¤file°abstractarray.jl¤lineÍh¤path²./abstractarray.jl…¤call¨getindex§inlinedÃ¤file¨array.jl¤lineÍ+¤pathª./array.jl…¤call¯top-level scope§inlinedÃ¤fileÙDintegrated_scoring_script.jl#==#47dfa770-47ea-47ee-98e7-87da471ab01c¤line¤pathÙ€/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl#==#47dfa770-47ea-47ee-98e7-87da471ab01c°persist_js_stateÂ¤mimeÙ'application/vnd.pluto.stacktrace+object²last_run_timestampËAØ–¾Ù¶²·has_pluto_hook_featuresÂ¬rootassignee¦new_df§cell_idÙ$47dfa770-47ea-47ee-98e7-87da471ab01c¹depends_on_disabled_cellsÂ§runtimeÀµpublished_object_keys§erroredÃÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06‰¦queuedÂ¤logs§runningÂ¦output†¤body‚£msgÙxIOError: readdir("/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision"): no such file or directory (ENOENT)ªstacktrace—…¤call³check_channel_state§inlinedÃ¤file«channels.jl¤lineÌª¤path­./channels.jl…¤callÙItake_unbuffered(::Channel{Tuple{String, Vector{String}, Vector{String}}})§inlinedÂ¤file«channels.jl¤lineÍ“¤path­./channels.jl…¤call¥take!§inlinedÃ¤file«channels.jl¤lineÍ¤path­./channels.jl…¤callÙLiterate(::Channel{Tuple{String, Vector{String}, Vector{String}}}, ::Nothing)§inlinedÂ¤file«channels.jl¤lineÍÑ¤path­./channels.jl…¤call§iterate§inlinedÃ¤file«channels.jl¤lineÍĞ¤path­./channels.jl…¤callºdcm_list_builder(::String)§inlinedÂ¤file§load.jl¤line¤pathÙ9/home/runner/.julia/packages/DICOMUtils/y9sLG/src/load.jl…¤call¯top-level scope§inlinedÂ¤fileÙDintegrated_scoring_script.jl#==#60fe5916-a1a6-11ec-1fbe-8952690e9d06¤line¤pathÙ€/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl#==#60fe5916-a1a6-11ec-1fbe-8952690e9d06°persist_js_stateÂ¤mimeÙ'application/vnd.pluto.stacktrace+object²last_run_timestampËAØ–¾Ùn“·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06¹depends_on_disabled_cellsÂ§runtimeÀµpublished_object_keys§erroredÃÙ$c8b89590-c7c4-4c40-93c4-9fd905eb3328‰¦queuedÂ¤logs§runningÂ¦output†¤bodyÙ2<div class="markdown"><h1>Save Results</h1>
+</div>°persist_js_stateÂ¤mime©text/html²last_run_timestampËAØ–¾¢B>h·has_pluto_hook_featuresÂ¬rootassigneeÀ§cell_idÙ$c8b89590-c7c4-4c40-93c4-9fd905eb3328¹depends_on_disabled_cellsÂ§runtimeÎ 8Aµpublished_object_keys§erroredÂ±cell_dependenciesŠÙ$34a6ee83-5c46-4661-910e-925ea33ef625„´precedence_heuristic§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625´downstream_cells_map£CSV‘Ù$a0872982-dcbb-4278-beaf-70409400b514£Pkg‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625ªStatistics³PhantomSegmentation®CalciumScoring§PlutoUI¯ImageMorphology¥DICOM©quantile!ªDICOMUtils‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06ªDataFrames®ImageFiltering£GLM²upstream_cells_map…§Pkg.add£Pkg‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625¬Pkg.activate³Pkg.Registry.update©mktempdirÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b„´precedence_heuristic	§cell_idÙ$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b´downstream_cells_map‚©BASE_PATH‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06¦VENDER“Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06Ù$e730f5ae-ae32-4869-9a59-98933bcba510Ù$75e9e00c-9603-46e9-a009-7cdc76f1a2cc²upstream_cells_map€Ù$e730f5ae-ae32-4869-9a59-98933bcba510„´precedence_heuristic	§cell_idÙ$e730f5ae-ae32-4869-9a59-98933bcba510´downstream_cells_map€²upstream_cells_map‡¥mkdir¦string¢cd£pwd¡~¥isdir¦VENDER‘Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6bÙ$75e9e00c-9603-46e9-a009-7cdc76f1a2cc„´precedence_heuristic	§cell_idÙ$75e9e00c-9603-46e9-a009-7cdc76f1a2cc´downstream_cells_map«output_path‘Ù$a0872982-dcbb-4278-beaf-70409400b514²upstream_cells_map„¢cd¦string£pwd¦VENDER‘Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6bÙ$a0872982-dcbb-4278-beaf-70409400b514„´precedence_heuristic	§cell_idÙ$a0872982-dcbb-4278-beaf-70409400b514´downstream_cells_map€²upstream_cells_map„£CSV‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625¦new_df‘Ù$47dfa770-47ea-47ee-98e7-87da471ab01c«output_path‘Ù$75e9e00c-9603-46e9-a009-7cdc76f1a2cc©CSV.writeÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792„´precedence_heuristic	§cell_idÙ$c34ae2e3-466f-4280-8786-b0e92dbb2792´downstream_cells_map€²upstream_cells_map¯TableOfContentsÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92„´precedence_heuristic	§cell_idÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92´downstream_cells_map¥scans‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06²upstream_cells_map‚¡:§collectÙ$47dfa770-47ea-47ee-98e7-87da471ab01c„´precedence_heuristic	§cell_idÙ$47dfa770-47ea-47ee-98e7-87da471ab01c´downstream_cells_map¦new_df‘Ù$a0872982-dcbb-4278-beaf-70409400b514²upstream_cells_mapƒ¡:¤vcat£dfs‘Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06„´precedence_heuristic	§cell_idÙ$60fe5916-a1a6-11ec-1fbe-8952690e9d06´downstream_cells_map£dfs‘Ù$47dfa770-47ea-47ee-98e7-87da471ab01c²upstream_cells_mapŞ +¡>¦isless§predict¦VENDER‘Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b¡<¬mask_inserts¡/¥scans‘Ù$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92©DataFrame¤mean°dcm_list_builder£abs£div¢=>¨@formula¦medianªDICOMUtils‘Ù$34a6ee83-5c46-4661-910e-925ea33ef625¥push!¡-¢Ã·¹DICOMUtils.get_pixel_size¡+¡*¨mask_rod¥ArrayªIntegrated©BASE_PATH‘Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6b¦string«StatsModelsªmask_heart¦dilate¡:ªdcm_reader¨basename¢lm¤Bool¤size©mapwindow¥score¡~¥undef°StatsModels.Term¥erodeÙ$c8b89590-c7c4-4c40-93c4-9fd905eb3328„´precedence_heuristic	§cell_idÙ$c8b89590-c7c4-4c40-93c4-9fd905eb3328´downstream_cells_map€²upstream_cells_map¨getindex´cell_execution_orderšÙ$34a6ee83-5c46-4661-910e-925ea33ef625Ù$c34ae2e3-466f-4280-8786-b0e92dbb2792Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6bÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06Ù$c8b89590-c7c4-4c40-93c4-9fd905eb3328Ù$47dfa770-47ea-47ee-98e7-87da471ab01cÙ$e730f5ae-ae32-4869-9a59-98933bcba510Ù$75e9e00c-9603-46e9-a009-7cdc76f1a2ccÙ$a0872982-dcbb-4278-beaf-70409400b514´last_hot_reload_timeË        ©shortpath¼integrated_scoring_script.jl®process_status¥ready¤pathÙX/home/runner/work/CAC-stanford-data/CAC-stanford-data/julia/integrated_scoring_script.jl®last_save_timeËAØ–¾¢1ÍŠªcell_orderšÙ$34a6ee83-5c46-4661-910e-925ea33ef625Ù$c34ae2e3-466f-4280-8786-b0e92dbb2792Ù$ff0a6e93-9c5e-4ac2-af02-ce253b535c6bÙ$7d8366d8-9cc5-49b3-8db3-1b9db6d12c92Ù$60fe5916-a1a6-11ec-1fbe-8952690e9d06Ù$c8b89590-c7c4-4c40-93c4-9fd905eb3328Ù$47dfa770-47ea-47ee-98e7-87da471ab01cÙ$e730f5ae-ae32-4869-9a59-98933bcba510Ù$75e9e00c-9603-46e9-a009-7cdc76f1a2ccÙ$a0872982-dcbb-4278-beaf-70409400b514±published_objects€¥nbpkg‡²installed_versions€°terminal_outputs€§enabledÂ·restart_recommended_msgÀ´restart_required_msgÀ­busy_packages¬instantiatedÂ«cell_inputsŠÙ$34a6ee83-5c46-4661-910e-925ea33ef625„§cell_idÙ$34a6ee83-5c46-4661-910e-925ea33ef625¤codeÚëbegin
 	let
 		using Pkg
 		Pkg.activate(mktempdir())
@@ -852,4 +852,4 @@ end¨metadata¨disabledÂ«code_foldedÂÙ$75e9e00c-9603-46e9-a009-7cdc76f1a2cc„§cell
 	end
 end¨metadata¨disabledÂ«code_foldedÂÙ$c8b89590-c7c4-4c40-93c4-9fd905eb3328„§cell_idÙ$c8b89590-c7c4-4c40-93c4-9fd905eb3328¤code¸md"""
 # Save Results
-"""¨metadata¨disabledÂ«code_foldedÃ«notebook_idÙ$018431ee-bda9-11ec-3e51-378a74195149«in_temp_dirÂ
+"""¨metadata¨disabledÂ«code_foldedÃ«notebook_idÙ$5100b06c-bda9-11ec-3a22-2fb98470ad96«in_temp_dirÂ
