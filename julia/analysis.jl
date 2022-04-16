@@ -87,7 +87,7 @@ begin
 	axInt1_small = Axis(fInt1_small[1, 1])
 
 	scatter!(df_i_canon1[!, :ground_truth_mass_small], df_i_canon1[!, :calculated_mass_small], label="Small Inserts", color=:red)
-	lines!([0, 1], [0, 1], label="Unity")
+	lines!([0, 1.2], [0, 1.2], label="Unity")
 	
 	axInt1_small.title = "IHU Mass vs Known Mass (Small)"
 	axInt1_small.ylabel = "Calculated Mass (mg)"
