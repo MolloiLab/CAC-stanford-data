@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.18.1
+# v0.19.8
 
 using Markdown
 using InteractiveUtils
@@ -15,6 +15,7 @@ macro bind(def, element)
 end
 
 # ╔═╡ 3c162d31-407a-4c50-a8a7-30153192f207
+# ╠═╡ show_logs = false
 begin
 	let
 		using Pkg
@@ -67,7 +68,7 @@ md"""
 
 # ╔═╡ cb6af1f1-9e54-4172-9e65-bcf534840716
 begin
-	SCAN_NUMBER = 10
+	SCAN_NUMBER = 4
 	VENDER = "Canon_Aquilion_One_Vision"
 	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 end
@@ -152,7 +153,7 @@ begin
 	ax = Makie.Axis(fig[1, 1])
 	ax.title = "Raw DICOM Array"
 	heatmap!(transpose(dcm_array[:, :, 25]), colormap=:grays)
-	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
+	scatter!(center_insert[2]:center_insert[2], center_insert[1]:center_insert[1], markersize=10, color=:red)
 	fig
 end
 
@@ -163,7 +164,7 @@ begin
 	ax2 = Makie.Axis(fig2[1, 1])
 	ax2.title = "Mask Array"
 	heatmap!(transpose(mask), colormap=:grays)
-	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
+	scatter!(center_insert[2]:center_insert[2], center_insert[1]:center_insert[1], markersize=10, color=:red)
 	fig2
 end
 
@@ -174,7 +175,7 @@ begin
 	ax3 = Makie.Axis(fig3[1, 1])
 	ax3.title = "Masked DICOM Array"
 	heatmap!(transpose(masked_array[:, :, 23]), colormap=:grays)
-	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
+	scatter!(center_insert[2]:center_insert[2], center_insert[1]:center_insert[1], markersize=10, color=:red)
 	fig3
 end
 
@@ -230,6 +231,11 @@ heatmap(bool_arr, colormap=:grays)
 # ╔═╡ a2ea95bc-8840-4fbe-a29d-3618c629e9dc
 heatmap(bool_arr_erode, colormap=:grays)
 
+# ╔═╡ a574b69a-023e-4f1c-a09d-2f75e2eba8ec
+md"""
+### 1 Point Calibration
+"""
+
 # ╔═╡ 29a2117d-0462-4aac-8ff0-060f1c6ba848
 c_img = calcium_image[:, :, cal_rod_slice-1:cal_rod_slice+1];
 
@@ -241,54 +247,30 @@ begin
 	end
 end;
 
+# ╔═╡ 3f17d44f-59fb-4cc3-93d6-df025d92f1bf
+cal_insert_mean = mean(c_img[mask_cal_3D])
+
 # ╔═╡ 0362be1a-514b-4133-8c79-b2f554d7ed9f
 hist(c_img[mask_cal_3D])
 
-# ╔═╡ af9b9f22-8a65-46f1-8e14-4b8a5191f764
-cal_insert_mean = mean(c_img[mask_cal_3D])
-
-# ╔═╡ aec152dd-ff56-49b5-be20-94d63874f624
-# cal_insert_mean = quantile!(c_img[mask_cal_3D], 0.7)
-
-# ╔═╡ 5176bb66-ad86-4c36-9ede-06403426a9bb
-md"""
-### Calibration Line
-"""
-
-# ╔═╡ 3d0415d5-5d6a-4ca7-9d79-8876e0618580
-density_array_calc = [0, 200] # mg/cc
-
-# ╔═╡ fe9c32a6-1580-4e7d-8d22-a4623b79db2e
-intensity_array = [0, cal_insert_mean] # HU
-
 # ╔═╡ 952a3a84-ce2d-4628-8c84-a2fc8f017a96
-df_cal = DataFrame(:density => density_array_calc, :intensity => intensity_array)
-
-# ╔═╡ 34ee7ab0-6d33-4d59-bb05-e2aa76a91f66
-linearRegressor = lm(@formula(intensity ~ density), df_cal);
-
-# ╔═╡ 620e74c0-7bca-4584-a4a4-7f95831270c0
-linearFit = predict(linearRegressor)
-
-# ╔═╡ 6142a256-8b23-495c-89ea-e26a99e93056
-m = linearRegressor.model.pp.beta0[2]
-
-# ╔═╡ 884ddd7d-7344-406d-a17f-6946c099fd91
-b = linearRegressor.model.rr.mu[1]
-
-# ╔═╡ 03e93f63-bfb4-4fdc-89ca-0a8a22c6658b
-density(intensity) = (intensity - b) / m
-
-# ╔═╡ 81be4377-f296-4bbe-86d8-fb98700f5863
-intensity(ρ) = m*ρ + b
+begin
+	intensity_array = [0, cal_insert_mean]
+	density_array_cal = [0, 200]
+	df_cal = DataFrame(:density => density_array_cal, :intensity => intensity_array)
+	linearRegressor = lm(@formula(intensity ~ density), df_cal)
+	linearFit = predict(linearRegressor)
+	m = linearRegressor.model.pp.beta0[2]
+	b = linearRegressor.model.rr.mu[1]
+end
 
 # ╔═╡ 67caa8b2-7fb7-49a0-b515-48a5da35f989
 begin
 	f = Figure()
 	ax1 = Axis(f[1, 1])
 	
-	scatter!(density_array_calc, intensity_array)
-	lines!(density_array_calc, linearFit, color = :red)
+	scatter!(density_array_cal, intensity_array)
+	lines!(density_array_cal, linearFit, color = :red)
 	ax1.title = "Calibration Line (Intensity vs Density)"
 	ax1.ylabel = "Intensity (HU)"
 	ax1.xlabel = "Density (mg/cm^3)"
@@ -296,16 +278,76 @@ begin
 	f
 end
 
+# ╔═╡ 18fbaeac-73d2-4880-8309-c262e1425896
+md"""
+### 3 Point Calibration
+"""
+
+# ╔═╡ 52193537-2f1c-4054-8909-612454805202
+begin
+	arr = masked_array[:, :, slice_CCI-2:slice_CCI+2]
+	single_arr = masked_array[:, :, slice_CCI]
+	pixel_size = DICOMUtils.get_pixel_size(header)
+end
+
+# ╔═╡ 3280a5f0-76b1-4e66-829f-75b0e7f2802f
+begin
+	eroded_mask_L_HD1d = erode(erode(mask_L_HD))
+	high_density_cal1d = mean(single_arr[eroded_mask_L_HD1d])
+end
+
+# ╔═╡ 606b52f7-9cd5-4ef8-8af5-5585e12a4688
+begin
+	eroded_mask_L_MD1d = erode(erode(mask_L_MD))
+	med_density_cal1d = mean(single_arr[eroded_mask_L_MD1d])
+end
+
+# ╔═╡ 1d752f2a-4478-4391-a2a9-10e98656ad68
+begin
+	eroded_mask_L_LD1d = erode(erode(mask_L_LD))
+	low_density_cal1d = mean(single_arr[eroded_mask_L_LD1d])
+end
+
+# ╔═╡ b6425bc8-4cb8-4429-b080-064d392a359f
+begin
+	intensity_array3 = [0, cal_insert_mean, med_density_cal1d, high_density_cal1d]
+	density_array_cal3 = [0, 200, 400, 800]
+	df_cal3 = DataFrame(:density => density_array_cal3, :intensity => intensity_array3)
+	linearRegressor3 = lm(@formula(intensity ~ density), df_cal3)
+	linearFit3 = predict(linearRegressor3)
+	m3 = linearRegressor3.model.pp.beta0[2]
+	b3 = linearRegressor3.model.rr.mu[1]
+end
+
+# ╔═╡ 3cf9a717-e872-41e9-ad3a-22f546a6ebf0
+let
+	f = Figure()
+	ax1 = Axis(f[1, 1])
+	
+	scatter!(density_array_cal3, intensity_array3)
+	lines!(density_array_cal3, linearFit3, color = :red)
+	ax1.title = "Calibration Line (Intensity vs Density)"
+	ax1.ylabel = "Intensity (HU)"
+	ax1.xlabel = "Density (mg/cm^3)"
+	
+	f
+end
+
+# ╔═╡ 422b6329-4b1f-4daa-9a03-4acad9c60d38
+begin
+	# # 1 Point Calibration
+	# density(intensity) = (intensity - b) / m
+	# intensity(ρ) = m*ρ + b
+
+	# 3 Point Calibration
+	density(intensity) = (intensity - b3) / m3
+	intensity(ρ) = m3*ρ + b3
+end
+
 # ╔═╡ db84d9bb-e0da-4f81-88c8-c2a20c3ce006
 md"""
 # Score Large Inserts
 """
-
-# ╔═╡ 707b8724-4f0c-43fd-b797-3badb3c617aa
-arr = masked_array[:, :, slice_CCI-2:slice_CCI+2];
-
-# ╔═╡ fe2ab4c6-0b7b-4d07-b84a-663d9d54aea5
-single_arr = masked_array[:, :, slice_CCI];
 
 # ╔═╡ 2d83f341-24e4-4f65-885b-e5852e1c5d96
 md"""
@@ -353,9 +395,6 @@ begin
 	single_ring_mask_L_HD = Bool.(ring_mask_L_HD[:, :, 3])
 	s_bkg_L_HD = mean(single_arr[single_ring_mask_L_HD])
 end
-
-# ╔═╡ a3236070-89c2-4500-b5de-74dfe4aa4ba5
-pixel_size = DICOMUtils.get_pixel_size(header)
 
 # ╔═╡ 1a7c8177-6f86-465e-b0dd-2756ff0db034
 S_Obj_HD = intensity(800)
@@ -992,7 +1031,7 @@ end
 # ╠═4a947165-c565-4c6d-b63c-8cc714d0d039
 # ╟─f1339241-169d-40c1-becc-8f230c12e835
 # ╠═641043a6-6d00-4f20-96ad-4b588bda2893
-# ╠═ede1723d-ac8b-43a5-a6d8-6a92fcbaa2fa
+# ╟─ede1723d-ac8b-43a5-a6d8-6a92fcbaa2fa
 # ╟─13671de8-9397-422f-81a4-57781e881178
 # ╟─c07994fb-87c8-4a61-8dd9-7fe50b087b13
 # ╟─2988d4aa-a2f2-45a5-9e96-fb9c233e9430
@@ -1010,25 +1049,22 @@ end
 # ╠═88efbea6-138f-4885-9afb-543648e20152
 # ╠═a50ca0be-2613-498a-bcb8-5bdf10b4eeed
 # ╠═a2ea95bc-8840-4fbe-a29d-3618c629e9dc
-# ╠═29a2117d-0462-4aac-8ff0-060f1c6ba848
+# ╟─a574b69a-023e-4f1c-a09d-2f75e2eba8ec
 # ╠═4c5b5a15-a456-4f67-977d-55a727f6ac7f
+# ╠═29a2117d-0462-4aac-8ff0-060f1c6ba848
+# ╠═3f17d44f-59fb-4cc3-93d6-df025d92f1bf
 # ╠═0362be1a-514b-4133-8c79-b2f554d7ed9f
-# ╠═af9b9f22-8a65-46f1-8e14-4b8a5191f764
-# ╠═aec152dd-ff56-49b5-be20-94d63874f624
-# ╟─5176bb66-ad86-4c36-9ede-06403426a9bb
-# ╠═3d0415d5-5d6a-4ca7-9d79-8876e0618580
-# ╠═fe9c32a6-1580-4e7d-8d22-a4623b79db2e
 # ╠═952a3a84-ce2d-4628-8c84-a2fc8f017a96
-# ╠═34ee7ab0-6d33-4d59-bb05-e2aa76a91f66
-# ╠═620e74c0-7bca-4584-a4a4-7f95831270c0
-# ╠═6142a256-8b23-495c-89ea-e26a99e93056
-# ╠═884ddd7d-7344-406d-a17f-6946c099fd91
-# ╠═03e93f63-bfb4-4fdc-89ca-0a8a22c6658b
-# ╠═81be4377-f296-4bbe-86d8-fb98700f5863
-# ╟─67caa8b2-7fb7-49a0-b515-48a5da35f989
+# ╠═67caa8b2-7fb7-49a0-b515-48a5da35f989
+# ╟─18fbaeac-73d2-4880-8309-c262e1425896
+# ╠═52193537-2f1c-4054-8909-612454805202
+# ╠═3280a5f0-76b1-4e66-829f-75b0e7f2802f
+# ╠═606b52f7-9cd5-4ef8-8af5-5585e12a4688
+# ╠═1d752f2a-4478-4391-a2a9-10e98656ad68
+# ╠═b6425bc8-4cb8-4429-b080-064d392a359f
+# ╟─3cf9a717-e872-41e9-ad3a-22f546a6ebf0
+# ╠═422b6329-4b1f-4daa-9a03-4acad9c60d38
 # ╟─db84d9bb-e0da-4f81-88c8-c2a20c3ce006
-# ╠═707b8724-4f0c-43fd-b797-3badb3c617aa
-# ╠═fe2ab4c6-0b7b-4d07-b84a-663d9d54aea5
 # ╟─2d83f341-24e4-4f65-885b-e5852e1c5d96
 # ╠═2d1f54af-2b00-49da-8c45-fd7cc3277234
 # ╟─4d08c2b9-b373-4fc4-ad4f-af7621f8e55f
@@ -1040,7 +1076,6 @@ end
 # ╟─5faa2499-1017-4182-92bc-cb6f18401617
 # ╠═6af0d533-6eb4-4129-8b12-a5eefe82b2c0
 # ╠═45557e45-f916-43a9-a2c5-944b154ee264
-# ╠═a3236070-89c2-4500-b5de-74dfe4aa4ba5
 # ╠═1a7c8177-6f86-465e-b0dd-2756ff0db034
 # ╠═8305356e-9b8e-4ccf-83bd-2258b4bfa2d6
 # ╟─29d535c8-994d-42e1-ad34-48453a3f92f4

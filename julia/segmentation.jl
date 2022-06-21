@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.18.1
+# v0.19.8
 
 using Markdown
 using InteractiveUtils
@@ -15,6 +15,7 @@ macro bind(def, element)
 end
 
 # ╔═╡ 14b6c3e4-48dd-11ec-336c-6918bf024f43
+# ╠═╡ show_logs = false
 begin
 	let
 		using Pkg
@@ -31,9 +32,10 @@ begin
 		Pkg.add("Statistics")
 		Pkg.add("CairoMakie")
 		Pkg.add("DataStructures")
+		Pkg.add("LinearAlgebra")
 		Pkg.add(url="https://github.com/JuliaHealth/DICOM.jl")
 		Pkg.add(url="https://github.com/Dale-Black/DICOMUtils.jl")
-		Pkg.add(url="https://github.com/Dale-Black/Phantoms.jl")
+		Pkg.add(url="https://github.com/Dale-Black/PhantomSegmentation.jl")
 	end
 
 	using Revise
@@ -47,9 +49,10 @@ begin
 	using Statistics
 	using CairoMakie
 	using DataStructures
+	using LinearAlgebra
 	using DICOM
 	using DICOMUtils
-	using Phantoms
+	using PhantomSegmentation
 end
 
 # ╔═╡ 9506ae45-f63f-4fd6-8467-0597cbde7006
@@ -246,10 +249,11 @@ md"""
         radius_val=95, 
         slice_used_center=nothing
         )
-Given a QRM Phantom with a heart insert, this function will create a mask of the whole heart for image-processing purposes.
+Given a QRM Phantom with heart insert, this function will create a mask of the whole heart for
+image processing purposes.
 """
 function mask_heart(header, array_used, slice_used_center; radius_val=95)
-    pixel_size = Phantoms.get_pixel_size(header)
+    pixel_size = PhantomSegmentation.get_pixel_size(header)
 
     radius = (radius_val / 2) / pixel_size[1]
     central_image = copy(array_used[:, :, slice_used_center])
@@ -314,6 +318,7 @@ function mask_heart(header, array_used, slice_used_center; radius_val=95)
     return masked_array, center_insert, mask
 end
 
+
 # ╔═╡ 57730e9f-05b2-4e3a-bff3-a3a6403a66e0
 masked_array, center_insert, mask = mask_heart(header, dcm_array, size(dcm_array, 3)÷2);
 
@@ -327,7 +332,7 @@ begin
 	ax = Makie.Axis(fig[1, 1])
 	ax.title = "Raw DICOM Array"
 	heatmap!(transpose(dcm_array[:, :, 15]), colormap=:grays)
-	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
+	scatter!(center_insert[2]:center_insert[2], center_insert[1]:center_insert[1], markersize=10, color=:red)
 	fig
 end
 
@@ -338,7 +343,7 @@ begin
 	ax2 = Makie.Axis(fig2[1, 1])
 	ax2.title = "Mask Array"
 	heatmap!(transpose(mask), colormap=:grays)
-	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
+	scatter!(center_insert[2]:center_insert[2], center_insert[1]:center_insert[1], markersize=10, color=:red)
 	fig2
 end
 
@@ -349,7 +354,7 @@ begin
 	ax3 = Makie.Axis(fig3[1, 1])
 	ax3.title = "Masked DICOM Array"
 	heatmap!(transpose(masked_array[:, :, 23]), colormap=:grays)
-	scatter!(center_insert[2]:center_insert[2]+1, center_insert[1]:center_insert[1]+1, markersize=10, color=:red)
+	scatter!(center_insert[2]:center_insert[2], center_insert[1]:center_insert[1], markersize=10, color=:red)
 	fig3
 end
 
@@ -372,19 +377,17 @@ md"""
 # ╔═╡ c4c6841a-88f4-4ca9-9353-0e9daa6d4dff
 """
 	get_calcium_slices(dcm_array, header; calcium_threshold=130)
-
-Returns the slices that contain the calcium vessel inserts `slice_dict` 
-and the slices that contain the calcium calibration rod insert `large_index`.
-
-The calcium rod slice `large_index` usually omits the first and last slice 
-of the rod. So to account for all of the slices containing the calcium rod, 
-one would want a range like so: `(large_index - 1):(large_index + 1)`
+	Returns the slices that contain the calcium vessel inserts `slice_dict` 
+	and the slices that contain the calcium calibration rod insert `large_index`.
+	The calcium rod slice `large_index` usually omits the first and last slice 
+	of the rod. So to account for all of the slices containing the calcium rod, 
+	one would want a range like so: `(large_index - 1):(large_index + 1)`
 """
 function get_calcium_slices(dcm_array, header; calcium_threshold=130)
     array = copy(dcm_array)
     array = Int.(array .> (1.1 * calcium_threshold))
 
-    pixel_size = Phantoms.get_pixel_size(header)
+    pixel_size = PhantomSegmentation.get_pixel_size(header)
     CCI_5mm_num_pixels = Int(round(π * (5 / 2)^2 / pixel_size[1]^2))
     cal_rod_num_pixels = Int(round(π * (20 / 2)^2 / pixel_size[1]^2))
 
@@ -604,25 +607,29 @@ md"""
 """
 
 # ╔═╡ 1ac3d601-0057-475e-a6ac-9522618f7bb9
+"""
+    compute_CCI(dcm_array, header, slice_dict; calcium_threshold=130)
+Main `CCI_calcium_image` function
+"""
 function compute_CCI(dcm_array, header, slice_dict, flipped; calcium_threshold=130)
-	SliceThickness = header[(0x0018,0x0050)]
-	max_key, _ = maximum(zip(values(slice_dict), keys(slice_dict)))
+    SliceThickness = header[(0x0018, 0x0050)]
+    max_key, _ = maximum(zip(values(slice_dict), keys(slice_dict)))
     max_keys = []
     for key in slice_dict
         if key[2] == max_key
             append!(max_keys, key[1])
-		end
-	end
+        end
+    end
     slice_CCI = Int(floor(median(max_keys)))
-    
+
     array = copy(dcm_array)
     array = Int.(array .> calcium_threshold)
-    
+
     calcium_image = array .* dcm_array
     quality_slice = Int.(round(slice_CCI - flipped * (20 / SliceThickness)))
 
     cal_rod_slice = slice_CCI + (flipped * Int(30 / SliceThickness))
-    
+
     return calcium_image, slice_CCI, quality_slice, cal_rod_slice
 end
 
@@ -740,7 +747,6 @@ md"""
 # ╔═╡ 92fca992-b36d-48f3-803e-f92e6463c291
 """
 	calc_output(dcm_array, CCI_slice, calcium_threshold=130, comp_connect=trues(3, 3))
-
 Calculate the output of a dcm_array
 """
 function calc_output(
@@ -748,14 +754,14 @@ function calc_output(
 )
     # Actual scoring for CCI insert
     # First step is to remove slices without calcium from arrays
-    PixelSpacing = Phantoms.get_pixel_size(header)
+    PixelSpacing = PhantomSegmentation.get_pixel_size(header)
     SliceThickness = header[(0x0018, 0x0050)]
     CCI_min = Int((CCI_slice - round(5 / SliceThickness, RoundUp)) - 1)
     CCI_max = Int((CCI_slice + round(5 / SliceThickness, RoundUp)) + 1)
     central_CCI = Int(round(CCI_max - CCI_min) / 2)
 
-    if CCI_min < 0
-        CCI_min = 0
+    if CCI_min ≤ 0
+        CCI_min = 1
     end
     if CCI_max > size(dcm_array, 3)
         CCI_max = size(dcm_array, 3)
@@ -828,19 +834,43 @@ output
 # ╔═╡ 14f46c1f-62fa-45ff-9c78-b01404c466da
 heatmap(transpose(output[2]))
 
+# ╔═╡ 7646e75a-dcf3-4f3f-bb4e-ec7ab8b56ce7
+md"""
+## `find_triangle_points`
+"""
+
+# ╔═╡ 59afc848-d55d-4a52-b063-2fef0a51de4b
+"""
+    find_triangle_points(p1::Vector, center::Vector; offset=0, offset2=0)
+Given the center-point `center` of an equilateral triangle and one single corner-point `p1`, 
+compute the other corner-points `p2` and `p3`
+"""
+function find_triangle_points(p1::Vector, center::Vector; offset=0, offset2=0)
+	# Shift the points as if the center-point was located at (0, 0)
+	p1 = p1 .- center
+
+	# Calculate points 2 and 3
+	R = norm(p1)
+	θ = atan(p1[2], p1[1])
+	p2 = [R*cos(θ + (2*π/3) + offset), R*sin(θ + (2*π/3) + offset)]
+ 	p3 = [R*cos(θ - (2*π/3) + offset2), R*sin(θ - (2*π/3) + offset2)]
+
+	# Fudge (NEEDS TO BE FIXED)
+	p2 = p2[1] + 2, p2[2] - 5
+	
+	# Shift the points back to the original center point
+	p2, p3 = Int.(round.(p2 .+ center)), Int.(round.(p3 .+ center))
+	return p2, p3
+end
+
 # ╔═╡ feca7b76-fc10-4aca-adff-4cd323dabc74
 md"""
 ## `center_points`
 """
 
-# ╔═╡ ae9ab557-553c-474a-8865-37807b9270fb
-"""
-	center_points(output, header, tmp_center, CCI_slice)
-
-Function ...
-"""
+# ╔═╡ 66f5641c-c5b1-45ba-a1d1-643fa2350823
 function center_points(dcm_array, output, header, tmp_center, CCI_slice)
-    PixelSpacing = Phantoms.get_pixel_size(header)
+    PixelSpacing = PhantomSegmentation.get_pixel_size(header)
     rows, cols = Int(header[(0x0028, 0x0010)]), Int(header[(0x0028, 0x0011)])
     sizes = []
     for row in eachrow(output[3])
@@ -890,7 +920,10 @@ end
 center_insert
 
 # ╔═╡ 42e86a48-1438-4edd-ac2d-f307d534e165
-center, center1, center2, center3 = center_points(dcm_array, output, header, center_insert, slice_CCI1)
+# center, center1, center2, center3 = center_points_test(dcm_array, output, header, center_insert, slice_CCI1)
+
+# ╔═╡ cdbc0f3d-3cbc-41ec-a66c-aa36ce91167d
+center_points(dcm_array, output, header, center_insert, slice_CCI1)
 
 # ╔═╡ 0f73d3a7-c6fa-49ee-8fdf-357b0fe94ec8
 md"""
@@ -900,19 +933,18 @@ md"""
 # ╔═╡ 9ac2f9ed-92bb-4540-add5-422df2a3f6da
 """
 	calc_centers(dcm_array, output, header, tmp_center, CCI_slice)
-
 Function ...
 """
-function calc_centers(dcm_array, output, header, tmp_center, CCI_slice)
-    PixelSpacing = Phantoms.get_pixel_size(header)
+function calc_centers(dcm_array, output, header, tmp_center, CCI_slice; angle_factor=0)
+    PixelSpacing = PhantomSegmentation.get_pixel_size(header)
     center, center1, center2, center3 = center_points(
         dcm_array, output, header, tmp_center, CCI_slice
     )
     centers = Dict()
     for size_index4 in (center1, center2, center3)
         center_index = size_index4
-        side_x = abs(center[1] - center_index[1])
-        side_y = abs(center[2] - center_index[2])
+        side_x = abs(center[1] - center_index[1]) + angle_factor
+        side_y = abs(center[2] - center_index[2]) + angle_factor
 
         angle = angle_calc(side_x, side_y)
         if (center_index[1] < center[1] && center_index[2] < center[2])
@@ -1006,7 +1038,6 @@ md"""
 		dcm_array, masked_array, header, CCI_slice, center_insert; 
 		calcium_threshold=130, comp_connect=trues(3, 3)
 		)
-
 Function ...
 """
 function mask_inserts(
@@ -1017,30 +1048,22 @@ function mask_inserts(
     center_insert;
     calcium_threshold=130,
     comp_connect=trues(3, 3),
+    angle_factor=0
 )
     output = calc_output(masked_array, header, CCI_slice, calcium_threshold, comp_connect)
-    insert_centers = calc_centers(dcm_array, output, header, center_insert, CCI_slice)
+    insert_centers = calc_centers(dcm_array, output, header, center_insert, CCI_slice; angle_factor=angle_factor)
 
-    PixelSpacing = Phantoms.get_pixel_size(header)
-    rows, cols = Int(header[tag"Rows"]), Int(header[tag"Columns"])
+    PixelSpacing = PhantomSegmentation.get_pixel_size(header)
+    rows, cols = Int(header[(0x0028, 0x0010)]), Int(header[(0x0028, 0x0011)])
 
     mask_L_HD = create_circular_mask(
-        cols, 
-		rows, 
-		insert_centers[:Large_HD], 
-		(round(5 / PixelSpacing[1], RoundUp) / 2) + 1
-	)
+        cols, rows, insert_centers[:Large_HD], (round(5 / PixelSpacing[1], RoundUp) / 2) + 1
+    )
     mask_L_MD = create_circular_mask(
-        cols, 
-		rows, 
-		insert_centers[:Large_MD], 
-		(round(5 / PixelSpacing[1], RoundUp) / 2) + 1
+        cols, rows, insert_centers[:Large_MD], (round(5 / PixelSpacing[1], RoundUp) / 2) + 1
     )
     mask_L_LD = create_circular_mask(
-        cols, 
-		rows, 
-		insert_centers[:Large_LD], 
-		(round(5 / PixelSpacing[1], RoundUp) / 2) + 1
+        cols, rows, insert_centers[:Large_LD], (round(5 / PixelSpacing[1], RoundUp) / 2) + 1
     )
     mask_M_HD = create_circular_mask(
         cols,
@@ -1061,35 +1084,25 @@ function mask_inserts(
         (round(3 / PixelSpacing[1], RoundUp) / 2) + 1,
     )
     mask_S_HD = create_circular_mask(
-        cols, 
-		rows, 
-		insert_centers[:Small_HD], 
-		(round(1 / PixelSpacing[1], RoundUp) / 2) + 1
+        cols, rows, insert_centers[:Small_HD], (round(1 / PixelSpacing[1], RoundUp) / 2) + 1
     )
     mask_S_MD = create_circular_mask(
-        cols, 
-		rows, 
-		insert_centers[:Small_MD], 
-		(round(1 / PixelSpacing[1], RoundUp) / 2) + 1
+        cols, rows, insert_centers[:Small_MD], (round(1 / PixelSpacing[1], RoundUp) / 2) + 1
     )
     mask_S_LD = create_circular_mask(
-        cols, 
-		rows, 
-		insert_centers[:Small_LD], 
-		(round(1 / PixelSpacing[1], RoundUp) / 2) + 1
+        cols, rows, insert_centers[:Small_LD], (round(1 / PixelSpacing[1], RoundUp) / 2) + 1
     )
- 
-    return transpose(mask_L_HD), transpose(mask_M_HD), transpose(mask_S_HD), transpose(mask_L_MD), transpose(mask_M_MD), transpose(mask_S_MD), transpose(mask_L_LD), transpose(mask_M_LD), transpose(mask_S_LD)
+
+    return transpose(mask_L_HD),
+    transpose(mask_M_HD),
+    transpose(mask_S_HD),
+    transpose(mask_L_MD),
+    transpose(mask_M_MD),
+    transpose(mask_S_MD),
+    transpose(mask_L_LD),
+    transpose(mask_M_LD),
+    transpose(mask_S_LD)
 end
-
-# ╔═╡ 9cf4a86b-d41f-4814-b14e-0854176e73d4
-mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(dcm_array, masked_array, header, slice_CCI, center_insert);
-
-# ╔═╡ 492574dc-5674-462d-9df1-a77e0f445994
-masks = mask_L_HD + mask_M_HD + mask_S_HD + mask_L_MD + mask_M_MD + mask_S_MD + mask_L_LD + mask_M_LD + mask_S_LD;
-
-# ╔═╡ 33b38675-7434-46e5-808c-ad4b0cbb0408
-heatmap(transpose(mask_L_HD), colormap=:grays)
 
 # ╔═╡ 4ff3a9d0-9681-4d49-a165-6787245a2a9f
 @bind a3 PlutoUI.Slider(1:size(masked_array, 3), default=26, show_value=true)
@@ -1138,6 +1151,12 @@ function overlay_mask_plot(array, mask, var, title::AbstractString)
 	fig
 end
 
+# ╔═╡ 9cf4a86b-d41f-4814-b14e-0854176e73d4
+mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(dcm_array, masked_array, header, slice_CCI, center_insert; angle_factor=-2);
+
+# ╔═╡ 492574dc-5674-462d-9df1-a77e0f445994
+masks = mask_L_HD + mask_M_HD + mask_S_HD + mask_L_MD + mask_M_MD + mask_S_MD + mask_L_LD + mask_M_LD + mask_S_LD;
+
 # ╔═╡ ee5cd3f6-0549-48fa-95dd-ab4f88308a31
 begin
 	masks_3D = Array{Bool}(undef, size(dcm_array))
@@ -1148,6 +1167,9 @@ end;
 
 # ╔═╡ 5a799514-6d20-43f3-adf9-7be531495108
 @bind v1 overlay_mask_bind(masks_3D)
+
+# ╔═╡ 33b38675-7434-46e5-808c-ad4b0cbb0408
+heatmap(transpose(mask_L_HD), colormap=:grays)
 
 # ╔═╡ 3d39f7b6-1f73-4783-9ee0-b770d7b35988
 overlay_mask_plot(dcm_array, masks_3D, v1, "masks overlayed")
@@ -1221,26 +1243,29 @@ slice_CCI
 # ╠═fb320178-0d33-4402-b075-7bf7541f94e4
 # ╠═68dae231-9907-44b2-afca-a5dac57998bb
 # ╠═14f46c1f-62fa-45ff-9c78-b01404c466da
+# ╟─7646e75a-dcf3-4f3f-bb4e-ec7ab8b56ce7
+# ╠═59afc848-d55d-4a52-b063-2fef0a51de4b
 # ╟─feca7b76-fc10-4aca-adff-4cd323dabc74
-# ╠═ae9ab557-553c-474a-8865-37807b9270fb
+# ╠═66f5641c-c5b1-45ba-a1d1-643fa2350823
 # ╠═39ce8635-28a7-4eee-875e-325e85d142d5
 # ╠═42e86a48-1438-4edd-ac2d-f307d534e165
+# ╠═cdbc0f3d-3cbc-41ec-a66c-aa36ce91167d
 # ╟─0f73d3a7-c6fa-49ee-8fdf-357b0fe94ec8
 # ╠═9ac2f9ed-92bb-4540-add5-422df2a3f6da
 # ╠═533a77b8-d541-4277-8123-cbfe416fd263
 # ╠═4c8ed7b6-392c-438b-b6d4-946f001c7980
 # ╟─891d81f2-f30e-4365-b0ba-b0cebae9f60f
 # ╠═efad1a40-b466-4e8e-a4ae-ab3c14efc3f6
-# ╠═9cf4a86b-d41f-4814-b14e-0854176e73d4
 # ╠═492574dc-5674-462d-9df1-a77e0f445994
 # ╠═33b38675-7434-46e5-808c-ad4b0cbb0408
 # ╟─4ff3a9d0-9681-4d49-a165-6787245a2a9f
 # ╠═105d699f-1d2c-4291-b5c2-3b7f18d81012
 # ╟─6e7c6d1a-f25d-46f9-88c7-85400d724736
-# ╠═3cdf5136-6315-45b2-9f7a-b8868f6436d4
-# ╠═bcdb7fe9-b699-48ae-a260-f7d4636a3ec7
-# ╠═0d7b6f09-badd-45fc-936f-ff516c622909
+# ╟─3cdf5136-6315-45b2-9f7a-b8868f6436d4
+# ╟─bcdb7fe9-b699-48ae-a260-f7d4636a3ec7
+# ╟─0d7b6f09-badd-45fc-936f-ff516c622909
 # ╠═ee5cd3f6-0549-48fa-95dd-ab4f88308a31
 # ╟─5a799514-6d20-43f3-adf9-7be531495108
+# ╠═9cf4a86b-d41f-4814-b14e-0854176e73d4
 # ╠═3d39f7b6-1f73-4783-9ee0-b770d7b35988
 # ╠═6d5f62e8-fdda-42df-a253-9b55d1395a22
