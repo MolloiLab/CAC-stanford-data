@@ -55,7 +55,7 @@ root_path = "/Users/daleblack/Google Drive/dev/MolloiLab/CAC-stanford-data/data/
 
 # ╔═╡ 5017031f-2e8d-44f9-925d-a14376050342
 md"""
-## Integrated
+## Integrated (1 Point) vs Integrated (3 Point)
 """
 
 # ╔═╡ 61a077c9-6bc2-450f-a58f-6622ca46a592
@@ -498,6 +498,78 @@ end
 
 
 
+# ╔═╡ ef0faf50-f2d5-46d3-8c3b-b7a3b187e204
+md"""
+## Zero CAC
+"""
+
+# ╔═╡ 142892fb-c260-45f5-955e-7be20bc10ea7
+begin
+	array_a = hcat(df_a[!, 8], df_a[!, 10], df_a[!, 12])
+	total_cac = length(array_a)
+	num_zero_a = length(findall(x -> x == 0, array_a))
+end
+
+# ╔═╡ 5055a194-8919-44f3-9405-351b6eab0568
+begin
+	array_i = hcat(df_i2[!, 5], df_i2[!, 7], df_i2[!, 9])
+	num_zero_i = length(findall(x -> x ≤ 0, array_i))
+end
+
+# ╔═╡ 2b420208-f9cc-42e3-b802-ea0e445bc4ef
+let
+	f = Figure()
+	f[1, 1]
+
+	colors = Makie.wong_colors()
+	labels = ["Number Zero CAC (SWCS)", "Number Zero CAC (Agatston)"]
+	elements = [PolyElement(polycolor = colors[i]) for i in 1:length(labels)]
+
+	##-- TOP --##
+	axtop = Axis(f[1, 1], xticks = (1:2, ["Integrated", "Agatston"]))
+	ylims!(axtop, low=0, high=100)
+	axtop.yticks = [0, 25, 50, 75, 100]
+	table = [1, 2]
+	heights1 = [(num_zero_i / total_cac) * 100, (num_zero_a / total_cac) * 100]
+	barplot!(axtop, table, heights1, color=colors[1:2], bar_labels=:y)
+	hidedecorations!(axtop, ticklabels=false, ticks=false)
+	
+	Label(f[1:end, 1:end, Top()], "Zero CAC Scores", valign = :center, padding = (0, 0, 0, 0), textsize=25)
+	Label(f[1:end, 1:end, Left()], "% false-negative zero CAC scores", valign = :center, padding = (0, 50, 0, 0), rotation=π/2, textsize=17)
+
+	# save("/Users/daleblack/Google Drive/Research/2022-AAPM/zero_cac.png", f)
+	f
+end
+
+# ╔═╡ f71c5d9d-ed7b-4959-8549-64de8f6937a2
+# begin
+# 	array_i1 = hcat(df_i1[!, 5], df_i1[!, 7], df_i1[!, 9])
+# 	num_zero_i1 = length(findall(x -> x ≤ 0, array_i1))
+# end
+
+# ╔═╡ 501724e4-860b-4fb7-a89c-b14ea2f8497a
+# begin
+	
+# 	df_i_80, df_i_100, df_i_120, df_i_135, = groupby(df_i2, :scan)
+	
+# 	# mean_i_80, std_i_80= mean(df_i_80[!, :mass_bkg]), std(df_i_80[!, :mass_bkg])
+# 	# mean_i_100, std_i_100= mean(df_i_100[!, :mass_bkg]), std(df_i_100[!, :mass_bkg])
+# 	# mean_i_120, std_i_120= mean(df_i_120[!, :mass_bkg]), std(df_i_120[!, :mass_bkg])
+# 	# mean_i_135, std_i_135 = mean(df_i_135[!, :mass_bkg]), std(df_i_135[!, :mass_bkg])
+	
+# 	# array_i_80 = hcat(df_i_80[!, 7], df_i_80[!, 9], df_i_80[!, 11])
+# 	# array_i_100 = hcat(df_i_100[!, 7], df_i_100[!, 9], df_i_100[!, 11])
+# 	# array_i_120 = hcat(df_i_120[!, 7], df_i_120[!, 9], df_i_120[!, 11])
+# 	# array_i_135 = hcat(df_i_135[!, 7], df_i_135[!, 9], df_i_135[!, 11])
+	
+# 	# num_zeroCAC_80_i = length(findall(x -> x < mean_i_80 - std_i_80, array_i_80))
+# 	# num_zeroCAC_100_i = length(findall(x -> x < mean_i_100 - std_i_100, array_i_100))
+# 	# num_zeroCAC_120_i = length(findall(x -> x < mean_i_120 - std_i_120, array_i_120))
+# 	# num_zeroCAC_135_i = length(findall(x -> x < mean_i_135 - std_i_135, array_i_135))
+
+# 	# total_zero_i = num_zeroCAC_80_i + num_zeroCAC_100_i + num_zeroCAC_120_i + num_zeroCAC_135_i
+# end
+
 # ╔═╡ Cell order:
 # ╠═6b400190-a550-4e32-baa6-d54b66d7676e
 # ╠═38cd4959-e50a-4724-849d-9a246dd4414e
@@ -530,3 +602,9 @@ end
 # ╠═b94b3990-9653-4fb3-a44d-52cc11aebf3a
 # ╠═9d197c96-ae44-43e8-9f92-4cef7b77310c
 # ╠═208e1303-b344-41b7-a476-a72909132ea0
+# ╟─ef0faf50-f2d5-46d3-8c3b-b7a3b187e204
+# ╟─2b420208-f9cc-42e3-b802-ea0e445bc4ef
+# ╠═142892fb-c260-45f5-955e-7be20bc10ea7
+# ╠═5055a194-8919-44f3-9405-351b6eab0568
+# ╠═f71c5d9d-ed7b-4959-8549-64de8f6937a2
+# ╟─501724e4-860b-4fb7-a89c-b14ea2f8497a

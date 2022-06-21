@@ -69,7 +69,7 @@ md"""
 # ╔═╡ cb6af1f1-9e54-4172-9e65-bcf534840716
 begin
 	SCAN_NUMBER = 4
-	VENDER = "Canon_Aquilion_One_Vision"
+	VENDER = "Siemens_SOMATOM_Force"
 	BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 end
 
@@ -203,7 +203,7 @@ angle_factor = -4
 
 # ╔═╡ 3bb994fa-e4e8-4e98-bf1b-5e896f21e96e
 mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(
-		dcm_array, masked_array, header, slice_CCI, center_insert; angle_factor=angle_factor);
+		dcm_array, masked_array, header, slice_CCI, center_insert; angle_factor=0, calcium_threshold=115);
 
 # ╔═╡ 0aece8c7-c8f7-49ca-b68e-b2fda92060c0
 masks = mask_L_HD + mask_M_HD + mask_S_HD + mask_L_MD + mask_M_MD + mask_S_MD + mask_L_LD + mask_M_LD + mask_S_LD;
@@ -310,7 +310,7 @@ end
 
 # ╔═╡ b6425bc8-4cb8-4429-b080-064d392a359f
 begin
-	intensity_array3 = [0, cal_insert_mean, med_density_cal1d, high_density_cal1d]
+	intensity_array3 = [0, 318.277, 595.561, 1172.95]
 	density_array_cal3 = [0, 200, 400, 800]
 	df_cal3 = DataFrame(:density => density_array_cal3, :intensity => intensity_array3)
 	linearRegressor3 = lm(@formula(intensity ~ density), df_cal3)

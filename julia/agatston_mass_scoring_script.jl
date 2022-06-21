@@ -45,7 +45,7 @@ end
 BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 
 # ╔═╡ b4fd6633-56e2-4d0d-ac13-b305b0e2d1c8
-venders = ["Canon_Aquilion_One_Vision", "GE_Revolution", "Philips_Brilliance_iCT"]
+venders = ["Canon_Aquilion_One_Vision", "GE_Revolution", "Philips_Brilliance_iCT", "Siemens_SOMATOM_Force"]
 
 # ╔═╡ 64eb1515-c69e-41f0-8fdb-f93389a7003f
 md"""
@@ -83,7 +83,8 @@ begin
 			pth = dcm_path_list[SCAN_NUMBER]
 			scan = basename(pth)
 			header, dcm_array, slice_thick_ori1 = dcm_reader(pth)
-		
+
+			thresh = 115
 			# Segment Heart
 			masked_array, center_insert, mask = mask_heart(header, dcm_array, size(dcm_array, 3)÷2)
 		
@@ -92,11 +93,12 @@ begin
 	
 			# Segment Calcium Inserts
 			mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(
-		            dcm_array, masked_array, header, slice_CCI, center_insert
+				dcm_array, masked_array, header, slice_CCI, center_insert;
+				calcium_threshold=thresh
 			)
 		
 			# Mask Calibration Factor
-			output = calc_output(masked_array, header, slice_CCI, 130, trues(3, 3))
+			output = calc_output(masked_array, header, slice_CCI, thresh, trues(3, 3))
 		    insert_centers = calc_centers(dcm_array, output, header, center_insert, slice_CCI)
 			rows, cols = Int(header[tag"Rows"]), Int(header[tag"Columns"])
 			pixel_size = DICOMUtils.get_pixel_size(header)
