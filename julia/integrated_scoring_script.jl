@@ -4,7 +4,7 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 34a6ee83-5c46-4661-910e-925ea33ef625
+# ╔═╡ 015f30f1-7bde-40e7-9294-2bd495a7962c
 # ╠═╡ show_logs = false
 begin
 	let
@@ -39,19 +39,19 @@ begin
 	using CalciumScoring
 end
 
-# ╔═╡ c34ae2e3-466f-4280-8786-b0e92dbb2792
+# ╔═╡ 7e617d7e-dd3a-4fd4-a77b-bf2608629d36
 TableOfContents()
 
-# ╔═╡ ff0a6e93-9c5e-4ac2-af02-ce253b535c6b
+# ╔═╡ 8b755f00-8176-4da8-9ab5-7d1585a6d4fb
 BASE_PATH = "/Users/daleblack/Google Drive/Datasets/"
 
-# ╔═╡ c24969d7-d482-4e97-ad74-3c11f0c9836e
-venders = ["Canon_Aquilion_One_Vision", "GE_Revolution", "Philips_Brilliance_iCT"]
+# ╔═╡ a2871448-7b2d-41b5-9cf5-9a711049e16d
+venders = ["Canon_Aquilion_One_Vision", "GE_Revolution", "Philips_Brilliance_iCT", "Siemens_SOMATOM_Force"]
 
-# ╔═╡ 7d8366d8-9cc5-49b3-8db3-1b9db6d12c92
+# ╔═╡ ad398e5a-c7fb-4e20-8cfc-3cf50e86fd21
 scans = collect(1:10)
 
-# ╔═╡ 60fe5916-a1a6-11ec-1fbe-8952690e9d06
+# ╔═╡ e4f24c82-60ce-4933-b441-d504fdee078a
 begin
 	dfs = []
 	for VENDER in venders
@@ -83,20 +83,28 @@ begin
 			# cal_insert_mean = quantile!(c_img[mask_cal_3D], 0.7)
 	
 			# Calibration line
-			density_array_calc = [0, 200] # mg/cc
-			intensity_array = [0, cal_insert_mean] # HU
-			df_cal = DataFrame(:density => density_array_calc, :intensity => intensity_array)
+			# density_array_calc = [0, 200] # mg/cc
+			density_array_calc3 = [0, 200, 400, 800] # mg/cc
+			# intensity_array = [0, cal_insert_mean] # HU
+			intensity_array3 = [0, 318.277, 595.561, 1172.95]
+			df_cal = DataFrame(:density => density_array_calc3, :intensity => intensity_array3)
 			linearRegressor = lm(@formula(intensity ~ density), df_cal)
 			linearFit = predict(linearRegressor)
 			m = linearRegressor.model.pp.beta0[2]
 			b = linearRegressor.model.rr.mu[1]
 			density(intensity) = (intensity - b) / m
 			intensity(ρ) = m*ρ + b
-	
+
+			
+			thresh = 115
 			# angle_factor = RMSE_Dict["factor"]
-			angle_factor = -4
+			# if VENDER=="Siemens_SOMATOM_Force" && SCAN_NUMBER==4
+			# 	angle_factor=0
+			# else
+			# 	angle_factor = -4
+			# end
 			mask_L_HD, mask_M_HD, mask_S_HD, mask_L_MD, mask_M_MD, mask_S_MD, mask_L_LD, mask_M_LD, mask_S_LD = mask_inserts(
-				dcm_array, masked_array, header, slice_CCI, center_insert; angle_factor=angle_factor)
+				dcm_array, masked_array, header, slice_CCI, center_insert; angle_factor=0, calcium_threshold=thresh)
 		
 			arr = masked_array[:, :, slice_CCI-3:slice_CCI+3]
 			single_arr = masked_array[:, :, slice_CCI]
@@ -275,34 +283,34 @@ begin
 	end
 end
 
-# ╔═╡ c8b89590-c7c4-4c40-93c4-9fd905eb3328
+# ╔═╡ d265f1e9-4f2d-4342-99e3-1ee74d60305d
 md"""
 # Save Results
 """
 
-# ╔═╡ 47dfa770-47ea-47ee-98e7-87da471ab01c
+# ╔═╡ cf2eab60-7418-49fc-a2ac-ba9397a2d8e2
 new_df = vcat(dfs[1:length(dfs)]...)
 
-# ╔═╡ e730f5ae-ae32-4869-9a59-98933bcba510
+# ╔═╡ a5091569-f68b-48c4-a5d4-f81c6daad5c1
 if ~isdir(string(cd(pwd, "..") , "/data/output"))
 	mkdir(string(cd(pwd, "..") , "/data/output"))
 end
 
-# ╔═╡ 75e9e00c-9603-46e9-a009-7cdc76f1a2cc
-output_path = string(cd(pwd, "..") , "/data/output", "/integrated.csv")
+# ╔═╡ 152b5890-eb8e-4f2b-a91e-107416b920b9
+output_path = string(cd(pwd, "..") , "/data/output", "/integrated3cal.csv")
 
-# ╔═╡ a0872982-dcbb-4278-beaf-70409400b514
+# ╔═╡ 2c94457f-fa67-4b2e-9756-68d42e6ac06b
 CSV.write(output_path, new_df)
 
 # ╔═╡ Cell order:
-# ╠═34a6ee83-5c46-4661-910e-925ea33ef625
-# ╠═c34ae2e3-466f-4280-8786-b0e92dbb2792
-# ╠═ff0a6e93-9c5e-4ac2-af02-ce253b535c6b
-# ╠═c24969d7-d482-4e97-ad74-3c11f0c9836e
-# ╠═7d8366d8-9cc5-49b3-8db3-1b9db6d12c92
-# ╠═60fe5916-a1a6-11ec-1fbe-8952690e9d06
-# ╟─c8b89590-c7c4-4c40-93c4-9fd905eb3328
-# ╠═47dfa770-47ea-47ee-98e7-87da471ab01c
-# ╠═e730f5ae-ae32-4869-9a59-98933bcba510
-# ╠═75e9e00c-9603-46e9-a009-7cdc76f1a2cc
-# ╠═a0872982-dcbb-4278-beaf-70409400b514
+# ╠═015f30f1-7bde-40e7-9294-2bd495a7962c
+# ╠═7e617d7e-dd3a-4fd4-a77b-bf2608629d36
+# ╠═8b755f00-8176-4da8-9ab5-7d1585a6d4fb
+# ╠═a2871448-7b2d-41b5-9cf5-9a711049e16d
+# ╠═ad398e5a-c7fb-4e20-8cfc-3cf50e86fd21
+# ╠═e4f24c82-60ce-4933-b441-d504fdee078a
+# ╟─d265f1e9-4f2d-4342-99e3-1ee74d60305d
+# ╠═cf2eab60-7418-49fc-a2ac-ba9397a2d8e2
+# ╠═a5091569-f68b-48c4-a5d4-f81c6daad5c1
+# ╠═152b5890-eb8e-4f2b-a91e-107416b920b9
+# ╠═2c94457f-fa67-4b2e-9756-68d42e6ac06b

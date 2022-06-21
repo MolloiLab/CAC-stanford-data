@@ -170,7 +170,7 @@ md"""
 """
 
 # ╔═╡ 0883a26a-54ba-4670-a19b-a6a0a23f5aee
-root_path = "/Users/daleblack/Google Drive/Datasets/Canon_Aquilion_One_Vision"
+root_path = "/Users/daleblack/Google Drive/Datasets/Siemens_SOMATOM_Force"
 
 # ╔═╡ 59976bc3-271e-4418-874c-b553b59e730a
 dcm_path_list = dcm_list_builder(root_path)
@@ -179,10 +179,10 @@ dcm_path_list = dcm_list_builder(root_path)
 dcm_reader(dcm_path_list[1]);
 
 # ╔═╡ 8652d37a-7dc2-4123-b20f-87a8981baa26
-dcm_path_list[2]
+dcm_path_list[5]
 
 # ╔═╡ 9b02d4cc-e9b3-47aa-8d57-e0befd64a5fc
-header, dcm_array, slice_thick_ori = dcm_reader(dcm_path_list[2]);
+header, dcm_array, slice_thick_ori = dcm_reader(dcm_path_list[5]);
 
 # ╔═╡ 2185c4e4-a518-4133-8174-662e0dd744eb
 heatmap(transpose(dcm_array[:, :, 8]), colormap=:grays)
@@ -826,7 +826,7 @@ function calc_output(
 end
 
 # ╔═╡ fb320178-0d33-4402-b075-7bf7541f94e4
-output = calc_output(masked_array, header, slice_CCI1);
+output = calc_output(masked_array, header, slice_CCI1, 115);
 
 # ╔═╡ 68dae231-9907-44b2-afca-a5dac57998bb
 output
